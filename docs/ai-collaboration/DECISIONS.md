@@ -238,3 +238,69 @@ rejection instead of letting one scene take the page down.
   field as noise.
 
 **Status:** Active
+
+---
+
+### 2026-09-20 — Scenes are isolated; reveals are armed before any of them run
+
+**Decision:** `startScenes()` iterates a scene registry, calls `reveal()`
+first, and catches per scene. It no longer sets a global `is-fallback`.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** With more than one canvas scene, a single failure was
+able to mark the whole page as degraded, and the scroll-reveal mechanism ran
+after the scenes — so a scene throwing could leave revealed copy permanently
+hidden.
+
+**Options considered:**
+- Keep initialising scenes individually with a shared failure flag
+- A registry loop with per-scene isolation, reveals armed first
+
+**Chosen approach:** The registry loop.
+
+**Reasoning:** `is-fallback` described a whole-page state, which stopped being
+true the moment scenes could fail independently — the About canvas failing
+says nothing about the hero. Ordering matters for the same reason the hero
+copy is visible by default: the mechanism that *shows* text must be armed
+before anything that can throw.
+
+**Consequences / Trade-offs:**
+- Adding Phases 6–7 is one array entry each.
+- `is-fallback` now marks only the individual section that failed, which is
+  what TEST_CHECKLIST asserts against.
+
+**Status:** Active
+
+---
+
+### 2026-09-20 — Revealed content is visible by default, hidden only once JS proves it can reveal it
+
+**Decision:** `[data-reveal]` elements are visible in CSS. `reveal.js` adds
+`is-reveal-ready` to `<html>`, and only that class hides them pending arrival.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** The conventional pattern starts revealed elements at
+`opacity: 0`. Here that would have hidden the entire About section whenever
+JavaScript failed or `IntersectionObserver` was unavailable.
+
+**Options considered:**
+- Hide in CSS, reveal in JS (conventional)
+- Show in CSS, hide only after JS confirms it will reveal
+
+**Chosen approach:** The second — the same inversion already used for the hero
+copy.
+
+**Reasoning:** This is the defect class recorded as observation #0003 during
+Phase 4: a mechanism that *approaches* the finished state leaves the
+unfinished state behind when it does not run. Applying the fix before shipping
+cost one class and one capability check.
+
+**Consequences / Trade-offs:**
+- Reveals are one-shot; elements are unobserved on arrival, because
+  re-animating on every scroll-by makes text unreadable when scrolling back.
+- A very slow load may show copy briefly before it is hidden — the same
+  accepted trade-off as the hero.
+
+**Status:** Active

@@ -14,6 +14,8 @@ import { profile, projects, timeline, skills, experience, certifications }
 import { art, placeholder, probeFile } from './lib/assets.js';
 import { initDialog, openProject } from './lib/dialog.js';
 import { initHero } from './scenes/hero.js';
+import { initAbout } from './scenes/about.js';
+import { reveal } from './lib/reveal.js';
 
 const root = document.documentElement;
 const $ = (id) => document.getElementById(id);
@@ -297,11 +299,17 @@ function wireChrome() {
 // ---------------------------------------------------------------------------
 
 function startScenes() {
-  initHero().catch((e) => {
-    // A failed scene must never take the portfolio down with it.
-    root.classList.add('is-fallback');
-    console.warn('[portfolio] hero scene unavailable:', e.message);
-  });
+  // Reveals first: they are pure DOM and must be armed before any scene has a
+  // chance to throw, so the copy is never left hidden by a failed canvas.
+  reveal(document);
+
+  for (const [name, init] of [['hero', initHero], ['about', initAbout]]) {
+    // Each scene is isolated: one failing must never take the others, or the
+    // portfolio, down with it.
+    init().catch((e) => {
+      console.warn(`[portfolio] ${name} scene unavailable:`, e.message);
+    });
+  }
 }
 
 // ---------------------------------------------------------------------------

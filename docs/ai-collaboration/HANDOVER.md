@@ -7,6 +7,7 @@ Read at the start of every session. Keep it current, not complete.
 - Purpose: Cinematic personal portfolio for Krishna Jaiswal (AI / Data Science /
   Machine Learning). Vanilla ES modules + WebGL2, no framework, no build step,
   no runtime dependencies. Deployable to any static host.
+- Version control: `git`, branch `main`, no remote configured, nothing pushed.
 
 ## Done
 - Phase 1 — reference analysis of `github.com/gireeshkumarreddy/cinematic-portofilo`.
@@ -14,30 +15,28 @@ Read at the start of every session. Keep it current, not complete.
   and 404 on `/license`). All-rights-reserved: none of its code, styles or
   media may be reused. Techniques are ideas and were reimplemented from scratch.
 - Phase 2 — architecture decided and approved (see DECISIONS.md).
-- Phase 3 — scaffold complete, automated checks passing.
-- Phase 4 — cinematic hero (see features/FEATURE-001.md):
-  - `src/gl/particles.js` — reusable particle field; CPU simulation, one
-    `drawArrays(POINTS)`; `sampleInk()` derives targets from the live `<h1>`
-  - `src/scenes/hero.js` — beats, font-ready gating, pointer parallax,
-    reduced-motion snap
-  - `src/main.js` rewired: `probeWebGL()` → `startScenes()`
-  - `src/styles/scenes.css` — staggered hero reveal, fail-visible by default
-  - Verified 2026-09-20: 10/10 modules parse; `check_content.mjs` → 7 checks
-    passed, exit 0; all modules serve as `text/javascript`
+- Phase 3 — scaffold: semantic markup, `content.js` as single source of truth,
+  case-study `<dialog>`, CSS token system, WebGL bootstrap.
+- Phase 4 — cinematic hero (features/FEATURE-001.md): particle field
+  condensing into the wordmark, targets sampled from the live `<h1>`.
+  **Committed as `d626ed5`** — the clean Phase 1–4 restore point.
+- Phase 5 — About scene (features/FEATURE-002.md): the same field in a
+  lattice configuration, plus the reusable `lib/reveal.js` scroll-reveal
+  mechanism the remaining scenes will share.
+- Verified 2026-09-20: 12/12 modules parse; import graph resolves;
+  class-name contract matches between JS and CSS; `check_content.mjs` → 7
+  checks passed; all modules serve as `text/javascript`.
 
 ## In Progress
-- Nothing. Phase 4 written and awaiting review.
+- Phase 5 written and verified; **not yet committed**.
 
 ## Broken / Blockers
 - None known.
-- **Open gap — no browser pass has ever been done.** Everything in the Manual
-  Checks table of TEST_CHECKLIST.md is unverified: rendering, console
-  cleanliness, WebGL init, the hero sequence itself, dialog behaviour,
-  keyboard navigation, reduced motion, mobile layout. Do not report any of it
-  as working until it has been looked at.
-- **No version control.** ROLLBACK.md cannot cite a commit, and the Phase 4
-  snapshot lives in a session scratchpad that is not durable. Ask Krishna
-  about `git init` before the next risky change.
+- **Open gap — no browser pass has ever been done, in any phase.** Everything
+  in the Manual Checks tables of TEST_CHECKLIST.md is unverified: rendering,
+  console cleanliness, both canvas scenes, reveals, dialog behaviour, keyboard
+  navigation, reduced motion, mobile layout. Do not report any of it as
+  working until it has been looked at.
 
 ## Avoid
 - Reusing any code, CSS, shader or media from the reference repository — Why:
@@ -49,31 +48,34 @@ Read at the start of every session. Keep it current, not complete.
   pin added in later phases.
 - Removing `"type": "module"` from `package.json` — Why: Node then parses
   `content.js` as CommonJS and `check_content.mjs` fails on the first `export`.
-- Making the hero copy hidden by default in CSS — Why: it is visible by
-  default *on purpose*. `hero.js` adds `.is-gl` only after confirming a WebGL2
-  context, so every failure path leaves the name on screen.
+- **Hiding anything in CSS by default.** The hero copy and every
+  `[data-reveal]` element are visible until JS proves it can reveal them
+  (`is-gl`, `is-reveal-ready`). This is the #0003 defect class; see
+  DECISIONS.md 2026-09-20.
 - Sampling the wordmark before `document.fonts.ready` — Why: it bakes the
   fallback face's letterforms into the particle field.
+- Re-randomising lattice jitter on resize — Why: the field visibly twitches.
+  Jitter derives from each particle's stable seed.
 - Writing any personal fact, metric or URL outside `src/data/content.js`.
 - Adding a profile photograph — Why: Krishna has explicitly declined to supply
   one; the design deliberately needs none.
 
 ## Next Steps
-1. Browser pass: serve, open, and fill in the Manual Checks table in
-   TEST_CHECKLIST.md — especially the hero sequence, which has never been seen.
-2. Ask about `git init` so rollback stops depending on a scratchpad copy.
-3. Phase 5 — About scene, then Phases 6–7 wire `#journeyStage`,
-   `#universeStage` and `#finStage`, which are already in the markup and can
-   reuse `createField()` with different targets.
+1. Commit Phase 5.
+2. Browser pass — the single largest gap in the project. Fill in the Manual
+   Checks tables in TEST_CHECKLIST.md.
+3. Phase 6 — Journey scene. `#journeyStage` is already in the markup, the rail
+   renders from `content.js`, and adding the scene is one entry in the
+   `startScenes()` registry plus a third `createField` configuration.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.
 - Date: 2026-09-20
 - AI model: Claude Opus 5 (1M context)
-- Did: Phases 1–4. Reference analysed and found unlicensed; architecture
-  approved; scaffold built; cinematic hero particle field implemented, with a
-  reduced-motion bug caught and fixed before verification.
-- Left: A browser pass (nothing visual has ever been observed), then Phase 5.
+- Did: Phases 1–5. Reference found unlicensed; architecture approved; scaffold,
+  cinematic hero and About lattice built; git initialised with a clean Phase
+  1–4 baseline commit.
+- Left: Commit Phase 5, then a browser pass, then Phase 6 (Journey).
 - Watch out for: Projects 04 and 05 were described from Krishna's brief and
   **not** inspected — their `source: 'provided'` flag and disclaimers must
   survive any edit. All `links: {}` are deliberately empty; do not populate

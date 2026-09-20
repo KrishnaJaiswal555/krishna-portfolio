@@ -114,6 +114,37 @@ section, footer.fin { position: relative; }
   padding: clamp(80px, 14vh, 180px) var(--edge);
 }
 
+/* The lattice canvas sits behind the copy; everything else in the section is
+   lifted above it. pointer-events:none so it never eats a text selection. */
+.about__stage {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block; z-index: 0; pointer-events: none;
+}
+.about > *:not(.about__stage) { position: relative; z-index: 1; }
+
+/* Scroll reveals.
+   Visible BY DEFAULT, exactly like the hero copy. `reveal.js` adds
+   `is-reveal-ready` to <html> only once it has confirmed it can actually
+   observe these elements, and only then do they start hidden. No JS, a module
+   that throws, or a browser without IntersectionObserver all leave the text
+   on screen. */
+html.is-reveal-ready [data-reveal]:not(.is-in) {
+  opacity: 0;
+  transform: translateY(18px);
+}
+[data-reveal] {
+  transition: opacity .7s var(--ease-out), transform .7s var(--ease-out);
+  /* --ri is the stagger index, set by reveal.js so CSS need not know the
+     element count. */
+  transition-delay: calc(var(--ri, 0) * .07s);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.is-reveal-ready [data-reveal]:not(.is-in) { opacity: 1; transform: none; }
+  [data-reveal] { transition: none; }
+}
+
 .about__grid {
   display: grid; gap: clamp(32px, 6vw, 88px);
   grid-template-columns: 1.15fr 1fr;

@@ -86,17 +86,19 @@
   <!-- ==================================================================== -->
   <!-- SCENE 2 — about -->
   <section class="about" id="about" aria-labelledby="aboutTitle">
-    <p class="scene__over">Scene 02</p>
-    <h2 class="scene__title" id="aboutTitle">About</h2>
+    <canvas class="about__stage" id="aboutStage" aria-hidden="true"></canvas>
+
+    <p class="scene__over" data-reveal>Scene 02</p>
+    <h2 class="scene__title" id="aboutTitle" data-reveal>About</h2>
 
     <div class="about__grid">
       <div class="about__lead">
-        <p class="about__intro">
+        <p class="about__intro" data-reveal>
           I am a Computer Technology engineering student interested in Data
           Science, Artificial Intelligence, Machine Learning, and building
           practical software systems that solve real-world problems.
         </p>
-        <p class="about__edu">
+        <p class="about__edu" data-reveal>
           <strong>B.Tech, Computer Technology</strong><br>
           Yeshvantrao Chavan College of Engineering, Nagpur<br>
           <span class="mono">2021 &ndash; 2026</span>
@@ -104,11 +106,11 @@
       </div>
 
       <div class="about__cols">
-        <div class="about__col">
+        <div class="about__col" data-reveal>
           <h3 class="about__h">Focus</h3>
           <ul class="about__list" id="focusList"></ul>
         </div>
-        <div class="about__col">
+        <div class="about__col" data-reveal>
           <h3 class="about__h">Looking toward</h3>
           <ul class="about__list" id="interestList"></ul>
         </div>

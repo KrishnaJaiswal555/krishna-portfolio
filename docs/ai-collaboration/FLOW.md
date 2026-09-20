@@ -10,7 +10,7 @@ Trigger: browser parses `index.html` and reaches
 1. `index.html` → `html` carries `is-booting`, which holds `body` at
    `opacity: 0` so no empty shell is ever visible.
 2. `src/main.js` → imports `data/content.js`, `lib/assets.js`,
-   `lib/dialog.js`, `scenes/hero.js`.
+   `lib/dialog.js`, `lib/reveal.js`, `scenes/hero.js`, `scenes/about.js`.
 3. `src/main.js` → `main()` runs immediately on module evaluation.
 4. `main()` → `renderAbout()` — fills `#focusList`, `#interestList`.
 5. `main()` → `renderJourney()` — builds one `<button class="jn">` per
@@ -19,10 +19,12 @@ Trigger: browser parses `index.html` and reaches
    `projects[]` entry into `#universeDeck`; each calls
    `lib/assets.js → art()` for its artwork.
 7. `main()` → `renderSkills()`, `renderContact()`, `wireChrome()`.
-8. `main()` → `startScenes()` → `scenes/hero.js → initHero()`.
-   **Not awaited** — the page is complete and interactive without it, and any
-   rejection is caught into `html.is-fallback` rather than taking the page
-   down.
+8. `main()` → `startScenes()`:
+   - `lib/reveal.js → reveal(document)` **first**, before anything that can
+     throw. A scene failing must never leave revealed copy hidden.
+   - then a registry loop over `[['hero', initHero], ['about', initAbout]]`,
+     each `.catch()`-ed individually so one failure cannot take the others —
+     or the page — down.
 9. `main()` → `lib/dialog.js → initDialog()` — binds close, backdrop click,
    `hashchange`, then calls `syncFromHash()` so a deep link opens immediately.
 10. `main()` → `wireResume()` → `lib/assets.js → probeFile()` — HEAD request;
@@ -31,35 +33,65 @@ Trigger: browser parses `index.html` and reaches
 
 **Currently modifying:** none.
 
-## Hero scene (Phase 4)
+## Scroll reveals
 
-Trigger: `main() → startScenes() → initHero()`.
+Trigger: `startScenes() → reveal(document)`.
 
-1. `scenes/hero.js` → `createGL(#heroStage)`. On null → `.is-fallback` on the
-   section and **return null**. The hero copy is visible by default, so there
-   is nothing to undo.
-2. → adds `.is-gl` to the section. This is the class that *hides* the copy
-   pending the reveal, so it is only ever added once a context is confirmed.
-3. → `await document.fonts.ready` — sampling before the webfont is in use
-   would bake the fallback face's letterforms into the field.
-4. → `createField(gl, countFor(innerWidth))` — 1,200 / 2,400 / 3,600 by
-   viewport.
+1. `lib/reveal.js` → collects `[data-reveal]`, sets `--ri` on each for CSS
+   staggering.
+2. → if `prefers-reduced-motion`, or if `IntersectionObserver` is missing:
+   add `is-in` to everything and **return**. No hiding ever happens.
+3. → otherwise add `is-reveal-ready` to `<html>`. This is the class that lets
+   `scenes.css` hide the elements, so they are only hidden once something is
+   definitely going to show them.
+4. → observe each element; on intersection add `is-in` and **unobserve** it.
+   One-shot by design.
+
+**Currently modifying:** none.
+
+## Hero scene (FEATURE-001)
+
+Trigger: `startScenes()` registry → `scenes/hero.js → initHero()`.
+
+1. `createGL(#heroStage)`. On null → `is-fallback` on the section, return
+   null. The hero copy is visible by default, so nothing needs undoing.
+2. → adds `is-gl` to the section — the class that hides the copy pending the
+   reveal, added only once a context is confirmed.
+3. → `await document.fonts.ready` — sampling earlier bakes the fallback face's
+   letterforms into the field.
+4. → `createField(gl, countFor(innerWidth))` — 1,200 / 2,400 / 3,600.
 5. → `retarget()` → `resizeCanvas()` → reads each `.hero__line` rect and
    computed font → `gl/particles.js → sampleInk()` → targets in device px.
 6. → `field.scatter()` — the pre-condense noise state.
 7. → `lib/scene.js → gate(section, {onFrame, onResize})`.
-   - `prefers-reduced-motion`: `onResize` runs (which snaps `pos` onto `tgt`),
-     `onFrame(9999)` draws one settled frame, no loop is ever started.
-   - otherwise: `IntersectionObserver` drives the rAF loop;
-     `visibilitychange` stops it; debounced `resize` calls `retarget()`.
-8. Each frame → `field.update(dt, pull, t, drift)` on the CPU →
-   `field.draw()` uploads positions via `bufferSubData` and issues one
-   `drawArrays(POINTS)`.
-9. At `t ≥ 3.35s` → `showText()` adds `.is-typed`; `scenes.css` transitions the
-   copy in, staggered, while the field is still tightening.
+8. Each frame → `field.update(dt, pull, t, drift)` → `field.draw()` uploads
+   positions via `bufferSubData` and issues one `drawArrays(POINTS)`.
+9. At `t ≥ 3.35s` → `showText()` adds `is-typed`; the copy transitions in,
+   staggered, while the field is still tightening.
 
-**Currently modifying:** none — Phase 4 is written; browser verification
-outstanding.
+**Currently modifying:** none.
+
+## About scene (FEATURE-002)
+
+Trigger: `startScenes()` registry → `scenes/about.js → initAbout()`.
+
+1. `createGL(#aboutStage)`. On null → `is-fallback` on the section, return
+   null. This section's copy is always visible.
+2. → `createField(gl, countFor(innerWidth))` — 360 / 700 / 1,050, far fewer
+   than the hero: this is texture, not the subject.
+3. → `lattice()` solves column count from the aspect ratio so cells stay
+   roughly square, then jitters each target within its cell using the
+   particle's **stable seed** — re-randomising per resize made the field
+   visibly twitch.
+4. → `field.scatter()`, then `gate(section, …)`.
+5. Each frame → section scroll progress `sp` is computed from its rect →
+   `field.update(dt, 1.4, t, drift)` — pull is constant, because this section
+   is a state rather than an event, so the lattice never "arrives".
+6. → alpha follows `sin(sp·π)^0.6`, so the grid fades in and back out instead
+   of abutting neighbouring scenes with a hard edge.
+7. → `offset` combines scroll drift with damped pointer sway.
+
+**Currently modifying:** none.
 
 ## Artwork resolution
 
@@ -78,14 +110,13 @@ Trigger: click on a `.pc` card, or a `#project/<id>` URL.
 
 1. `src/main.js` → card listener → `lib/dialog.js → openProject(id)`
 2. `openProject()` → looks the project up in `byId`, bails if already open.
-3. → `src/main.js → renderCase(project)` returns an array of nodes built
-   purely from `content.js`. Metrics and links sections are emitted **only**
-   if their arrays/objects are non-empty.
+3. → `src/main.js → renderCase(project)` returns nodes built purely from
+   `content.js`. Metrics and links are emitted **only** if non-empty.
 4. → `history.pushState({project: id}, '', '#project/<id>')`
 5. → `dialog.showModal()` — the platform supplies focus trapping,
    Esc-to-close, background inertness and `::backdrop`.
-6. Closing fires the `close` event → if the hash still names a project,
-   `history.back()` rewinds it, so the browser back button closes the overlay
-   rather than leaving the page.
+6. Closing fires `close` → if the hash still names a project, `history.back()`
+   rewinds it, so the browser back button closes the overlay rather than
+   leaving the page.
 
 **Currently modifying:** none.
