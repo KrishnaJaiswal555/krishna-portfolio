@@ -1,0 +1,11 @@
+{
+  "name": "krishna-portfolio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Cinematic portfolio for Krishna Jaiswal — AI, Data Science, Machine Learning",
+  "scripts": {
+    "check": "node tools/check_content.mjs",
+    "serve": "python tools/serve.py 5173"
+  }
+}

@@ -1,0 +1,326 @@
+/* ==========================================================================
+   Per-scene composition.
+   Portrait is a RECOMPOSITION, not a scaled desktop: the journey rail turns
+   vertical and the project deck becomes a single column. Mapping the desktop
+   arrangement onto a tall screen collapses both into unreadable bands.
+   ========================================================================== */
+
+section, footer.fin { position: relative; }
+
+.flow { position: relative; z-index: 2; background: var(--bg); }
+
+/* ==========================================================================
+   Scene 1 — hero
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid; align-content: center;
+  padding: calc(var(--hdr-h) + 6vh) var(--edge) 14vh;
+  max-width: var(--maxw); margin: 0 auto;
+  overflow: hidden;
+}
+.hero__stage {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  z-index: 0;
+}
+.hero__copy { position: relative; z-index: 1; }
+
+.hero__over {
+  font-family: var(--mono);
+  font-size: 12px; letter-spacing: .24em; text-transform: uppercase;
+  color: var(--dim);
+  margin: 0 0 18px;
+}
+
+.hero__name {
+  font-family: var(--disp);
+  /* Fills the viewport width at every size without a media query. */
+  font-size: clamp(52px, 15.5vw, 210px);
+  line-height: .86;
+  letter-spacing: .005em;
+  margin: 0 0 26px;
+}
+.hero__line { display: block; }
+.hero__line:last-child { color: var(--accent); }
+
+.hero__roles {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 14px;
+  font-size: clamp(13px, 1.5vw, 16px);
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--paper);
+  margin: 0 0 20px;
+}
+.hero__roles i {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--accent); display: inline-block;
+}
+
+.hero__edu { color: var(--dim); font-size: 14px; margin: 0; }
+
+/* Hero reveal.
+   The copy is visible BY DEFAULT and is only hidden once hero.js has confirmed
+   a live WebGL context by adding `.is-gl`. So no JavaScript, no WebGL, or a
+   scene that throws all leave the name on screen — the failure mode is the
+   readable one. `.is-typed` then lands it as the particles finish gathering. */
+.hero.is-gl .hero__copy > *,
+.hero.is-gl .hero__scroll {
+  opacity: 0;
+  transform: translateY(14px);
+}
+.hero.is-gl.is-typed .hero__copy > *,
+.hero.is-gl.is-typed .hero__scroll {
+  opacity: 1;
+  transform: none;
+  transition: opacity .9s var(--ease-out), transform .9s var(--ease-out);
+}
+/* Staggered so the block assembles rather than arriving as one slab. The
+   particles are still tightening while this runs, which is the overlap. */
+.hero.is-gl.is-typed .hero__over  { transition-delay: .00s; }
+.hero.is-gl.is-typed .hero__name  { transition-delay: .06s; }
+.hero.is-gl.is-typed .hero__roles { transition-delay: .30s; }
+.hero.is-gl.is-typed .hero__edu   { transition-delay: .42s; }
+.hero.is-gl.is-typed .hero__scroll{ transition-delay: .60s; }
+
+/* Reduced motion: hero.js reveals the copy immediately, and no transition
+   should animate it into place. */
+@media (prefers-reduced-motion: reduce) {
+  .hero.is-gl .hero__copy > *,
+  .hero.is-gl .hero__scroll { opacity: 1; transform: none; }
+}
+
+.hero__scroll {
+  position: absolute; left: var(--edge); bottom: 5vh; z-index: 1;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dim);
+}
+.hero__scroll::after {
+  content: ''; display: block;
+  width: 1px; height: 34px; margin: 10px auto 0;
+  background: linear-gradient(var(--accent), transparent);
+}
+
+/* ==========================================================================
+   Scene 2 — about
+   ========================================================================== */
+
+.about, .journey, .universe, .skills {
+  max-width: var(--maxw); margin: 0 auto;
+  padding: clamp(80px, 14vh, 180px) var(--edge);
+}
+
+.about__grid {
+  display: grid; gap: clamp(32px, 6vw, 88px);
+  grid-template-columns: 1.15fr 1fr;
+  align-items: start;
+}
+.about__intro {
+  font-size: clamp(19px, 2.4vw, 28px);
+  line-height: 1.5; color: var(--paper);
+  max-width: 30ch;
+}
+.about__edu { color: var(--dim); font-size: 15px; }
+.about__edu strong { color: var(--paper); font-weight: 500; }
+
+.about__cols { display: grid; gap: 40px; grid-template-columns: 1fr 1fr; }
+.about__h {
+  font-family: var(--mono);
+  font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 16px;
+}
+.about__list { display: grid; gap: 9px; }
+.about__list li {
+  color: var(--dim); font-size: 15px;
+  padding-left: 16px; position: relative;
+}
+.about__list li::before {
+  content: ''; position: absolute; left: 0; top: .62em;
+  width: 5px; height: 1px; background: var(--accent);
+}
+
+/* ==========================================================================
+   Scene 3 — journey
+   ========================================================================== */
+
+.journey__stage {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 0; pointer-events: none;
+}
+.journey__rail {
+  position: relative; z-index: 1;
+  display: grid; gap: 0;
+  border-top: 1px solid var(--line);
+  margin-top: 30px;
+}
+.jn {
+  display: grid;
+  grid-template-columns: 96px 1fr auto;
+  gap: clamp(14px, 3vw, 40px);
+  align-items: baseline;
+  width: 100%;
+  padding: 26px 8px;
+  background: none; border: 0; border-bottom: 1px solid var(--line);
+  color: inherit; font: inherit; text-align: left; cursor: default;
+  transition: background .3s var(--ease-out), padding-left .3s var(--ease-out);
+}
+.jn:hover, .jn.is-active { background: var(--accent-dim); padding-left: 18px; }
+.jn__year {
+  font-family: var(--mono); font-size: 13px;
+  color: var(--accent); letter-spacing: .06em;
+}
+.jn__label { font-size: clamp(17px, 2.2vw, 24px); color: var(--paper); }
+.jn__key {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .16em; text-transform: uppercase; color: var(--dimmer);
+}
+.jn__lines { display: block; color: var(--dim); font-size: 13.5px; margin-top: 4px; }
+.jn__lines i { font-style: normal; display: block; }
+
+/* ==========================================================================
+   Scene 4 — project universe
+   ========================================================================== */
+
+.universe__stage {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 0; pointer-events: none;
+}
+.universe__deck {
+  position: relative; z-index: 1;
+  display: grid; gap: clamp(18px, 2.4vw, 30px);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  perspective: 1400px;
+}
+
+.pc {
+  display: grid; gap: 0;
+  text-align: left; cursor: pointer;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  color: inherit; font: inherit;
+  padding: 0;
+  transition: transform .45s var(--ease-out), border-color .3s linear,
+              box-shadow .45s var(--ease-out);
+}
+.pc:hover, .pc:focus-visible {
+  transform: translateY(-8px);
+  border-color: var(--accent);
+  box-shadow: 0 24px 60px -30px rgba(79, 209, 224, .5);
+}
+
+.pc__art {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--bg-2);
+  overflow: hidden;
+}
+.pc__art img, .pc__art canvas {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+.pc__num {
+  position: absolute; top: 12px; left: 14px;
+  font-family: var(--mono); font-size: 11px;
+  color: var(--accent); letter-spacing: .1em;
+}
+
+.pc__body { padding: 20px 22px 24px; display: grid; gap: 10px; }
+.pc__title { font-size: 19px; line-height: 1.3; color: var(--paper); }
+.pc__sub {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .12em; text-transform: uppercase; color: var(--dimmer);
+}
+.pc__blurb { color: var(--dim); font-size: 14px; margin: 0; }
+.pc__tech { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.pc__more {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--accent);
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   Scene 5 — skills
+   ========================================================================== */
+
+.skills__grid {
+  display: grid; gap: clamp(20px, 3vw, 36px);
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  margin-bottom: clamp(48px, 8vh, 90px);
+}
+.sk__items { display: flex; flex-wrap: wrap; gap: 7px; }
+
+.skills__side {
+  display: grid; gap: clamp(32px, 6vw, 80px);
+  grid-template-columns: 1.4fr 1fr;
+  padding-top: clamp(32px, 6vh, 64px);
+  border-top: 1px solid var(--line);
+}
+.xp { margin-bottom: 22px; }
+.xp__role { font-size: 17px; color: var(--paper); }
+.xp__org {
+  font-family: var(--mono); font-size: 12px; color: var(--accent);
+  margin: 2px 0 10px;
+}
+.xp__points { display: grid; gap: 7px; }
+.xp__points li {
+  color: var(--dim); font-size: 14px;
+  padding-left: 16px; position: relative;
+}
+.xp__points li::before {
+  content: ''; position: absolute; left: 0; top: .66em;
+  width: 5px; height: 1px; background: var(--dimmer);
+}
+.skills__resume { margin-top: clamp(36px, 6vh, 64px); }
+
+/* ==========================================================================
+   Scene 6 — finale
+   ========================================================================== */
+
+.fin {
+  position: relative;
+  padding: clamp(90px, 18vh, 200px) var(--edge) 60px;
+  border-top: 1px solid var(--line);
+  overflow: hidden;
+}
+.fin__stage {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  display: block; z-index: 0; pointer-events: none;
+}
+.fin__in { position: relative; z-index: 1; max-width: var(--maxw); margin: 0 auto; }
+.fin__line { color: var(--dim); max-width: 46ch; margin: 0 0 36px; }
+
+.fin__links { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 64px; }
+
+.fin__c {
+  display: block;
+  font-family: var(--mono); font-size: 11.5px; color: var(--dimmer);
+  padding-top: 26px; border-top: 1px solid var(--line);
+}
+
+/* ==========================================================================
+   Portrait / small screens — recomposition
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .about__grid { grid-template-columns: 1fr; }
+  .skills__side { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .about__cols { grid-template-columns: 1fr; gap: 30px; }
+  .universe__deck { grid-template-columns: 1fr; }
+
+  /* The rail stands up: year over label, no three-column grid to collapse. */
+  .jn {
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 20px 6px;
+  }
+  .jn__key { order: 3; }
+}

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en" class="is-booting">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Krishna Jaiswal — AI, Data Science &amp; Machine Learning</title>
+<meta name="description" content="Portfolio of Krishna Jaiswal — Computer Technology engineer working in Data Science, Artificial Intelligence and Machine Learning.">
+<meta name="theme-color" content="#05070a">
+
+<meta property="og:title" content="Krishna Jaiswal — AI · Data Science · Machine Learning">
+<meta property="og:description" content="Semantic search, career intelligence, analytics and applied machine learning.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<link rel="stylesheet" href="src/styles/app.css">
+<link rel="stylesheet" href="src/styles/scenes.css">
+<link rel="stylesheet" href="src/styles/project.css">
+</head>
+<body>
+
+<a class="skip" href="#about">Skip to content</a>
+
+<!-- ====================================================================== -->
+<header class="hdr" id="hdr">
+  <a class="hdr__mark" href="#top" aria-label="Krishna Jaiswal, top of page">
+    <span>KRISHNA</span><i aria-hidden="true"></i><span>JAISWAL</span>
+  </a>
+
+  <nav class="hdr__nav" aria-label="Primary">
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#journey">Journey</a></li>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <button class="hdr__burger" id="burger" aria-expanded="false" aria-controls="menu">
+    <span aria-hidden="true"></span><span aria-hidden="true"></span>
+    <span class="sr-only">Menu</span>
+  </button>
+</header>
+
+<nav class="menu" id="menu" aria-label="Primary, expanded" hidden>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#journey">Journey</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ====================================================================== -->
+<!-- SCENE 1 — cinematic opening. The canvas is decoration; the heading below
+     is the real one, and carries the page for search engines, screen readers
+     and any visitor whose browser cannot give us WebGL. -->
+<section class="hero" id="top">
+  <canvas class="hero__stage" id="heroStage" aria-hidden="true"></canvas>
+
+  <div class="hero__copy">
+    <p class="hero__over">Portfolio — MMXXVI</p>
+    <h1 class="hero__name">
+      <span class="hero__line">KRISHNA</span>
+      <span class="hero__line">JAISWAL</span>
+    </h1>
+    <p class="hero__roles">
+      <span>AI</span><i aria-hidden="true"></i>
+      <span>Data Science</span><i aria-hidden="true"></i>
+      <span>Machine Learning</span>
+    </p>
+    <p class="hero__edu">B.Tech, Computer Technology · YCCE · 2021&ndash;2026</p>
+  </div>
+
+  <a class="hero__scroll" href="#about" aria-label="Scroll to about">
+    <span aria-hidden="true">Scroll</span>
+  </a>
+</section>
+
+<main class="flow">
+
+  <!-- ==================================================================== -->
+  <!-- SCENE 2 — about -->
+  <section class="about" id="about" aria-labelledby="aboutTitle">
+    <p class="scene__over">Scene 02</p>
+    <h2 class="scene__title" id="aboutTitle">About</h2>
+
+    <div class="about__grid">
+      <div class="about__lead">
+        <p class="about__intro">
+          I am a Computer Technology engineering student interested in Data
+          Science, Artificial Intelligence, Machine Learning, and building
+          practical software systems that solve real-world problems.
+        </p>
+        <p class="about__edu">
+          <strong>B.Tech, Computer Technology</strong><br>
+          Yeshvantrao Chavan College of Engineering, Nagpur<br>
+          <span class="mono">2021 &ndash; 2026</span>
+        </p>
+      </div>
+
+      <div class="about__cols">
+        <div class="about__col">
+          <h3 class="about__h">Focus</h3>
+          <ul class="about__list" id="focusList"></ul>
+        </div>
+        <div class="about__col">
+          <h3 class="about__h">Looking toward</h3>
+          <ul class="about__list" id="interestList"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SCENE 3 — journey. Nodes are rendered from content.js as real buttons. -->
+  <section class="journey" id="journey" aria-labelledby="journeyTitle">
+    <p class="scene__over">Scene 03</p>
+    <h2 class="scene__title" id="journeyTitle">Journey</h2>
+    <canvas class="journey__stage" id="journeyStage" aria-hidden="true"></canvas>
+    <ol class="journey__rail" id="journeyRail"></ol>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SCENE 4 — project universe. Cards are rendered as <button>s that open
+       the native <dialog> case study; each is also addressable as
+       #project/<id> so a card can be linked to directly. -->
+  <section class="universe" id="work" aria-labelledby="workTitle">
+    <p class="scene__over">Scene 04</p>
+    <h2 class="scene__title" id="workTitle">Work</h2>
+    <p class="scene__sub">Five projects. Select any card for the full case study.</p>
+    <canvas class="universe__stage" id="universeStage" aria-hidden="true"></canvas>
+    <div class="universe__deck" id="universeDeck"></div>
+  </section>
+
+  <!-- ==================================================================== -->
+  <!-- SCENE 5 — skills, experience, certifications -->
+  <section class="skills" id="skills" aria-labelledby="skillsTitle">
+    <p class="scene__over">Scene 05</p>
+    <h2 class="scene__title" id="skillsTitle">Skills</h2>
+
+    <div class="skills__grid" id="skillsGrid"></div>
+
+    <div class="skills__side">
+      <div>
+        <h3 class="about__h">Experience</h3>
+        <div id="experienceList"></div>
+      </div>
+      <div>
+        <h3 class="about__h">Certifications</h3>
+        <ul class="about__list" id="certList"></ul>
+      </div>
+    </div>
+
+    <!-- Hidden unless the PDF is actually present — see assets.probeFile(). -->
+    <p class="skills__resume" id="resumeWrap" hidden>
+      <a class="btn" id="resumeLink" href="#" download>Download résumé (PDF)</a>
+    </p>
+  </section>
+
+</main>
+
+<!-- ====================================================================== -->
+<!-- SCENE 6 — contact / finale -->
+<footer class="fin" id="contact" aria-labelledby="contactTitle">
+  <canvas class="fin__stage" id="finStage" aria-hidden="true"></canvas>
+  <div class="fin__in">
+    <p class="scene__over">Scene 06</p>
+    <h2 class="scene__title" id="contactTitle">Get in touch</h2>
+    <p class="fin__line">Open to Data Analyst, Data Scientist and entry-level AI/ML roles.</p>
+    <nav class="fin__links" id="contactLinks" aria-label="Contact"></nav>
+    <small class="fin__c">&copy; 2026 Krishna Jaiswal</small>
+  </div>
+</footer>
+
+<!-- Case-study overlay. Native <dialog> gives focus trapping, Esc-to-close,
+     an inert background and a backdrop with no JavaScript of our own. -->
+<dialog class="case" id="caseDialog" aria-labelledby="caseTitle">
+  <article class="case__in" id="caseBody"></article>
+  <button class="case__x" id="caseClose" aria-label="Close case study">&times;</button>
+</dialog>
+
+<noscript>
+  <div class="noscript">
+    <h2>Krishna Jaiswal — AI, Data Science &amp; Machine Learning</h2>
+    <p>
+      This portfolio uses JavaScript to render project detail. Core contact
+      details:
+      <a href="mailto:krishnajaiswal91102@gmail.com">krishnajaiswal91102@gmail.com</a> ·
+      <a href="https://linkedin.com/in/krisjais">LinkedIn</a> ·
+      <a href="https://github.com/KrishnaJaiswal555">GitHub</a>
+    </p>
+  </div>
+</noscript>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+/* ==========================================================================
+   Case-study overlay.
+   Built on native <dialog>: focus trapping, Esc-to-close, inert background
+   and the ::backdrop pseudo-element all come from the platform. We add only
+   appearance and the open/close transition.
+   ========================================================================== */
+
+.case {
+  width: min(960px, 100vw);
+  max-width: 100vw;
+  max-height: 100svh;
+  height: 100svh;
+  margin: 0 0 0 auto;              /* slides in against the right edge */
+  padding: 0;
+  border: 0;
+  border-left: 1px solid var(--line);
+  background: var(--bg-2);
+  color: var(--paper);
+  overflow: hidden;
+}
+.case::backdrop {
+  background: rgba(2, 4, 7, .72);
+  backdrop-filter: blur(6px);
+}
+
+/* [open] is set by showModal() before the frame paints, so animating from it
+   is enough — no JS class bookkeeping needed. */
+.case[open] { animation: caseIn .42s var(--ease-out); }
+.case[open]::backdrop { animation: fadeIn .42s var(--ease-out); }
+
+@keyframes caseIn { from { transform: translateX(40px); opacity: 0; } }
+@keyframes fadeIn { from { opacity: 0; } }
+
+.case__in {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(34px, 6vw, 72px) clamp(24px, 5vw, 66px) 90px;
+}
+
+.case__x {
+  position: absolute; top: 18px; right: 18px;
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--paper);
+  font-size: 22px; line-height: 1; cursor: pointer;
+  transition: border-color .2s linear, color .2s linear;
+}
+.case__x:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- case-study content -------------------------------------------------- */
+
+.cs__num {
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: .2em; color: var(--accent);
+  margin: 0 0 10px;
+}
+.cs__title {
+  font-family: var(--disp);
+  font-size: clamp(30px, 5.5vw, 58px);
+  line-height: 1.02;
+  margin: 0 0 8px;
+}
+.cs__sub {
+  font-family: var(--mono); font-size: 12px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--dimmer);
+  margin: 0 0 30px;
+}
+
+.cs__art {
+  aspect-ratio: 16 / 9;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 34px;
+}
+.cs__art img, .cs__art canvas {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+
+.cs__h {
+  font-family: var(--mono);
+  font-size: 11.5px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent);
+  margin: 34px 0 14px;
+}
+.cs__p { color: var(--dim); max-width: 68ch; }
+.cs__p strong { color: var(--paper); font-weight: 500; }
+
+.cs__list { display: grid; gap: 9px; max-width: 68ch; }
+.cs__list li {
+  color: var(--dim); font-size: 14.5px;
+  padding-left: 18px; position: relative;
+}
+.cs__list li::before {
+  content: ''; position: absolute; left: 0; top: .66em;
+  width: 6px; height: 1px; background: var(--accent);
+}
+
+/* Metrics. Rendered only when the project actually has measured figures —
+   an empty array produces no grid and no heading at all. */
+.cs__metrics {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+.mt {
+  padding: 16px 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+}
+.mt__v {
+  font-family: var(--mono); font-size: 25px;
+  color: var(--accent); line-height: 1.1;
+}
+.mt__l { font-size: 12.5px; color: var(--dim); margin-top: 6px; }
+.mt__n {
+  display: block;
+  font-family: var(--mono); font-size: 10.5px;
+  color: var(--dimmer); margin-top: 4px;
+}
+
+.cs__flow { display: grid; gap: 8px; max-width: 46ch; }
+.cs__flow li {
+  padding: 12px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: 3px;
+  font-size: 14px; color: var(--dim);
+}
+
+.cs__tech { display: flex; flex-wrap: wrap; gap: 7px; }
+
+/* Placeholder note and project disclaimers share a restrained warning tone —
+   visible and honest, never alarming. */
+.cs__note {
+  margin-top: 30px;
+  padding: 15px 18px;
+  border: 1px solid color-mix(in srgb, var(--warn) 34%, transparent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--warn) 7%, transparent);
+  color: var(--dim);
+  font-size: 13.5px;
+}
+.cs__note strong { color: var(--warn); font-weight: 500; }
+
+.cs__links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+
+/* Shown when a project has no links yet, so the empty state is explained
+   rather than silently missing. */
+.cs__pending {
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--dimmer);
+  margin-top: 36px;
+}
+
+@media (max-width: 720px) {
+  .case { width: 100vw; border-left: 0; }
+  .case__in { padding-bottom: 70px; }
+}
