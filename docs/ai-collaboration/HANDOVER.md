@@ -22,13 +22,13 @@ Read at the start of every session. Keep it current, not complete.
   **Committed as `d626ed5`** — the clean Phase 1–4 restore point.
 - Phase 5 — About scene (features/FEATURE-002.md): the same field in a
   lattice configuration, plus the reusable `lib/reveal.js` scroll-reveal
-  mechanism the remaining scenes will share.
+  mechanism the remaining scenes will share. **Committed as `6790fb5`.**
 - Verified 2026-09-20: 12/12 modules parse; import graph resolves;
   class-name contract matches between JS and CSS; `check_content.mjs` → 7
   checks passed; all modules serve as `text/javascript`.
 
 ## In Progress
-- Phase 5 written and verified; **not yet committed**.
+- Nothing. Phase 5 committed; working tree clean at `6790fb5`.
 
 ## Broken / Blockers
 - None known.
@@ -61,12 +61,12 @@ Read at the start of every session. Keep it current, not complete.
   one; the design deliberately needs none.
 
 ## Next Steps
-1. Commit Phase 5.
-2. Browser pass — the single largest gap in the project. Fill in the Manual
+1. Browser pass — the single largest gap in the project. Fill in the Manual
    Checks tables in TEST_CHECKLIST.md.
-3. Phase 6 — Journey scene. `#journeyStage` is already in the markup, the rail
+2. Phase 6 — Journey scene. `#journeyStage` is already in the markup, the rail
    renders from `content.js`, and adding the scene is one entry in the
-   `startScenes()` registry plus a third `createField` configuration.
+   `startScenes()` registry plus a third `createField` configuration. Add its
+   ROLLBACK entry first, with `6790fb5` as the revert target.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.
