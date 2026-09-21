@@ -57,6 +57,24 @@ looking perfectly fine on disk, so this is checked explicitly.
 | Mobile layout | Narrow to 380px | Journey rail stacks; deck becomes one column; burger menu opens and closes | — |
 | Reduced motion | Enable OS "reduce motion", reload | No animation anywhere; every scene lands settled and fully readable | — |
 
+### Responsive (FEATURE-008)
+
+Breakpoints in play: **400px**, **620px**, **720px**, **860px**, **900px**,
+plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| No horizontal scrollbar | At 320, 360, 400, 768, 1024, 1440px | **Never** a horizontal scrollbar, on any section, at any width | — |
+| Case dialog width | Open a case study on desktop with classic scrollbars | Dialog does not exceed the viewport. It was `100vw`, which includes the scrollbar gutter and is wider than the visible page | — |
+| Deck overflow-safe by construction | At 320px, temporarily disable the 620px rule in devtools | Deck still does not overflow — the `min(300px, 100%)` floor handles it without needing the media query | — |
+| Small-phone type | At 320–400px | Hero and closing wordmark each fit their line; section titles readable and not crowding the gutter | — |
+| Short landscape | Phone rotated to landscape (~667×375) | Hero shrinks to fit instead of filling 100svh; scroll cue hidden; sections tighten | — |
+| Tap targets | On a real touch device | Buttons, burger, dialog close and case-nav controls all comfortably tappable (≥44px) | — |
+| Coarse vs narrow | Narrow a **desktop** window to 380px | Tap targets stay desktop-sized — the rule keys on input device, not viewport width | — |
+| Case nav wrapping | Open a case study at 360px | Prev/next stack rather than squashing into unreadable slivers | — |
+| Nav bar clearance (mobile) | Scroll to the bottom of a case study at 360px | The last line clears the nav bar | — |
+| Portrait recomposition | At 380px portrait | Each section is recomposed, not merely a shrunken desktop layout | — |
+
 ### Hero (FEATURE-001)
 
 | Check | Steps | Expected result | Actual |

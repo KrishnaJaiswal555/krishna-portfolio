@@ -10,6 +10,23 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 11: Responsive design
+
+- Revert to commit: **`1d613f4`** — the Phase 10 state, verified green.
+- Files added by Phase 11: `docs/ai-collaboration/features/FEATURE-008.md`
+- Files modified by Phase 11:
+  - `src/styles/app.css` — coarse-pointer tap targets
+  - `src/styles/scenes.css` — overflow-safe grid tracks, a ≤400px refinement,
+    and a short-landscape guard for the hero
+  - `src/styles/project.css` — `100vw` → `100%`, coarse-pointer nav buttons
+- **CSS-only phase.** No JavaScript, no scene, no scheduler changed. The
+  rollback risk is visual regression only; nothing can break at runtime.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `11 checks passed`
+  - Serve and load `/` at 320px → expected: layout still usable, but the
+    project deck again relies on the 620px media query rather than being
+    overflow-safe by construction
+
 ## 2026-09-21 — Phase 10: Contact and footer (finale scene)
 
 - Revert to commit: **`c9eb66d`** — the Phase 9 state, verified green.

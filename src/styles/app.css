@@ -218,3 +218,22 @@ html.is-menu .menu { opacity: 1; pointer-events: auto; }
   .hdr__nav { display: none; }
   .hdr__burger { display: flex; }
 }
+
+/* ==========================================================================
+   Touch input
+   A mouse pointer is precise to the pixel; a fingertip is not. These raise
+   hit areas to the commonly cited 44px minimum on coarse pointers only, so
+   desktop spacing is unaffected. Keyed on the INPUT device rather than on
+   viewport width — a small window on a desktop is still driven by a mouse,
+   and a large tablet is still driven by a finger.
+   ========================================================================== */
+
+@media (pointer: coarse) {
+  .btn { padding: 15px 26px; }
+
+  .menu a { padding: 6px 0; }
+
+  /* The burger is the only way to navigate below 860px, so it gets the most
+     generous target on the page. */
+  .hdr__burger { width: 48px; height: 48px; }
+}

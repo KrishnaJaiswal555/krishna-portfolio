@@ -29,6 +29,11 @@ Read at the start of every session. Keep it current, not complete.
   five projects (the only genuine gap against the brief's §8 list), rendered
   as an ordered pipeline; prev/next stepping between case studies with arrow
   keys; a new content assertion, so the check now reports **8**, not 7.
+- Phase 11 — Responsive design (FEATURE-008): layout made overflow-safe **by
+  construction** rather than by media query. `100vw` → `100%` on the case
+  dialog (`vw` includes the scrollbar gutter); all `auto-fit` tracks given a
+  `min(Npx, 100%)` floor; `pointer: coarse` tap targets keyed on input device
+  rather than viewport width; a ≤400px refinement and a short-landscape guard.
 - Phase 10 — Contact and footer (FEATURE-007): the last canvas wired. The
   finale **reuses** the hero's wordmark configuration as a closing bookend,
   gathering on scroll rather than on a clock. `sampleHeading()` extracted to
@@ -46,7 +51,8 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. Phase 10 complete. **Every canvas on the site is now wired.**
+- Nothing. Phase 11 complete. Every canvas is wired; layout is overflow-safe
+  at every width.
 
 ## Broken / Blockers
 - None known.
@@ -90,9 +96,11 @@ Krishna has directed that all remaining development phases be completed
 first, with a full browser verification on localhost afterwards. Phases are
 being committed individually to preserve rollback granularity.
 
-1. Phase 11 — Responsive design audit across every scene.
-2. Phase 12 — Performance and accessibility audit.
-3. Phase 13 — deployment files, then the browser verification: desktop
+1. Phase 12 — Performance and accessibility audit. Known items already
+   identified: lists with `list-style: none` need `role="list"` (Safari
+   VoiceOver drops list semantics otherwise), and the scenes read
+   `pointer: coarse` once at init rather than live.
+2. Phase 13 — deployment files, then the browser verification: desktop
    layout, mobile responsiveness, navigation and scrolling, animations and
    particle effects, interactive elements, console errors, and performance.
    **No row in the Manual Checks tables may be marked done unless the site

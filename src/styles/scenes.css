@@ -236,7 +236,13 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
 .universe__deck {
   position: relative; z-index: 1;
   display: grid; gap: clamp(18px, 2.4vw, 30px);
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  /* minmax(min(300px, 100%), 1fr), not minmax(300px, 1fr).
+     A bare 300px minimum cannot shrink below 300px, so at a 320px viewport
+     (≈284px after gutters) the track overflows horizontally. The min() makes
+     the floor collapse to the available width instead. The 620px rule below
+     also fixes this, but a layout should not DEPEND on a media query to avoid
+     overflowing — this is safe by construction at any width. */
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
   perspective: 1400px;
   transform-style: preserve-3d;
 }
@@ -305,7 +311,7 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
 
 .skills__grid {
   display: grid; gap: clamp(20px, 3vw, 36px);
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
   margin-bottom: clamp(48px, 8vh, 90px);
 }
 /* A hairline rule per group, so five tag clouds read as five distinct
@@ -425,4 +431,36 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
     padding: 20px 6px;
   }
   .jn__key { order: 3; }
+}
+
+/* Small phones. At 320-400px the display type is already at its clamp floor,
+   so the only thing left to give back is gutter and vertical rhythm. */
+@media (max-width: 400px) {
+  :root { --edge: 16px; }
+
+  .hero__name { font-size: 15vw; }
+  .fin__mark { font-size: 14vw; }
+
+  .hero__roles { gap: 9px; font-size: 12px; letter-spacing: .12em; }
+  .scene__title { font-size: 34px; }
+
+  /* Two buttons plus labels will not fit one row at this width. */
+  .case__nav { flex-wrap: wrap; }
+  .case__navBtn { max-width: 100%; flex: 1 1 auto; }
+}
+
+/* Short landscape — a phone turned sideways has ~375px of height, and a
+   100svh hero plus a fixed header leaves almost nothing for the name.
+   Keyed on HEIGHT, so it never fires on a short desktop window that is wide
+   enough to be fine. */
+@media (max-height: 520px) and (orientation: landscape) {
+  .hero {
+    min-height: auto;
+    padding-top: calc(var(--hdr-h) + 4vh);
+    padding-bottom: 8vh;
+  }
+  .hero__name { font-size: clamp(38px, 9vw, 86px); }
+  .hero__scroll { display: none; }
+
+  .about, .journey, .universe, .skills { padding-block: 64px; }
 }
