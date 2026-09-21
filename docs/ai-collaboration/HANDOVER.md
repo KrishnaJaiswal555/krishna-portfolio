@@ -29,6 +29,12 @@ Read at the start of every session. Keep it current, not complete.
   five projects (the only genuine gap against the brief's §8 list), rendered
   as an ordered pipeline; prev/next stepping between case studies with arrow
   keys; a new content assertion, so the check now reports **8**, not 7.
+- Phase 13 — Deployment preparation (FEATURE-010): `.nojekyll`, per-host
+  README instructions, and a pre-deployment audit that came back **clean** —
+  no root-relative references (which would 404 on a GitHub Pages *project*
+  site while working perfectly on localhost), no secrets, no `localhost` in
+  shipped files. 19 files, 129.6 KB. **Not deployed:** no remote is
+  configured and nothing has been pushed.
 - Phase 12 — Performance and accessibility (FEATURE-009): `--dimmer` raised
   from a measured ≈3.0:1 to ≈5.7:1 (it carried small secondary text and was
   below the 4.5:1 AA floor), with a **standing contrast assertion** that reads
@@ -57,8 +63,9 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. Phase 12 complete. Every canvas is wired, layout is overflow-safe
-  at every width, and every text token clears WCAG AA.
+- Nothing. **All thirteen development phases are written and committed.**
+  Every canvas is wired, layout is overflow-safe at every width, every text
+  token clears WCAG AA, and the deployment audit is clean.
 
 ## Broken / Blockers
 - None known.
@@ -107,13 +114,33 @@ Krishna has directed that all remaining development phases be completed
 first, with a full browser verification on localhost afterwards. Phases are
 being committed individually to preserve rollback granularity.
 
-1. Phase 13 — deployment files, then the browser verification: desktop
-   layout, mobile responsiveness, navigation and scrolling, animations and
-   particle effects, interactive elements, console errors, and performance.
-   **No row in the Manual Checks tables may be marked done unless the site
-   has actually been opened and driven in a browser.**
+**The browser verification is the only thing left, and it is the whole
+remaining risk.** Thirteen phases of visual work have been built and none of
+it has ever been seen rendering. Everything verified so far is structural —
+syntax, contracts, wiring, contrast arithmetic, path safety — and *none* of
+that can tell you whether the particles align to the letterforms, whether the
+scroll feels right, or whether anything is visibly broken.
 
-Add a ROLLBACK entry before starting each phase.
+To run it:
+
+```bash
+python tools/serve.py 5173      # then open http://localhost:5173
+```
+
+Fill in the Actual column of every Manual Checks table in TEST_CHECKLIST.md,
+covering: desktop layout, mobile responsiveness, navigation and scrolling,
+animations and particle effects, interactive elements, console errors, and
+performance.
+
+**No row may be marked done unless the site has actually been opened and
+driven in a browser.** An automated check passing is not a substitute and must
+never be recorded as one.
+
+Likeliest first finding: `sampleHeading()`'s baseline factor (`fontSize *
+0.78`). If the hero or finale particles sit offset from the letterforms, that
+constant is why — and it is in one shared place for exactly this reason.
+
+Add a ROLLBACK entry before any further change.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.

@@ -10,6 +10,25 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 13: Deployment preparation
+
+- Revert to commit: **`ff6e981`** — the Phase 12 state, verified green.
+- Files added by Phase 13:
+  - `.nojekyll`
+  - `docs/ai-collaboration/features/FEATURE-010.md`
+- Files modified by Phase 13:
+  - `README.md` — deployment instructions per host
+- **Lowest-risk phase in the project.** Nothing here affects what the site
+  does; it affects only how a host serves it. Reverting cannot break the
+  running page.
+- One thing the rollback *would* reintroduce: without `.nojekyll`, GitHub
+  Pages runs Jekyll over the repository and attempts to process every `.md`
+  under `docs/`. Harmless in the usual case, but it is a build step nobody
+  asked for and a class of failure nobody would expect.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `12 checks passed`
+  - Serve and load `/` → expected: entirely unchanged
+
 ## 2026-09-21 — Phase 12: Performance and accessibility
 
 - Revert to commit: **`b2564a9`** — the Phase 11 state, verified green.

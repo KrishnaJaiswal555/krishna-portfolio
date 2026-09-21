@@ -93,9 +93,55 @@ state with no animation at all.
 
 ## Deployment
 
-Static hosting, no backend. Push the repository and point any of GitHub Pages,
-Netlify or Vercel at the root — there is no build command and no environment
-configuration. No API keys or secrets exist in this project.
+Static hosting, no backend, **no build step**. There is nothing to compile and
+no environment configuration, because the project has no API keys, tokens or
+secrets of any kind.
+
+### GitHub Pages
+
+Settings → Pages → Deploy from a branch → `main` / root.
+
+Two things matter here:
+
+- **`.nojekyll` is in the repository root and must stay.** GitHub Pages runs
+  Jekyll over the repo by default, which would try to process every Markdown
+  file under `docs/`. The empty `.nojekyll` file turns that off.
+- A **project** site is served from `https://<user>.github.io/<repo>/`, not
+  from the domain root. Every reference in this project is relative for that
+  reason, so it resolves correctly under a subpath. If you ever add a
+  reference beginning with `/`, it will work on localhost and 404 on Pages.
+
+### Netlify
+
+Drag the folder onto the Netlify dashboard, or connect the repository. Publish
+directory: the repository root. Build command: leave **empty**.
+
+### Vercel
+
+Import the repository, framework preset **Other**. Build command empty, output
+directory the root.
+
+### Any other static host
+
+Upload the repository contents as-is. The only requirement is that `.js` files
+are served with a JavaScript MIME type — every browser refuses an ES module
+served as `text/plain`, which presents as a blank page with a console error.
+
+### Deep links
+
+Project case studies are addressed with a URL fragment
+(`…/#project/upi-sentinel-ai`), not a path. Fragments never reach the server,
+so deep links work on any static host with no redirect rules or SPA fallback
+configuration.
+
+### Before going live
+
+```bash
+node tools/check_content.mjs     # expects: 12 checks passed
+```
+
+Then confirm in the browser that the résumé button appears (or is correctly
+absent), and that no case study shows a link you did not intend to publish.
 
 ## Credits
 

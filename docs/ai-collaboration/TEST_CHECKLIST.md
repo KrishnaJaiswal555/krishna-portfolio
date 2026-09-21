@@ -167,6 +167,19 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | DPR cap | Load on a 3× display | Canvas buffers cap at 2× — sharp, without quadrupling fill cost | — |
 | Payload | Network tab, hard reload | ~125KB of JS+CSS+HTML, plus Google Fonts. No other third-party request | — |
 
+### Deployment (FEATURE-010)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Content check before publishing | `node tools/check_content.mjs` | `12 checks passed`, exit 0 | ✅ automated |
+| No root-relative paths | Pre-deployment audit script | None — all references relative, so a subpath deploy resolves | ✅ automated |
+| No secrets | Pre-deployment audit script | No keys, tokens or credentials in any shipped file | ✅ automated |
+| Subpath deploy | Publish to GitHub Pages as a **project** site, load `https://<user>.github.io/<repo>/` | Styles, modules and fonts all load. This is where a root-relative path would 404 while localhost looked fine | — |
+| `.nojekyll` respected | Check the Pages build log | No Jekyll processing of `docs/` | — |
+| JS MIME type | Network tab on the deployed site | `.js` served as JavaScript. Served as `text/plain`, every module is refused and the page is blank | — |
+| Deep link on host | Open `…/#project/upi-sentinel-ai` directly on the deployed URL | Case study opens — fragments never reach the server, so no redirect rules are needed | — |
+| No unintended links | Open all five case studies on the deployed site | Only links Krishna has explicitly added appear | — |
+
 ### Case studies
 
 | Check | Steps | Expected result | Actual |
