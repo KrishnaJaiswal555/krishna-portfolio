@@ -40,14 +40,26 @@ Three structural properties define the system:
 | `src/scenes/hero.js` | Scene 1 — field condenses into the wordmark | `particles.js`, `scene.js`, `renderer.js`, `ease.js` |
 | `src/scenes/about.js` | Scene 2 — field as a jittered lattice | same |
 | `src/scenes/journey.js` | Scene 3 — field as a spine beside the milestone rail | same |
+| `src/scenes/universe.js` | Scene 4 — field as a constellation between project cards; also owns the deck's entrance, parallax and hover | same, plus the `.pc` cards |
 | `src/styles/*` | `app` tokens + header · `scenes` composition · `project` overlay | none |
 | `tools/serve.py` | Dev server with caching disabled | filesystem |
 | `tools/check_content.mjs` | Content integrity assertions | `content.js` |
 
-Scenes for the project universe (`#universeStage`) and the finale
-(`#finStage`) are **not yet written**. Their canvases already exist in the
-markup, and adding each is one entry in the `startScenes()` registry plus a
-further `createField` configuration.
+The finale scene (`#finStage`) is **not yet written**. Its canvas already
+exists in the markup, and adding it is one entry in the `startScenes()`
+registry.
+
+The four particle configurations are now complete and the set is closed:
+wordmark (hero), lattice (about), spine (journey), constellation (universe).
+A fifth scene should reuse one of them rather than invent a new one — the
+coherence of the set is the point.
+
+### Property ownership between CSS and JS
+Where JS writes a style property every frame, CSS must not also set or
+transition it. `scenes/universe.js` owns `transform` on `.pc` and on the deck,
+so `scenes.css` deliberately omits `transform` from the `.pc` transition and
+from its hover rule; CSS keeps colour and shadow. The two writing the same
+property produces a fight that resolves at random per frame.
 
 ### The scene contract
 Every scene module exports one `async init…()` that returns `null` if its

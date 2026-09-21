@@ -10,6 +10,31 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 7: Project Universe scene (constellation + deck choreography)
+
+- Revert to commit: **`4f2fa6e`** — the Phase 6 state, verified green.
+  `git reset --hard 4f2fa6e` undoes Phase 7 completely.
+- Files added by Phase 7 (removed by the reset):
+  - `src/scenes/universe.js`
+  - `docs/ai-collaboration/features/FEATURE-004.md`
+- Files modified by Phase 7 (restored by the reset):
+  - `src/main.js` — universe registered in `startScenes()`
+  - `index.html` — `data-reveal` on the Work heading
+  - `src/styles/scenes.css` — universe layering, `is-deck-ready` initial
+    state, and **`transform` removed from the `.pc` transition**
+  - `docs/ai-collaboration/` — ARCHITECTURE, FLOW, HANDOVER, DECISIONS,
+    TEST_CHECKLIST
+- **Interaction warning on this rollback:** `universe.js` owns the card
+  `transform` outright, which is why CSS no longer transitions or sets it on
+  hover. Deleting the scene file without restoring the CSS hover transform
+  leaves the cards with no hover motion at all. Revert the commit rather than
+  deleting files piecemeal.
+- Re-check after rollback:
+  - `node --check` across the remaining 13 modules → expected: silent, exit 0
+  - `node tools/check_content.mjs` → expected: `7 checks passed`, exit 0
+  - Serve and load `/` → expected: earlier scenes intact, project deck static
+    but fully readable and clickable, no console errors
+
 ## 2026-09-21 — Phase 6: Journey scene (particle spine + milestone rail)
 
 - Revert to commit: **`a2b89eb`** — the Phase 5 state, verified green.

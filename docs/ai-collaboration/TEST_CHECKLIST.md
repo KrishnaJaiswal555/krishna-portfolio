@@ -13,7 +13,8 @@ What to run and check before any change counts as done. A change is done only wh
 | Check | Command | Expected output | Last run |
 |---|---|---|---|
 | Content integrity | `node tools/check_content.mjs` | 7 named checks print `ok`, then `7 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
-| Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **13** modules | ✅ 2026-09-21 — matched |
+| Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **14** modules | ✅ 2026-09-21 — matched |
+| Property ownership | For each style property JS writes per frame, grep CSS for a rule setting or transitioning it | Exactly one writer. `transform` on `.pc` and the deck belongs to `universe.js`; CSS must not transition it | ✅ 2026-09-21 — single writer confirmed. Two writers on one animated property is a race that resolves differently per frame, and neither rule looks wrong on its own |
 | Import graph | `grep` every `^import` binding against the `^export`s of its source module | Every named import resolves | ✅ 2026-09-21 — matched. **Do not skip:** `node --check` parses each file in isolation, so a mistyped export name passes syntax and fails only in the browser |
 | Class-name contract | `grep` each class / custom property JS sets, confirm CSS matches | `is-gl`, `is-typed`, `is-reveal-ready`, `is-in`, `is-active`, `jn__*`, `--ri` present on both sides | ✅ 2026-09-21 — matched. A mismatch here produces no error at all, just content that never appears |
 | No dead exports or unread writes | `grep -rn "<name>" src/ tools/` for each export and each written property | Every one has at least one reader | ✅ 2026-09-21 — `dataset.milestone` found unread and removed. Prior finds: `unitQuad`, `progress` |
@@ -87,6 +88,22 @@ looking perfectly fine on disk, so this is checked explicitly.
 | No graduation claim | Read the rail | No milestone asserts the degree was completed | — |
 | Spine on-canvas | Narrow to 380px | The spine stays visible on the canvas; rail stacks | — |
 | Reduced motion | Reduce motion, reload | Spine drawn once and still; rail fully readable | — |
+
+### Project Universe (FEATURE-004)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| One coordinated entrance | Scroll into Work | All five cards arrive as a single event. **Not** a queue of cards fading in one after another | — |
+| Depth parallax | Move the pointer across the section | Flanking cards move further than centre cards; the deck yaws as one object | — |
+| Hover lift | Hover one card | It lifts toward you; siblings ease back slightly | — |
+| Keyboard parity | Tab onto a card | It lifts exactly as hover does, and drops on blur | — |
+| No transform fight | Hover on and off repeatedly, quickly | Motion is smooth. Any stutter or snapping means CSS has regained a `transform` rule — see the Property ownership row above | — |
+| Constellation | Look behind the cards | A network strung between card centres, not scattered dots or a bare zig-zag | — |
+| Even density | Compare short and long links | Particles are evenly spread; not bunched on the short links | — |
+| No WebGL | Force-disable WebGL, reload | Deck **still** rises, parallaxes and lifts on hover. Only the network is missing | — |
+| JS disabled | Disable JavaScript, reload | Deck is plain, complete and every card clickable — not hidden | — |
+| Reduced motion | Reduce motion, reload | Cards settled and visible, no parallax; network drawn once and still | — |
+| Reflow | Resize across 620px and 1100px | Grid reflows, depths re-solve, the constellation re-strings to the new centres | — |
 
 ### Case studies
 

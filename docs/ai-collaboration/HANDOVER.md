@@ -9,7 +9,7 @@ Read at the start of every session. Keep it current, not complete.
   no runtime dependencies. Deployable to any static host.
 - Version control: `git`, branch `main`, no remote configured, nothing pushed.
   Commit SHAs are **not** duplicated here — `git log` and ROLLBACK.md are the
-  record. Copying them into this file is what made it go stale last time.
+  record. Copying them into this file is what made it go stale before.
 
 ## Done
 - Phase 1 — reference analysis of `github.com/gireeshkumarreddy/cinematic-portofilo`.
@@ -19,22 +19,27 @@ Read at the start of every session. Keep it current, not complete.
 - Phase 2 — architecture decided and approved (see DECISIONS.md).
 - Phase 3 — scaffold: semantic markup, `content.js` as single source of truth,
   case-study `<dialog>`, CSS token system, WebGL bootstrap.
-- Phase 4 — cinematic hero (FEATURE-001): particle field condensing into the
-  wordmark, sampled from the live `<h1>`.
-- Phase 5 — About scene (FEATURE-002): the field as a jittered lattice, plus
-  the shared `lib/reveal.js` scroll-reveal mechanism.
-- Phase 6 — Journey scene (FEATURE-003): the field as a spine beside the
-  milestone rail, plus a timeline data correction (see below).
+- Phase 4 — hero (FEATURE-001): field condensing into the wordmark.
+- Phase 5 — About (FEATURE-002): field as a lattice, plus `lib/reveal.js`.
+- Phase 6 — Journey (FEATURE-003): field as a spine, plus a timeline data
+  correction (year axis did not fit the data; unconfirmed graduation removed).
+- Phase 7 — Project Universe (FEATURE-004): field as a constellation between
+  the cards, plus the deck's entrance, depth parallax and hover lift.
+
+**The four particle configurations are complete and the set is closed:**
+wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
+than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. Phase 6 complete.
+- Nothing. Phase 7 complete.
 
 ## Broken / Blockers
 - None known.
 - **Open gap — no browser pass has ever been done, in any phase.** Every row
-  in the Manual Checks tables of TEST_CHECKLIST.md is unverified across six
-  phases of visual work. Krishna has twice chosen to continue rather than
-  pause for it; that is his call, but the risk compounds with each scene.
+  in the Manual Checks tables of TEST_CHECKLIST.md is unverified across seven
+  phases of visual work. Krishna has three times chosen to continue rather
+  than pause for it; that is his call, but nothing on this site has been seen
+  rendering, and the risk compounds with each scene.
 
 ## Avoid
 - Reusing any code, CSS, shader or media from the reference repository — Why:
@@ -42,23 +47,22 @@ Read at the start of every session. Keep it current, not complete.
 - Adding a framework, bundler or animation library — Why: the architecture was
   chosen specifically to avoid them; see DECISIONS.md.
 - Changing `overflow-x: clip` to `hidden` in `app.css` — Why: `hidden` promotes
-  `<body>` to a scroll container and silently breaks every `position: sticky`
-  pin.
+  `<body>` to a scroll container and breaks every `position: sticky` pin.
 - Removing `"type": "module"` from `package.json` — Why: Node then parses
   `content.js` as CommonJS and `check_content.mjs` fails on the first `export`.
-- **Hiding anything in CSS by default.** The hero copy and every
-  `[data-reveal]` element stay visible until JS proves it can reveal them
-  (`is-gl`, `is-reveal-ready`). This is the #0003 defect class.
+- **Hiding anything in CSS by default.** Hero copy, `[data-reveal]` elements
+  and the project deck all stay visible until JS proves it can reveal them
+  (`is-gl`, `is-reveal-ready`, `is-deck-ready`). This is the #0003 defect class.
+- **Letting CSS set or transition a property JS animates per frame.**
+  `transform` on `.pc` and the deck belongs to `universe.js` alone.
 - Sampling the wordmark before `document.fonts.ready` — Why: it bakes the
   fallback face's letterforms into the particle field.
 - Re-randomising lattice jitter on resize — Why: the field visibly twitches.
-  Jitter derives from each particle's stable seed.
-- Measuring `.jn` rows with `getBoundingClientRect()` — Why: they carry
-  `data-reveal`, whose transform moves the rect but not layout. Use
-  `offsetTop`.
+- Measuring animated elements with `getBoundingClientRect()` — Why: a
+  transform moves the rect but not layout, so the scene reads its own output.
+  Use `offsetTop`/`offsetLeft`. This has now bitten three scenes.
 - Restoring a "graduated" or "B.Tech completed" timeline milestone — Why:
-  Krishna never confirmed it. The About section states the 2021–2026 range;
-  nothing may claim more.
+  Krishna never confirmed it.
 - Making timeline rows interactive again — Why: activating one does nothing,
   and a control that does nothing is worse than plain text for assistive tech.
 - Writing any personal fact, metric or URL outside `src/data/content.js`.
@@ -67,21 +71,23 @@ Read at the start of every session. Keep it current, not complete.
 
 ## Next Steps
 1. Browser pass — the single largest gap in the project.
-2. Phase 7 — Project Universe scene. `#universeStage` is in the markup, the
-   deck renders from `content.js`, and adding the scene is one registry entry
-   plus a fourth `createField` configuration. Add its ROLLBACK entry first.
+2. Phase 8 — project detail pages. The case-study `<dialog>` already exists
+   from Phase 3 and renders every field from `content.js`; Phase 8 is about
+   its visual treatment, not new plumbing.
+3. The finale canvas (`#finStage`) is still unwired — it belongs to Phase 10
+   (contact and footer). Add a ROLLBACK entry before starting either.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.
 - Date: 2026-09-21
 - AI model: Claude Opus 5 (1M context)
-- Did: Phases 1–6. Reference found unlicensed; architecture approved; scaffold,
-  hero, About lattice and Journey spine built. Timeline corrected: the year
-  axis did not survive contact with the data (five of six milestones are
-  2026), and an unconfirmed graduation claim was removed.
-- Left: A browser pass, then Phase 7 (Project Universe).
+- Did: Phases 1–7. Reference found unlicensed; architecture approved; scaffold,
+  hero, About lattice, Journey spine and Project Universe constellation built.
+  Caught and fixed a live CSS/JS transform race in the deck.
+- Left: A browser pass, then Phase 8 (project detail pages).
 - Watch out for: Projects 04 and 05 were described from Krishna's brief and
   **not** inspected — their `source: 'provided'` flag and disclaimers must
   survive any edit. All `links: {}` are deliberately empty; do not populate
   them from local git remotes or guesses. Krishna has supplied no photograph
-  and no screenshots; every asset path must stay optional.
+  and no screenshots; every asset path must stay optional, and the deck still
+  shows generated placeholders for all five projects.

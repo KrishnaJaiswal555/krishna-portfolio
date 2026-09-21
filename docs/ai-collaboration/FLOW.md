@@ -111,6 +111,37 @@ Trigger: `startScenes()` registry → `scenes/journey.js → initJourney()`.
 5. `pointerover` on the rail sets the active milestone directly;
    `pointerleave` hands control back to scroll.
 
+## Project Universe scene (FEATURE-004)
+
+Trigger: `startScenes()` registry → `scenes/universe.js → initUniverse()`.
+
+1. Collect `.pc` cards from the deck. No cards → return null.
+2. `createGL(#universeStage)`. **A null context does not abort this scene** —
+   it marks the section `is-fallback` and continues, because the deck's
+   motion is pure DOM. Only the constellation is guarded behind `if (gl)`.
+3. → adds `is-deck-ready` to the section, the class that lets CSS hide the
+   cards pending their entrance. Added only once JS will bring them back.
+4. → `measure()`:
+   - card depth from horizontal distance to the deck's centre column, so
+     flanking cards move hardest — solved from real layout, so it survives
+     the `auto-fit` grid reflowing.
+   - card centres via `offsetLeft`/`offsetTop`. This module writes a
+     transform to every card, so a rect would feed the scene its own output.
+   - build edges: each card to the next, **plus** each to the one after, then
+     distribute particles by cumulative edge length so density is even rather
+     than bunched on the short links.
+5. → `gate(section, …)`, threshold 0.12.
+6. Each frame:
+   - `mat` is one scalar every card reads — the entrance is a single event.
+     Per-card variation is in distance *travelled*, never in start time.
+   - `live` ramps in after `mat` completes, so parallax and hover cannot
+     fight the entrance.
+   - the deck yaws as a whole; each card adds its own depth-scaled offset.
+   - hover lifts one card and eases the siblings back; `focus`/`blur` feed the
+     same `hover` index, so keyboard behaves as pointer does.
+   - if a context exists: `field.update()` then `field.draw()`, alpha scaled
+     by both the section's travel and `mat`.
+
 **Currently modifying:** none.
 
 ## Artwork resolution

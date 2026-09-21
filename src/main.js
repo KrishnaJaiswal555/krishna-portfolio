@@ -16,6 +16,7 @@ import { initDialog, openProject } from './lib/dialog.js';
 import { initHero } from './scenes/hero.js';
 import { initAbout } from './scenes/about.js';
 import { initJourney } from './scenes/journey.js';
+import { initUniverse } from './scenes/universe.js';
 import { reveal } from './lib/reveal.js';
 
 const root = document.documentElement;
@@ -311,6 +312,7 @@ function startScenes() {
     ['hero', initHero],
     ['about', initAbout],
     ['journey', initJourney],
+    ['universe', initUniverse],
   ]) {
     // Each scene is isolated: one failing must never take the others, or the
     // portfolio, down with it.

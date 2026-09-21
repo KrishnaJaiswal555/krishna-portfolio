@@ -376,3 +376,73 @@ plain text, not better. The distinction that matters is whether activation
 - The tab order is shorter and contains only controls that act.
 
 **Status:** Active
+
+---
+
+### 2026-09-21 — The project deck's choreography does not depend on WebGL
+
+**Decision:** `initUniverse()` runs the card entrance, depth parallax and
+hover lift whether or not a WebGL context exists. Only the constellation
+requires the canvas.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** Every earlier scene returns `null` immediately when
+`createGL()` fails, because in those scenes the canvas *is* the scene. In the
+universe, the canvas is a constellation drawn behind cards whose motion is
+pure DOM and owes nothing to WebGL.
+
+**Options considered:**
+- Bail on a null context, consistent with the other scenes
+- Continue without the canvas, running the DOM choreography regardless
+
+**Chosen approach:** Continue.
+
+**Reasoning:** Bailing would have discarded fully working behaviour for an
+unrelated reason. Consistency between scenes is worth less than each scene
+degrading to the best state it can actually reach — and this is the section
+Krishna identified as the most important on the site.
+
+**Consequences / Trade-offs:**
+- `initUniverse()` carries `if (gl)` guards that the other scenes do not.
+- Without WebGL the deck still rises, parallaxes and lifts on hover; only the
+  network between the cards is missing.
+
+**Status:** Active
+
+---
+
+### 2026-09-21 — Where JS animates a property every frame, CSS must not touch it
+
+**Decision:** `transform` was removed from the `.pc` transition and from its
+hover rule. `scenes/universe.js` is the sole writer of `transform` on the
+cards and the deck.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** Phase 3 gave `.pc` a hover `transform: translateY(-8px)`
+and a `transform` transition. Phase 7 began writing a transform to every card
+on every frame for entrance, parallax and hover lift.
+
+**Options considered:**
+- Leave the CSS hover and have JS avoid transform
+- Give JS sole ownership and strip transform from CSS
+
+**Chosen approach:** JS owns it.
+
+**Reasoning:** Two writers on one animated property is not a style question,
+it is a race: the per-frame inline write and the transition resolve against
+each other differently depending on when each lands, producing stutter that is
+maddening to diagnose because neither rule is wrong on its own. The hover lift
+also has to compose with the entrance and the parallax offsets, which only the
+JS side can see.
+
+**Consequences / Trade-offs:**
+- Hover motion now requires JavaScript; without it the cards still highlight
+  via border and shadow, which CSS retains.
+- Keyboard `focus`/`blur` had to be wired explicitly to the same hover state,
+  or keyboard users would get a deck that never responds.
+- Recorded in ARCHITECTURE.md as a general rule, since the finale scene will
+  face the same question.
+
+**Status:** Active
