@@ -182,6 +182,16 @@ export const projects = [
       { label: 'Embedding dim', value: '384' },
       { label: 'Automated tests', value: '274 passed' },
     ],
+    // Read from the project's own README and source during Phase 1.
+    architecture: [
+      'Catalog pipeline (pandas) cleans and normalises 5,295 product records',
+      'all-MiniLM-L6-v2 encodes product text into 384-dimension vectors',
+      'Vectors are L2-normalized and indexed in FAISS IndexFlatIP (exact cosine)',
+      'A query is embedded the same way, then retrieved by vector similarity',
+      'A deterministic hybrid reranker reorders the candidate set',
+      'FastAPI serves the REST API; SQLite holds product metadata',
+      'Streamlit UI with a Plotly analytics dashboard; Docker Compose runs both',
+    ],
     status: 'Runs locally via Docker Compose. No public deployment.',
     contribution: 'Individual project.',
     links: {},
@@ -223,6 +233,16 @@ export const projects = [
       { label: 'Workflow agents', value: '5' },
     ],
     // The project's own README states this plainly; it is not softened here.
+    // Read from the project's own README and source during Phase 1.
+    architecture: [
+      'Streamlit frontend calls a FastAPI backend over HTTP',
+      'The backend runs a LangGraph workflow of five agents in sequence',
+      'Market → candidate → job matching → resume intelligence → quality guard',
+      'The quality guard can send a draft back for revision, up to three times',
+      'Retrieval uses ChromaDB where available, TF-IDF otherwise',
+      'A job catalog of 8,971 postings is loaded lazily, on first request',
+      'Gemini writes language only; every number is computed in Python',
+    ],
     status: 'Deployment-ready (Phase 6 complete). Not yet deployed.',
     contribution: 'Individual project.',
     links: {},
@@ -256,6 +276,13 @@ export const projects = [
     ],
     metrics: [
       { label: 'Transactions analysed', value: '9,994' },
+    ],
+    // Read from the project's own README and files during Phase 1.
+    architecture: [
+      'Transactional dataset modelled in MySQL',
+      'SQL queries aggregate, filter, group and sort to produce business KPIs',
+      'Power BI connects to the modelled data and builds the report',
+      'Interactive region filter drives drill-down by category and segment',
     ],
     status: 'Power BI report (.pbix) with supporting SQL.',
     contribution: 'Individual project.',
@@ -293,6 +320,14 @@ export const projects = [
     metrics: [
       { label: 'DenseNet201', value: '85.0%', note: 'Color Constancy + CLAHE' },
       { label: 'Baseline', value: '82.1%' },
+    ],
+    // Described from information Krishna provided; not read from source.
+    architecture: [
+      'HAM10000 dermoscopic images as the dataset',
+      'Five preprocessing variants prepared from the same source images',
+      'Each variant trained on both architectures, holding everything else equal',
+      'Transfer learning with fine-tuning, augmentation and early stopping',
+      'Results compared across the preprocessing × architecture grid',
     ],
     status: 'Academic study.',
     contribution: 'Final-year group project.',
@@ -342,6 +377,15 @@ export const projects = [
       'LangGraph investigation',
       'Explanation validation',
       'Evidence-grounded explanation',
+    ],
+    // Described from information Krishna provided; not read from source.
+    architecture: [
+      'Streamlit dashboard over a FastAPI backend',
+      'A machine-learning model scores each synthetic transaction for risk',
+      'Contributing risk factors are identified from the scored result',
+      'Sentence Transformers embed the factors; ChromaDB retrieves related knowledge',
+      'A LangGraph workflow runs the investigation over the retrieved evidence',
+      'The explanation is validated before it is returned',
     ],
     status: 'Deployment status not independently verified.',
     contribution: 'Individual project.',

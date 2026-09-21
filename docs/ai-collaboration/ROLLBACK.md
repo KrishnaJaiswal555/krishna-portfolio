@@ -10,6 +10,26 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 8: Project detail pages (architecture + case-study navigation)
+
+- Revert to commit: **`8c49d97`** — the Phase 7 state, verified green.
+- Files added by Phase 8: `docs/ai-collaboration/features/FEATURE-005.md`
+- Files modified by Phase 8:
+  - `src/data/content.js` — an `architecture` array added to all five projects
+  - `src/lib/dialog.js` — prev/next stepping, arrow keys, nav state
+  - `src/main.js` — architecture section in `renderCase()`, nav elements passed
+  - `index.html` — nav controls inside the `<dialog>`
+  - `src/styles/project.css` — nav bar, and taller bottom padding so the last
+    line of a case study is not trapped under it
+  - `tools/check_content.mjs` — asserts every project has an architecture
+- **Check-coupling note:** the new assertion means reverting `content.js`
+  alone, without also reverting `check_content.mjs`, leaves the content check
+  failing. Revert the commit as a unit.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `7 checks passed` (not 8)
+  - Serve and load `/#project/ai-product-search` → expected: overlay opens,
+    no nav bar, no console errors
+
 ## 2026-09-21 — Phase 7: Project Universe scene (constellation + deck choreography)
 
 - Revert to commit: **`4f2fa6e`** — the Phase 6 state, verified green.

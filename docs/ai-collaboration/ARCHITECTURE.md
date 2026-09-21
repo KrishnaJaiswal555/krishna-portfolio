@@ -31,7 +31,7 @@ Three structural properties define the system:
 | `src/data/content.js` | Single source of truth for all content | `main.js`, `check_content.mjs` |
 | `src/main.js` | Boot; renders collections into the shell; wires chrome, reveals, scenes and the overlay | `content.js`, `assets.js`, `dialog.js`, `reveal.js`, `scenes/*` |
 | `src/lib/assets.js` | Optional-asset loading; generated placeholders; file probing | DOM, `fetch` |
-| `src/lib/dialog.js` | Case-study overlay and `#project/<id>` deep links | `history`, `<dialog>`, `main.js → renderCase` |
+| `src/lib/dialog.js` | Case-study overlay, `#project/<id>` deep links, and stepping between projects | `history`, `<dialog>`, `main.js → renderCase` |
 | `src/lib/reveal.js` | Shared scroll reveals for `[data-reveal]`; one-shot | `IntersectionObserver`, `scene.js` |
 | `src/lib/scene.js` | Scene lifecycle: visibility gating, reduced motion, resize | `IntersectionObserver` |
 | `src/lib/ease.js` | Easing and frame-rate independent damping | none |

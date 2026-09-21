@@ -165,6 +165,14 @@ function renderCase(p) {
     section('Results', grid);
   }
 
+  // Architecture reads as an ordered pipeline rather than prose: these are
+  // all data-flow systems, and a numbered path is how they actually work.
+  if (p.architecture?.length) {
+    const flow = el('ol', 'cs__flow');
+    for (const step of p.architecture) flow.append(el('li', null, step));
+    section('Architecture', flow);
+  }
+
   section('Technology', tags(p.tech));
 
   const meta = el('p', 'cs__p');
@@ -337,6 +345,8 @@ function main() {
     dialog: $('caseDialog'),
     body: $('caseBody'),
     close: $('caseClose'),
+    prev: $('casePrev'),
+    next: $('caseNext'),
     projects,
     renderCase,
   });

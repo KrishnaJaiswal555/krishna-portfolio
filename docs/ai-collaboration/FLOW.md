@@ -159,11 +159,26 @@ Trigger: click on a `.pc` card, or a `#project/<id>` URL.
 
 1. `src/main.js` → card listener → `lib/dialog.js → openProject(id)`
 2. → `src/main.js → renderCase(project)` returns nodes built purely from
-   `content.js`. Metrics and links are emitted **only** if non-empty.
-3. → `history.pushState()` → `dialog.showModal()` — the platform supplies
+   `content.js`. Metrics and links are emitted **only** if non-empty;
+   Architecture renders as an ordered pipeline via `.cs__flow`.
+3. → `updateNav()` sets each nav control's label, accessible name and
+   disabled state from the project's position in the deck order.
+4. → `history.pushState()` → `dialog.showModal()` — the platform supplies
    focus trapping, Esc-to-close, background inertness and `::backdrop`.
-4. Closing fires `close` → if the hash still names a project, `history.back()`
+5. Closing fires `close` → if the hash still names a project, `history.back()`
    rewinds it, so the browser back button closes the overlay rather than
    leaving the page.
+
+### Stepping between projects
+
+Trigger: the prev/next controls, or ArrowLeft / ArrowRight while open.
+
+1. `dialog.js → step(delta)` → finds the current index, bails at either end.
+   **No wrap-around**: looping silently would hide the size of the set.
+2. → `openProject(id, { push: false })` → re-renders the body and calls
+   `history.replaceState()`. Only the *initial* open pushes, so reading all
+   five projects does not bury the deck under five back-presses.
+3. The arrow-key handler ignores events originating in `input`, `textarea` or
+   `select`, so it can never hijack typing.
 
 **Currently modifying:** none.

@@ -12,7 +12,8 @@ What to run and check before any change counts as done. A change is done only wh
 
 | Check | Command | Expected output | Last run |
 |---|---|---|---|
-| Content integrity | `node tools/check_content.mjs` | 7 named checks print `ok`, then `7 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
+| Content integrity | `node tools/check_content.mjs` | **8** named checks print `ok`, then `8 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
+| Element contract | After adding markup a module reads by id / dataset, grep both sides | Every id, `data-*` and hook the JS consumes exists in the markup | ✅ 2026-09-21 — matched. A mismatch here yields controls that are silently dead, with no error |
 | Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **14** modules | ✅ 2026-09-21 — matched |
 | Property ownership | For each style property JS writes per frame, grep CSS for a rule setting or transitioning it | Exactly one writer. `transform` on `.pc` and the deck belongs to `universe.js`; CSS must not transition it | ✅ 2026-09-21 — single writer confirmed. Two writers on one animated property is a race that resolves differently per frame, and neither rule looks wrong on its own |
 | Import graph | `grep` every `^import` binding against the `^export`s of its source module | Every named import resolves | ✅ 2026-09-21 — matched. **Do not skip:** `node --check` parses each file in isolation, so a mistyped export name passes syntax and fails only in the browser |
@@ -118,3 +119,9 @@ looking perfectly fine on disk, so this is checked explicitly.
 | Back button | Open a case study, press Back | Overlay closes; page stays put | — |
 | Esc / backdrop | Press Escape, then click outside | Overlay closes both ways | — |
 | Résumé button | With no PDF present | Button hidden, not broken. Add the PDF, reload → button appears | — |
+| Architecture renders | Open each of the five case studies | Each shows an Architecture section as a numbered pipeline | — |
+| Nav ends disable | Open project 01, then project 05 | Prev is disabled on 01; Next is disabled on 05. Neither wraps around | — |
+| Arrow keys | With the overlay open, press ← and → | Steps between projects | — |
+| History not buried | Open 01, step to 05, press Back once | Returns to the deck — not four steps back through the projects | — |
+| Nav bar clearance | Scroll to the bottom of a long case study | The last line is fully readable, not trapped under the nav bar | — |
+| Nav labels | Look at the prev/next controls | Each shows the destination project's title | — |

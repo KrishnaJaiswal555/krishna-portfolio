@@ -24,6 +24,15 @@ ok('every project has the fields the renderer reads', () => {
   }
 });
 
+ok('every project documents its architecture', () => {
+  // Item 7 of the brief's case-study requirements. A project with no
+  // architecture renders no section at all, which would fail silently.
+  for (const p of projects) {
+    assert.ok(Array.isArray(p.architecture) && p.architecture.length,
+      `${p.id}: architecture must be a non-empty array`);
+  }
+});
+
 ok('project ids are unique (they are used as URL fragments)', () => {
   const ids = projects.map((p) => p.id);
   assert.equal(new Set(ids).size, ids.length, 'duplicate project id');

@@ -25,13 +25,17 @@ Read at the start of every session. Keep it current, not complete.
   correction (year axis did not fit the data; unconfirmed graduation removed).
 - Phase 7 — Project Universe (FEATURE-004): field as a constellation between
   the cards, plus the deck's entrance, depth parallax and hover lift.
+- Phase 8 — Project detail pages (FEATURE-005): `architecture` added to all
+  five projects (the only genuine gap against the brief's §8 list), rendered
+  as an ordered pipeline; prev/next stepping between case studies with arrow
+  keys; a new content assertion, so the check now reports **8**, not 7.
 
 **The four particle configurations are complete and the set is closed:**
 wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. Phase 7 complete.
+- Nothing. Phase 8 complete.
 
 ## Broken / Blockers
 - None known.
@@ -70,12 +74,24 @@ than invent another — the coherence of the set is the point.
   one; the design deliberately needs none.
 
 ## Next Steps
-1. Browser pass — the single largest gap in the project.
-2. Phase 8 — project detail pages. The case-study `<dialog>` already exists
-   from Phase 3 and renders every field from `content.js`; Phase 8 is about
-   its visual treatment, not new plumbing.
-3. The finale canvas (`#finStage`) is still unwired — it belongs to Phase 10
-   (contact and footer). Add a ROLLBACK entry before starting either.
+
+Krishna has directed that all remaining development phases be completed
+first, with a full browser verification on localhost afterwards. Phases are
+being committed individually to preserve rollback granularity.
+
+1. Phase 9 — Skills and résumé section.
+2. Phase 10 — Contact and footer. This wires the last canvas (`#finStage`),
+   which must **reuse** one of the four existing particle configurations
+   rather than invent a fifth; the closed set is the point.
+3. Phase 11 — Responsive design audit across every scene.
+4. Phase 12 — Performance and accessibility audit.
+5. Phase 13 — deployment files, then the browser verification: desktop
+   layout, mobile responsiveness, navigation and scrolling, animations and
+   particle effects, interactive elements, console errors, and performance.
+   **No row in the Manual Checks tables may be marked done unless the site
+   has actually been opened and driven in a browser.**
+
+Add a ROLLBACK entry before starting each phase.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.

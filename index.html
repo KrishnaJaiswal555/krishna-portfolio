@@ -183,7 +183,19 @@
      an inert background and a backdrop with no JavaScript of our own. -->
 <dialog class="case" id="caseDialog" aria-labelledby="caseTitle">
   <article class="case__in" id="caseBody"></article>
+
   <button class="case__x" id="caseClose" aria-label="Close case study">&times;</button>
+
+  <nav class="case__nav" aria-label="Project navigation">
+    <button class="case__navBtn" id="casePrev" type="button" data-dir="prev">
+      <span aria-hidden="true">&larr;</span>
+      <span class="case__navLabel"></span>
+    </button>
+    <button class="case__navBtn" id="caseNext" type="button" data-dir="next">
+      <span class="case__navLabel"></span>
+      <span aria-hidden="true">&rarr;</span>
+    </button>
+  </nav>
 </dialog>
 
 <noscript>
