@@ -29,6 +29,12 @@ Read at the start of every session. Keep it current, not complete.
   five projects (the only genuine gap against the brief's §8 list), rendered
   as an ordered pipeline; prev/next stepping between case studies with arrow
   keys; a new content assertion, so the check now reports **8**, not 7.
+- Phase 12 — Performance and accessibility (FEATURE-009): `--dimmer` raised
+  from a measured ≈3.0:1 to ≈5.7:1 (it carried small secondary text and was
+  below the 4.5:1 AA floor), with a **standing contrast assertion** that reads
+  the real tokens out of `app.css` so it cannot regress. `role="list"` on all
+  ten lists — `list-style: none` strips list semantics in Safari/VoiceOver.
+  Heading order verified: exactly one `<h1>`. The content check reports **12**.
 - Phase 11 — Responsive design (FEATURE-008): layout made overflow-safe **by
   construction** rather than by media query. `100vw` → `100%` on the case
   dialog (`vw` includes the scrollbar gutter); all `auto-fit` tracks given a
@@ -51,8 +57,8 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. Phase 11 complete. Every canvas is wired; layout is overflow-safe
-  at every width.
+- Nothing. Phase 12 complete. Every canvas is wired, layout is overflow-safe
+  at every width, and every text token clears WCAG AA.
 
 ## Broken / Blockers
 - None known.
@@ -87,6 +93,11 @@ than invent another — the coherence of the set is the point.
 - Making timeline rows interactive again — Why: activating one does nothing,
   and a control that does nothing is worse than plain text for assistive tech.
 - Writing any personal fact, metric or URL outside `src/data/content.js`.
+- Lowering any colour token without re-running `check_content.mjs` — the
+  contrast assertion reads the real values out of `app.css`, and `--dimmer`
+  has already failed AA once.
+- Creating a `<ul>`/`<ol>` in JS without going through `main.js → list()`,
+  which sets the `role` that `list-style: none` otherwise strips.
 - Adding a profile photograph — Why: Krishna has explicitly declined to supply
   one; the design deliberately needs none.
 
@@ -96,11 +107,7 @@ Krishna has directed that all remaining development phases be completed
 first, with a full browser verification on localhost afterwards. Phases are
 being committed individually to preserve rollback granularity.
 
-1. Phase 12 — Performance and accessibility audit. Known items already
-   identified: lists with `list-style: none` need `role="list"` (Safari
-   VoiceOver drops list semantics otherwise), and the scenes read
-   `pointer: coarse` once at init rather than live.
-2. Phase 13 — deployment files, then the browser verification: desktop
+1. Phase 13 — deployment files, then the browser verification: desktop
    layout, mobile responsiveness, navigation and scrolling, animations and
    particle effects, interactive elements, console errors, and performance.
    **No row in the Manual Checks tables may be marked done unless the site

@@ -10,6 +10,24 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 12: Performance and accessibility
+
+- Revert to commit: **`b2564a9`** — the Phase 11 state, verified green.
+- Files added by Phase 12: `docs/ai-collaboration/features/FEATURE-009.md`
+- Files modified by Phase 12:
+  - `src/styles/app.css` — `--dimmer` raised to meet AA contrast
+  - `index.html` — `role="list"` on lists, heading-order correction
+  - `src/main.js` — `role="list"` on JS-built lists
+- **Accessibility regression warning:** reverting this phase restores a
+  `--dimmer` value measured at ≈3.0:1 against the page background, which is
+  below the 4.5:1 AA minimum for the small supporting text that uses it, and
+  removes list semantics that Safari VoiceOver needs. Do not revert this phase
+  for a visual preference — change the token instead.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `11 checks passed`
+  - Serve and load `/` → expected: site renders identically apart from
+    slightly dimmer secondary text
+
 ## 2026-09-21 — Phase 11: Responsive design
 
 - Revert to commit: **`1d613f4`** — the Phase 10 state, verified green.

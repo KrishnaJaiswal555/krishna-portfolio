@@ -30,6 +30,18 @@ const el = (tag, cls, text) => {
   return n;
 };
 
+/**
+ * A <ul>/<ol> that keeps its list semantics.
+ * `list-style: none` is set globally in app.css, and Safari + VoiceOver drop
+ * list semantics from an unmarkered list — so the count is never announced.
+ * The explicit role restores it. Every generated list goes through here.
+ */
+const list = (tag, cls) => {
+  const n = el(tag, cls);
+  n.setAttribute('role', 'list');
+  return n;
+};
+
 const tags = (items) => {
   const wrap = el('div', 'pc__tech');
   for (const t of items) wrap.append(el('span', 'tag', t));
@@ -141,12 +153,12 @@ function renderCase(p) {
   section('Problem', el('p', 'cs__p', p.problem));
   section('Solution', el('p', 'cs__p', p.solution));
 
-  const feats = el('ul', 'cs__list');
+  const feats = list('ul', 'cs__list');
   for (const f of p.features) feats.append(el('li', null, f));
   section('Key features', feats);
 
   if (p.workflow?.length) {
-    const flow = el('ol', 'cs__flow');
+    const flow = list('ol', 'cs__flow');
     for (const step of p.workflow) flow.append(el('li', null, step));
     section('Workflow', flow);
   }
@@ -169,7 +181,7 @@ function renderCase(p) {
   // Architecture reads as an ordered pipeline rather than prose: these are
   // all data-flow systems, and a numbered path is how they actually work.
   if (p.architecture?.length) {
-    const flow = el('ol', 'cs__flow');
+    const flow = list('ol', 'cs__flow');
     for (const step of p.architecture) flow.append(el('li', null, step));
     section('Architecture', flow);
   }
@@ -236,7 +248,7 @@ function renderSkills() {
     // Location is carried in content.js but was never rendered; it is part of
     // how an employment entry reads on a CV.
     box.append(el('div', 'xp__org', `${e.org} · ${e.location} · ${e.period}`));
-    const pts = el('ul', 'xp__points');
+    const pts = list('ul', 'xp__points');
     for (const p of e.points) pts.append(el('li', null, p));
     box.append(pts);
     xp.append(box);

@@ -151,6 +151,22 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | Contact links | Click each | Email opens a mail client; LinkedIn and GitHub open in a new tab | — |
 | No WebGL | Force-disable WebGL | Footer fully readable; wordmark visible as static type, no gathering | — |
 
+### Accessibility and performance (FEATURE-009)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Contrast | Inspect small secondary text (copyright, card subtitles, timeline keys, metric notes) | Comfortably readable. `--dimmer` was ≈3.0:1 and is now ≈5.7:1; `check_content.mjs` asserts every text token ≥4.5:1 | — |
+| List semantics | VoiceOver / NVDA over the nav, Focus list, certifications, timeline, case-study features | Each is announced as a list **with its item count**. `list-style: none` strips this in Safari without the explicit `role` | — |
+| Heading order | Run an accessibility inspector | Exactly one `<h1>` (the hero); `<h2>` per section; `<h3>` for subsections. No skipped levels | — |
+| Skip link | Load the page, press Tab once | "Skip to content" appears and jumps past the header | — |
+| Focus ring | Tab through every control | A visible accent ring on each — links, buttons, project cards, dialog controls | — |
+| Canvas hidden from AT | Screen-reader pass | No canvas is announced; all five carry `aria-hidden="true"` | — |
+| Name announced once | Screen-reader pass over the footer | The closing wordmark is not read — the `<h1>` already announced it | — |
+| No ungated animation | Scroll past a scene, watch the CPU | Every `requestAnimationFrame` lives in `scene.js`; off-screen and hidden-tab scenes stop entirely | — |
+| Frame cost | DevTools performance profile while scrolling | Smooth scrolling; no long tasks from particle updates | — |
+| DPR cap | Load on a 3× display | Canvas buffers cap at 2× — sharp, without quadrupling fill cost | — |
+| Payload | Network tab, hard reload | ~125KB of JS+CSS+HTML, plus Google Fonts. No other third-party request | — |
+
 ### Case studies
 
 | Check | Steps | Expected result | Actual |

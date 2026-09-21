@@ -7,6 +7,7 @@
 // tiny and dependency-free -- it exists to fail loudly, not to be a framework.
 
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { profile, projects, timeline, skills, experience, certifications }
   from '../src/data/content.js';
 
@@ -96,6 +97,42 @@ ok('timeline entries carry the fields the rail prints', () => {
     }
     assert.ok(Array.isArray(t.lines) && t.lines.length,
       `timeline "${t.label}" has no lines`);
+  }
+});
+
+// --- WCAG contrast, computed from the real tokens in app.css --------------
+// A one-off fix satisfies the brief; a check stops it regressing. The tokens
+// are read from the stylesheet rather than duplicated here, so this can never
+// drift from what the page actually renders.
+
+const css = readFileSync(new URL('../src/styles/app.css', import.meta.url), 'utf8');
+
+const token = (name) => {
+  const m = css.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{3,6})`));
+  assert.ok(m, `app.css has no --${name} token`);
+  return m[1];
+};
+
+const luminance = (hex) => {
+  const h = hex.replace('#', '');
+  const full = h.length === 3 ? [...h].map((c) => c + c).join('') : h;
+  const ch = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255);
+  const lin = ch.map((c) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+};
+
+const contrast = (a, b) => {
+  const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x);
+  return (hi + 0.05) / (lo + 0.05);
+};
+
+ok('text colours meet WCAG AA contrast against the page background', () => {
+  const bg = token('bg');
+  // Every token used for text. --dimmer was the one that failed at #55616e.
+  for (const name of ['paper', 'dim', 'dimmer', 'accent', 'warn']) {
+    const ratio = contrast(token(name), bg);
+    assert.ok(ratio >= 4.5,
+      `--${name} (${token(name)}) is ${ratio.toFixed(2)}:1 on --bg, below the 4.5:1 AA minimum`);
   }
 });
 

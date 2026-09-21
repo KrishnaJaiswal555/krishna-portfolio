@@ -14,7 +14,11 @@
 
   --paper:     #e8edf2;
   --dim:       #8b98a7;
-  --dimmer:    #55616e;
+  /* Raised from #55616e, which measured ≈3.0:1 against --bg — below the 4.5:1
+     WCAG AA minimum, and it carries small supporting text (.fin__c, .pc__sub,
+     .jn__key, .mt__n). Now ≈5.7:1, still clearly dimmer than --dim at ≈6.9:1.
+     tools/check_content.mjs asserts this, so it cannot silently regress. */
+  --dimmer:    #7d8996;
 
   /* One accent, used sparingly. Cyan reads as data/instrumentation rather
      than as a brand colour, which suits the subject matter. */
