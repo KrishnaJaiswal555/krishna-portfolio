@@ -375,6 +375,47 @@ plain text, not better. The distinction that matters is whether activation
   carries no information, and the scene still responds to scroll for everyone.
 - The tab order is shorter and contains only controls that act.
 
+**Status:** **Superseded 2026-09-21** — see "Timeline rows are buttons again"
+below. The reasoning above was correct *given its precondition* (activating a
+row did nothing). That precondition expired, and nothing reopened the
+decision — which is how the regression in BUG-001 survived.
+
+---
+
+### 2026-09-21 — Timeline rows are buttons again, because they now do something
+
+**Decision:** Reverse the decision above. `renderJourney()` emits
+`<button type="button">` with `aria-pressed`, and clicking a row pins the
+active milestone.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** Krishna reported the cyan indicator was stuck. Root
+cause (BUG-001) was that Phase 6 removed the `.jn:hover` CSS affordance and
+made the highlight depend solely on a class that only a per-frame scroll
+calculation ever set — so any hover was undone immediately, and a stationary
+viewport re-pinned the same row forever.
+
+**Options considered:**
+- Restore `.jn:hover` in CSS only, and leave the rows as `<div>`
+- Give the rows a real action and make them buttons again
+
+**Chosen approach:** Both, for different reasons. `.jn:hover` returns as a
+no-JavaScript affordance; the rows become buttons because pinning is a genuine
+action with a genuine toggle state.
+
+**Reasoning:** The earlier decision was not wrong — it was *conditional*, and
+the condition was "activating a row does nothing". Once clicking pins a
+milestone, a `<button>` with `aria-pressed` is the honest element and the
+`<div>` becomes the accessibility problem instead.
+
+**Consequences / Trade-offs:**
+- Precedence is now pin > hover > scroll, and the frame loop must respect
+  `pinned`. Omitting that term is exactly what caused the bug.
+- Indicator logic moved above the WebGL guard; it works with no canvas.
+- Decision entries that rest on a precondition should say so, so a changed
+  precondition reopens them rather than leaving a settled-looking record.
+
 **Status:** Active
 
 ---

@@ -109,6 +109,26 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | Spine on-canvas | Narrow to 380px | The spine stays visible on the canvas; rail stacks | — |
 | Reduced motion | Reduce motion, reload | Spine drawn once and still; rail fully readable | — |
 
+### Timeline indicator — regression fix (BUG-001)
+
+The indicator is a per-row `box-shadow`, not a separately positioned bar, so
+it cannot drift out of alignment and has no hardcoded coordinates. Precedence
+is **pin > hover > scroll**.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Click moves it | Click each of the five rows in turn | The cyan bar and tint move to the clicked row **every time**. This is the reported bug | — |
+| All five work | Test every row, including first and last | No row is dead; none is stuck | — |
+| Click again releases | Click the pinned row a second time | Pin releases; the indicator resumes following scroll | — |
+| Scroll cannot override a pin | Pin row 3, then scroll the section | Row 3 stays lit. Before the fix, the frame loop reset it every frame | — |
+| Hover previews | Hover across rows without clicking | Highlight follows the pointer; on leaving, it returns to the pinned row (or to scroll) | — |
+| Keyboard | Tab onto a row, press Enter/Space | Pins it, same as a click; focus ring visible | — |
+| Announced state | Screen reader over a pinned row | Reported as a pressed toggle button (`aria-pressed="true"`) | — |
+| Works without WebGL | Force-disable WebGL, reload | **Indicator still works.** It used to be behind the WebGL guard and vanished entirely | — |
+| Alignment | Compare bar to row at several widths | Bar spans exactly the selected row's height at every viewport | — |
+| Responsive | Narrow below 620px | Rows stack; indicator still tracks the selected row | — |
+| Reveal animation | Scroll the rail into view | Rows fade/slide in. A `transition` conflict was silently killing this | — |
+
 ### Project Universe (FEATURE-004)
 
 | Check | Steps | Expected result | Actual |
@@ -124,6 +144,23 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | JS disabled | Disable JavaScript, reload | Deck is plain, complete and every card clickable — not hidden | — |
 | Reduced motion | Reduce motion, reload | Cards settled and visible, no parallax; network drawn once and still | — |
 | Reflow | Resize across 620px and 1100px | Grid reflows, depths re-solve, the constellation re-strings to the new centres | — |
+
+### Project overview visuals and backdrop (FEATURE-011)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Per-project art | Look at all five cards | Each shows a *different* schematic of that project — embedding space, agent chain, dashboard bars, CNN stack, transaction graph. Not five identical constellations | — |
+| Honest labelling | Read each card's art | "SCHEMATIC — VISUAL PENDING". These must not read as real screenshots | — |
+| Text stays dominant | Read card titles and blurbs | Art is subordinate; text never loses contrast against it | — |
+| Backdrop present | Look at the Work section background | A faint blueprint grid with two dim pools — charcoal, not black, and not bright | — |
+| Backdrop is immovable | Scroll through the Work section | The backdrop stays put; it does **not** travel with the section | — |
+| Backdrop ignores the cursor | Move the pointer around the section | The backdrop does not react at all. Only the cards and constellation respond | — |
+| Backdrop does not reach the indicator | Scroll between Journey and Work | The cyan milestone indicator is unaffected — the backdrop is scoped to `.universe` | — |
+| Readability | Read every label over the backdrop | Full contrast retained; the section-edge mask prevents a hard seam | — |
+| No new requests | Network tab, hard reload | **Zero** new requests. The backdrop is CSS gradients; the card art is canvas | — |
+| Responsive | 320px → 1440px | Backdrop and card art both scale without banding, overflow or seams | — |
+| Reduced motion | Enable "reduce motion", reload | Backdrop switches to `scroll` attachment; no repaint cost on scroll | — |
+| Performance | Profile while scrolling the Work section | No new long tasks. `background-attachment: fixed` repaints on scroll — if it stutters on a low-end machine, that is the suspect | — |
 
 ### Skills and résumé (FEATURE-006)
 

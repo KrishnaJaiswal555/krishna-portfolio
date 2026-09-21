@@ -35,11 +35,70 @@ export async function initJourney() {
   const rail = document.getElementById('journeyRail');
   if (!section || !canvas || !rail) return null;
 
+  // -------------------------------------------------------------------------
+  // The active-milestone indicator.
+  //
+  // This block runs BEFORE the WebGL context is requested, and must stay that
+  // way. It used to live below the `if (!gl) return null` guard, which meant a
+  // machine without WebGL2 got no indicator at all — the highlight is plain
+  // CSS on `.jn.is-active` and owes nothing to the canvas.
+  //
+  // Precedence is pin > hover > scroll. Scroll is the weakest signal because
+  // it is always present: before this, the per-frame scroll branch reclaimed
+  // the active row the instant the pointer left, and with a stationary
+  // viewport it resolved to the same row every frame — the indicator looked
+  // frozen.
+  // -------------------------------------------------------------------------
+
+  const rows = [...rail.querySelectorAll('.jn')];
+  let active = -1;
+  let pinned = -1;        // set by click/Enter; survives pointer and scroll
+  let hovering = -1;
+
+  function setActive(i) {
+    if (i === active || i < 0 || i >= rows.length) return;
+    rows[active]?.classList.remove('is-active');
+    active = i;
+    rows[active]?.classList.add('is-active');
+    rows.forEach((r, k) => r.setAttribute('aria-pressed', String(k === pinned)));
+  }
+
+  const coarse = matchMedia('(pointer: coarse)');
+
+  rows.forEach((row, i) => {
+    // Click toggles a pin. Clicking the pinned row again releases it back to
+    // scroll-following, so the control is never a one-way trap.
+    row.addEventListener('click', () => {
+      pinned = pinned === i ? -1 : i;
+      setActive(i);
+    });
+    // Keyboard parity comes free from <button>, but focus should preview the
+    // row the same way hover does.
+    row.addEventListener('focus', () => setActive(i));
+    row.addEventListener('pointerenter', () => {
+      if (coarse.matches) return;
+      hovering = i;
+      setActive(i);
+    });
+  });
+
+  rail.addEventListener('pointerleave', () => {
+    hovering = -1;
+    if (pinned >= 0) setActive(pinned);
+  });
+
+  setActive(0);
+
+  // -------------------------------------------------------------------------
+  // The spine. Everything below is decoration and may legitimately be absent.
+  // -------------------------------------------------------------------------
+
   const gl = createGL(canvas);
   if (!gl) {
-    // The rail is plain readable content; nothing needs undoing.
     section.classList.add('is-fallback');
-    return null;
+    // The indicator above is already live, so this is a partial success, not
+    // a failure. Returning null would read as "nothing works here".
+    return { section, setActive };
   }
 
   let field = createField(gl, countFor(window.innerWidth));
@@ -50,10 +109,7 @@ export async function initJourney() {
   let baseX = new Float32Array(0);
   let baseY = new Float32Array(0);
 
-  let rows = [];          // the .jn elements, in document order
   let centres = [];       // their vertical centres, device px, layout-based
-  let active = -1;
-  let hovering = -1;
   let focusY = 0;         // damped y the bulge actually tracks
 
   function measure() {
@@ -70,10 +126,10 @@ export async function initJourney() {
       baseY = new Float32Array(field.count);
     }
 
-    rows = [...rail.querySelectorAll('.jn')];
     // offsetTop is relative to the nearest positioned ancestor. .jn sits
     // inside <li> inside the positioned rail, so the rail's own offset within
-    // the section has to be added back.
+    // the section has to be added back. `rows` is collected once, above —
+    // re-querying here would drop the listeners' element identity.
     centres = rows.map((el) => (rail.offsetTop + el.offsetTop + el.offsetHeight / 2) * size.dpr);
 
     // The spine sits just outside the rail's left edge, clamped so it can
@@ -119,26 +175,8 @@ export async function initJourney() {
     }
   }
 
-  function setActive(i) {
-    if (i === active || i < 0 || i >= rows.length) return;
-    rows[active]?.classList.remove('is-active');
-    active = i;
-    rows[active]?.classList.add('is-active');
-  }
-
   measure();
   field.scatter(size.w, size.h);
-  rows[active]?.classList.add('is-active');
-
-  if (!prefersReduced() && !matchMedia('(pointer: coarse)').matches) {
-    rail.addEventListener('pointerover', (e) => {
-      const row = e.target.closest('.jn');
-      if (!row) return;
-      hovering = rows.indexOf(row);
-      if (hovering >= 0) setActive(hovering);
-    });
-    rail.addEventListener('pointerleave', () => { hovering = -1; });
-  }
 
   const control = gate(section, {
     threshold: 0,
@@ -151,9 +189,10 @@ export async function initJourney() {
       gl.clearColor(0, 0, 0, 0);
       gl.clear(gl.COLOR_BUFFER_BIT);
 
-      // With no pointer on the rail, the milestone nearest the middle of the
-      // viewport takes over — so scrolling alone walks the thread.
-      if (hovering < 0 && centres.length) {
+      // Scroll is the WEAKEST signal: it only drives the active milestone
+      // when nothing is pinned and nothing is hovered. Without the `pinned`
+      // term this branch ran every frame and silently undid every click.
+      if (pinned < 0 && hovering < 0 && centres.length) {
         const secTop = section.getBoundingClientRect().top;
         const mid = (window.innerHeight / 2 - secTop) * size.dpr;
         let best = 0;

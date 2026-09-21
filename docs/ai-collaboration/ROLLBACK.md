@@ -10,6 +10,24 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Fix: timeline indicator regression + project overview visuals
+
+- Revert to commit: **`f7e3a1c`** — the Phase 13 state.
+- Files modified:
+  - `src/scenes/journey.js` — indicator logic lifted out from behind the
+    WebGL guard; click-to-pin added; scroll no longer overrides hover/pin
+  - `src/main.js` — `renderJourney()` emits `<button>` again
+  - `src/styles/scenes.css` — hover affordance restored, transition conflict
+    fixed, fixed background on the Work section
+  - `src/lib/assets.js` — per-project generated card art
+- **Regression being fixed:** commit `4f2fa6e` (Phase 6) deleted `.jn:hover`
+  from the active rule and changed the rows from `<button>` to `<div>`. Before
+  that, the highlight followed the pointer through pure CSS with no JS
+  involved. Reverting *this* fix reinstates that regression.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `12 checks passed`
+  - The indicator will again be stuck, and absent entirely without WebGL2
+
 ## 2026-09-21 — Phase 13: Deployment preparation
 
 - Revert to commit: **`ff6e981`** — the Phase 12 state, verified green.

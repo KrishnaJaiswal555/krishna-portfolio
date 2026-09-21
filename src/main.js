@@ -70,13 +70,18 @@ function renderJourney() {
   for (const node of timeline) {
     const li = el('li');
 
-    // NOT a <button>. Highlighting a milestone changes nothing and reveals
-    // nothing — every entry is fully readable at all times — so an
-    // interactive control here would be a control that does nothing, which
-    // is worse for a screen-reader or keyboard user than plain text. The
-    // scene reacts to hover and scroll; the information never depends on it.
-    const row = el('div', 'jn');
+    // A <button> again. Phase 6 made these plain <div>s on the reasoning that
+    // a control which does nothing is worse than text for assistive tech —
+    // which was correct AT THE TIME, because activating a row did nothing.
+    // Rows now pin the active milestone (click to pin, click again to
+    // release), so there is a real action and a real toggle state, and the
+    // button is the honest element. `aria-pressed` is maintained by
+    // journey.js so the pinned state is announced, not just painted.
+    const row = el('button', 'jn');
+    row.type = 'button';
     row.setAttribute('data-reveal', '');
+    row.setAttribute('aria-pressed', 'false');
+    row.setAttribute('aria-label', `${node.year} — ${node.label}. Pin this milestone.`);
 
     row.append(el('span', 'jn__year', node.year));
 

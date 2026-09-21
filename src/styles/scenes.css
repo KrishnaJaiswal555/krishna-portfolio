@@ -199,18 +199,43 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   width: 100%;
   padding: 26px 8px;
   border-bottom: 1px solid var(--line);
+  /* Button resets — these rows are <button> again now that clicking one pins
+     the milestone. Without these the UA stylesheet centres the text and
+     imposes its own font. */
+  background: none;
+  border-left: 0; border-right: 0; border-top: 0;
+  color: inherit; font: inherit; text-align: left;
+  cursor: pointer;
   /* A marker for the active milestone, animated from the left rather than
      toggled, so walking the rail reads as one thread moving. */
   box-shadow: inset 2px 0 0 -2px var(--accent);
+  /* opacity and transform MUST be listed here. These rows also carry
+     [data-reveal], whose rule declares its own `transition` at identical
+     specificity — and because this rule comes later in the file it wins
+     outright, which silently killed the reveal animation on the rail. */
   transition: background .3s var(--ease-out), padding-left .3s var(--ease-out),
-              box-shadow .3s var(--ease-out);
+              box-shadow .3s var(--ease-out),
+              opacity .7s var(--ease-out), transform .7s var(--ease-out);
 }
+
+/* Hover feedback independent of JavaScript. Before the regression fix the
+   highlight came from `.jn:hover` alone; that CSS affordance is restored here
+   so the rail still responds under the pointer even if the scene module never
+   runs — it just no longer has to carry the active state on its own. */
+.jn:hover:not(.is-active) {
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+}
+
 .jn.is-active {
   background: var(--accent-dim);
   padding-left: 18px;
   box-shadow: inset 2px 0 0 0 var(--accent);
 }
 .jn.is-active .jn__label { color: var(--accent-hot); }
+/* Pinned by click, as opposed to merely hovered or scrolled past. */
+.jn[aria-pressed="true"] {
+  box-shadow: inset 3px 0 0 0 var(--accent-hot);
+}
 .jn__year {
   font-family: var(--mono); font-size: 13px;
   color: var(--accent); letter-spacing: .06em;
@@ -232,6 +257,51 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   display: block; z-index: 0; pointer-events: none;
 }
 .universe > *:not(.universe__stage) { position: relative; z-index: 1; }
+
+/* --------------------------------------------------------------------------
+   Fixed backdrop for the project overview.
+
+   Drawn entirely with CSS gradients rather than an image file: zero bytes,
+   zero network requests, nothing to optimise or cache-bust, and no external
+   dependency of any kind. An abstract blueprint grid with two dim pools of
+   light, in charcoal against the page black.
+
+   `background-attachment: fixed` is what makes it immovable — it anchors to
+   the viewport, so it does not travel with the section, the scroll or any
+   pointer interaction.
+
+   Scoped to `.universe` deliberately. It cannot reach `.journey`, so it has
+   no way to affect the cyan milestone indicator. `> *` above matches elements
+   only, never a pseudo-element, so this ::before keeps z-index 0 and stays
+   behind every card and label.
+   -------------------------------------------------------------------------- */
+.universe::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-attachment: fixed;
+  background-image:
+    /* two soft pools, off-centre so the field is not symmetrical */
+    radial-gradient(ellipse 70% 55% at 18% 22%, rgba(79, 209, 224, .055), transparent 70%),
+    radial-gradient(ellipse 60% 50% at 82% 78%, rgba(79, 209, 224, .035), transparent 70%),
+    /* blueprint grid */
+    repeating-linear-gradient(to right,  rgba(124, 138, 152, .05) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(to bottom, rgba(124, 138, 152, .05) 0 1px, transparent 1px 96px),
+    /* charcoal wash, so the grid never sits on pure black */
+    linear-gradient(160deg, #0a0e14 0%, #06090d 55%, #05070a 100%);
+  /* Kept low so body copy and card text never lose contrast. */
+  opacity: .85;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* `fixed` backgrounds repaint on scroll; for reduced-motion users pin it to
+     the section instead, which is cheaper and completely still. */
+  .universe::before { background-attachment: scroll; }
+}
 
 .universe__deck {
   position: relative; z-index: 1;

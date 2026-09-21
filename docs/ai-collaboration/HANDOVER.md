@@ -63,9 +63,17 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. **All thirteen development phases are written and committed.**
-  Every canvas is wired, layout is overflow-safe at every width, every text
-  token clears WCAG AA, and the deployment audit is clean.
+- **Post-phase fix round, awaiting browser confirmation.**
+  - BUG-001 — the cyan milestone indicator was stuck. A regression I
+    introduced in `4f2fa6e` (Phase 6): the `.jn:hover` CSS affordance was
+    deleted, and the per-frame scroll branch undid every hover. Fixed with a
+    pin > hover > scroll precedence, click-to-pin, and the indicator logic
+    lifted out from behind the WebGL guard.
+  - FEATURE-011 — per-project card schematics replacing the single shared
+    constellation, plus a fixed CSS-gradient backdrop on the Work section
+    (zero bytes, zero requests), scoped to `.universe` so it cannot reach the
+    Journey indicator.
+- All thirteen development phases remain written and committed.
 
 ## Broken / Blockers
 - None known.
