@@ -97,6 +97,14 @@ export const skills = [
 ];
 
 // Dates are taken from the resume. No milestone is inferred or estimated.
+//
+// The `year` field is the rail's axis label and holds the REAL granularity of
+// each milestone, not a calendar year. Five of these fall in 2026, so a
+// year-per-node axis would print "2026" five times and read as a bug.
+//
+// There is deliberately no "graduated" milestone: the programme runs
+// 2021–2026 and completion was never confirmed, so the site states the range
+// (in the About section) and claims nothing beyond it.
 export const timeline = [
   {
     year: '2021',
@@ -106,38 +114,31 @@ export const timeline = [
     source: 'verified',
   },
   {
-    year: '2026',
+    year: 'Feb – Jun 2026',
     key: 'Industry',
     label: 'Data Science Intern',
-    lines: ['Prism IT Solutions', 'Feb – Jun 2026'],
+    lines: ['Prism IT Solutions, Pune', 'EDA on 15,000+ records'],
     source: 'verified',
   },
   {
-    year: '2026',
+    year: 'May 2026',
     key: 'Modelling',
     label: 'Customer Churn Prediction',
-    lines: ['Logistic Regression', 'May 2026'],
+    lines: ['Logistic Regression · Scikit-learn', '7,000+ customer records'],
     source: 'verified',
   },
   {
-    year: '2026',
+    year: 'Jun 2026',
     key: 'Analytics',
     label: 'Retail Sales Analytics',
-    lines: ['SQL + Power BI', 'Jun 2026'],
+    lines: ['MySQL · Power BI', '9,994 transactions'],
     source: 'verified',
   },
   {
-    year: '2026',
+    year: 'Aug 2026',
     key: 'Semantic search',
     label: 'AI Product Search',
-    lines: ['Embeddings + FAISS', 'Aug 2026'],
-    source: 'verified',
-  },
-  {
-    year: '2026',
-    key: 'Graduation',
-    label: 'B.Tech completed',
-    lines: ['Computer Technology', '2021 – 2026'],
+    lines: ['Embeddings · FAISS', '5,295 products'],
     source: 'verified',
   },
 ];

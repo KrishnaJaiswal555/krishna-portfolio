@@ -2,26 +2,26 @@
 
 What to run and check before any change counts as done. A change is done only when every row matches its expected output.
 
-> **Automated checks: executed 2026-09-20, all passing.**
+> **Automated checks: executed 2026-09-21, all passing.**
 > **Manual browser checks: NOT yet executed** — no browser has been driven in
-> this project at any point. Every row in the manual table is unverified and
-> must not be reported as working until someone has actually looked at it.
+> this project at any point, across six phases. Every row in the manual tables
+> is unverified and must not be reported as working until someone has
+> actually looked at it. This is the project's largest known gap.
 
 ## Commands
 
 | Check | Command | Expected output | Last run |
 |---|---|---|---|
-| Content integrity | `node tools/check_content.mjs` | 7 named checks print `ok`, then `7 checks passed`; exit 0 | ✅ 2026-09-20 — matched |
-| Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **12** modules | ✅ 2026-09-20 — matched |
-| Import graph | `grep` every `^import` binding against the `^export`s of its source module | Every named import resolves | ✅ 2026-09-20 — matched. **Do not skip this:** `node --check` parses each file in isolation, so a mistyped export name passes syntax and fails only in the browser |
-| Class-name contract | `grep` each class/custom-property JS sets, and confirm CSS matches it | `is-gl`, `is-typed`, `is-reveal-ready`, `is-in`, `--ri` present on both sides | ✅ 2026-09-20 — matched. A mismatch here produces no error at all, just content that never appears |
-| No dead exports | `grep -rn "<exportName>" src/ tools/` for each export | Every export has at least one caller | ✅ 2026-09-20 — `unitQuad` and `progress` found unused and removed |
+| Content integrity | `node tools/check_content.mjs` | 7 named checks print `ok`, then `7 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
+| Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **13** modules | ✅ 2026-09-21 — matched |
+| Import graph | `grep` every `^import` binding against the `^export`s of its source module | Every named import resolves | ✅ 2026-09-21 — matched. **Do not skip:** `node --check` parses each file in isolation, so a mistyped export name passes syntax and fails only in the browser |
+| Class-name contract | `grep` each class / custom property JS sets, confirm CSS matches | `is-gl`, `is-typed`, `is-reveal-ready`, `is-in`, `is-active`, `jn__*`, `--ri` present on both sides | ✅ 2026-09-21 — matched. A mismatch here produces no error at all, just content that never appears |
+| No dead exports or unread writes | `grep -rn "<name>" src/ tools/` for each export and each written property | Every one has at least one reader | ✅ 2026-09-21 — `dataset.milestone` found unread and removed. Prior finds: `unitQuad`, `progress` |
+| Element-contract drift | After changing an element's tag, grep for code that still assumes the old one | No `button.jn`, no `.type =` on a div | ✅ 2026-09-21 — matched |
 | Server syntax | `python -m py_compile tools/serve.py` | Prints nothing, exit 0 | ✅ 2026-09-20 — matched |
 | Dev server | `python tools/serve.py 5173` | Serves the root; see MIME table below | ✅ 2026-09-20 — matched |
 | Tests | — | No test framework. `check_content.mjs` is the whole suite, by design. | n/a |
-| Type check | — | Not applicable; plain JavaScript, no types. | n/a |
-| Lint | — | No linter configured. | n/a |
-| Build | — | No build step. Deliberate; see DECISIONS.md. | n/a |
+| Type check / Lint / Build | — | Not applicable; plain JavaScript, no types, no linter, no build step. | n/a |
 
 ### Server responses — verified 2026-09-20
 
@@ -31,8 +31,8 @@ looking perfectly fine on disk, so this is checked explicitly.
 | Path | Expected | Actual |
 |---|---|---|
 | `/` | `200 text/html` | ✅ |
-| `/src/main.js` · `/src/scenes/hero.js` · `/src/scenes/about.js` · `/src/gl/particles.js` · `/src/lib/reveal.js` | `200 text/javascript` | ✅ all |
-| `/src/styles/app.css` | `200 text/css` | ✅ |
+| every module under `/src/` | `200 text/javascript` | ✅ |
+| `/src/styles/*.css` | `200 text/css` | ✅ |
 | `/public/resume/…pdf` (absent) | `404` | ✅ — the state that hides the résumé button |
 | `/public/projects/…png` (absent) | `404` | ✅ — the state that triggers the generated placeholder |
 | Response header | `Cache-Control: no-store, must-revalidate` | ✅ present |
@@ -48,10 +48,10 @@ looking perfectly fine on disk, so this is checked explicitly.
 |---|---|---|---|
 | Page renders | Open the site | All six sections visible; no empty shell; body fades in | — |
 | Console clean | DevTools console on load | No errors and no warnings. `[portfolio] <name> scene unavailable:` appears **only** if a scene actually throws | — |
-| Keyboard only | Tab from the top of the page | Skip link first; every card and timeline node reachable with a visible focus ring | — |
+| Keyboard only | Tab from the top | Skip link first; every **project card** reachable with a visible focus ring. Timeline rows are content, not controls, and are correctly **not** in the tab order | — |
 | No photograph | Inspect the rendered page and `public/` | No image of Krishna anywhere | — |
-| JS disabled | Disable JavaScript, reload | Hero name, About copy and the `<noscript>` contact details all readable. **Nothing hidden.** | — |
-| Mobile layout | Narrow to 380px | Journey rail stacks vertically; deck becomes one column; burger menu opens and closes | — |
+| JS disabled | Disable JavaScript, reload | Hero name and About copy readable, `<noscript>` contact details shown. **Nothing hidden.** Timeline and project cards will be absent — they are JS-rendered | — |
+| Mobile layout | Narrow to 380px | Journey rail stacks; deck becomes one column; burger menu opens and closes | — |
 | Reduced motion | Enable OS "reduce motion", reload | No animation anywhere; every scene lands settled and fully readable | — |
 
 ### Hero (FEATURE-001)
@@ -61,19 +61,32 @@ looking perfectly fine on disk, so this is checked explicitly.
 | Sequence | Load and watch | Black → particles surface → condense into the name → copy fades in staggered → settles with drift | — |
 | WebGL init | Console on a WebGL2-capable machine | The `.hero` section does **not** carry `is-fallback` | — |
 | No WebGL | Force-disable WebGL, reload | Hero name visible immediately; no blank hero | — |
-| Pointer parallax | Move the cursor after it settles | Field drifts by depth; effect is subtle, not a toy | — |
-| Resize | Drag across 620px and 1100px | Field re-samples against the new type size; count steps without visual corruption | — |
-| Reduced motion | Reduce motion, reload | Particles drawn **already formed** into the name, held still; copy visible | — |
+| Pointer parallax | Move the cursor after it settles | Field drifts by depth; subtle, not a toy | — |
+| Resize | Drag across 620px and 1100px | Field re-samples against the new type size; count steps without corruption | — |
+| Reduced motion | Reduce motion, reload | Particles drawn **already formed** into the name, held still | — |
 
 ### About (FEATURE-002)
 
 | Check | Steps | Expected result | Actual |
 |---|---|---|---|
 | Reveals | Scroll into the section | Copy arrives staggered, once. Scrolling back does **not** replay it | — |
-| Lattice subordinate | Read the body copy over the canvas | Grid is visible but never costs the text contrast | — |
+| Lattice subordinate | Read the body copy over the canvas | Grid visible but never costs the text contrast | — |
 | Text selectable | Drag-select the intro paragraph | Selects normally; the canvas does not intercept | — |
-| Fade at edges | Scroll through the whole section | Grid fades in and back out; no hard edge against neighbouring scenes | — |
+| Fade at edges | Scroll through the section | Grid fades in and back out; no hard edge against neighbours | — |
 | Resize stability | Resize repeatedly | Grid re-solves without the field twitching | — |
+
+### Journey (FEATURE-003)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Spine reads | Scroll into the section | A continuous thread beside the rail, running off both ends — not a stray column of dots | — |
+| Bulge glides | Scroll slowly through | The bulge moves smoothly between milestones; never jumps | — |
+| Scroll drives | Keep the pointer away from the rail | The active milestone follows the viewport centre | — |
+| Hover overrides | Hover a row, then leave | Hover takes over immediately; leaving returns control to scroll | — |
+| Dates correct | Read the rail | `2021`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026` — in that order, no repeated bare "2026" | — |
+| No graduation claim | Read the rail | No milestone asserts the degree was completed | — |
+| Spine on-canvas | Narrow to 380px | The spine stays visible on the canvas; rail stacks | — |
+| Reduced motion | Reduce motion, reload | Spine drawn once and still; rail fully readable | — |
 
 ### Case studies
 
@@ -81,10 +94,10 @@ looking perfectly fine on disk, so this is checked explicitly.
 |---|---|---|---|
 | Projects render | Scroll to Work | Five cards, 01–05, each showing a generated "VISUAL PENDING" placeholder | — |
 | No invented links | Open each case study | Every project shows "Links to be added" — never a guessed repository URL | — |
-| Metrics honesty | Open case study 01 | Precision@5 `0.80` with note "12-query evaluation set"; `0.67` without reranking; no latency figure anywhere | — |
+| Metrics honesty | Open case study 01 | Precision@5 `0.80` with note "12-query evaluation set"; `0.67` without reranking; no latency figure | — |
 | Disclaimers present | Open case studies 04 and 05 | Both show a Note covering the academic / synthetic-data limits | — |
 | Opens | Click any project card | Overlay slides in; URL becomes `#project/<id>` | — |
 | Deep link | Load `/#project/upi-sentinel-ai` directly | Overlay already open on that project | — |
 | Back button | Open a case study, press Back | Overlay closes; page stays put | — |
-| Esc / backdrop | Press Escape, then try clicking outside | Overlay closes both ways | — |
+| Esc / backdrop | Press Escape, then click outside | Overlay closes both ways | — |
 | Résumé button | With no PDF present | Button hidden, not broken. Add the PDF, reload → button appears | — |

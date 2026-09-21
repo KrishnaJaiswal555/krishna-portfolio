@@ -10,6 +10,35 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 6: Journey scene (particle spine + milestone rail)
+
+- Revert to commit: **`a2b89eb`** — the Phase 5 state, verified green.
+  `git reset --hard a2b89eb` undoes Phase 6 completely.
+- Files added by Phase 6 (removed by the reset):
+  - `src/scenes/journey.js`
+  - `docs/ai-collaboration/features/FEATURE-003.md`
+- Files modified by Phase 6 (restored by the reset):
+  - `src/data/content.js` — **timeline restructured**: six nodes to five, real
+    date granularity instead of a repeated "2026", and the unconfirmed
+    "B.Tech completed" milestone removed
+  - `src/main.js` — `renderJourney()` emits a `<div class="jn">` instead of a
+    `<button>`; journey registered in `startScenes()`
+  - `index.html` — `data-reveal` on the Journey heading
+  - `src/styles/scenes.css` — journey layering, wider year column, active
+    milestone marker
+  - `docs/ai-collaboration/` — ARCHITECTURE, FLOW, HANDOVER, DECISIONS,
+    TEST_CHECKLIST
+- **Content warning on this rollback:** reverting restores the old timeline,
+  which prints "2026" as the axis label on five of six rows and reasserts
+  "B.Tech completed" — a claim Krishna has never confirmed. If Phase 6 is
+  rolled back for a rendering reason, re-apply the `content.js` timeline
+  change on its own; it is independent of the scene.
+- Re-check after rollback:
+  - `node --check` across the remaining 12 modules → expected: silent, exit 0
+  - `node tools/check_content.mjs` → expected: `7 checks passed`, exit 0
+  - Serve and load `/` → expected: hero and About intact, Journey rail plain
+    but fully readable, no console errors
+
 ## 2026-09-20 — Phase 5: About scene (lattice + scroll reveals)
 
 - Revert to commit: **`d626ed5`** — the Phase 1–4 baseline, verified green.

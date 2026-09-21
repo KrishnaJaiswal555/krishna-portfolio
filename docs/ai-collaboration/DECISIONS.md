@@ -304,3 +304,75 @@ cost one class and one capability check.
   accepted trade-off as the hero.
 
 **Status:** Active
+
+---
+
+### 2026-09-21 — The Journey axis is chronological sequence, not calendar years
+
+**Decision:** The timeline rail is ordered by milestone with each entry's real
+date granularity as its axis label. The unconfirmed "B.Tech completed"
+milestone was removed.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** The reference's Scene 3 is a year scrubber — a clock
+hand sweeping 2021→2026 with one node per year. Krishna's milestones are one
+entry in 2021 and five in 2026.
+
+**Options considered:**
+- Port the year scrubber faithfully
+- Invent intermediate milestones to fill 2022–2025
+- Change the axis to milestone sequence with real dates
+
+**Chosen approach:** The third.
+
+**Reasoning:** A year axis over this data prints "2026" five times and reads
+as a rendering bug — the reference's mechanic depends on one-node-per-year,
+which this timeline is not. Filling the gap years was never an option: it
+would mean inventing history. Labelling each milestone at its true precision
+(`Feb – Jun 2026`, `May 2026`, `Aug 2026`) is both accurate and more
+informative than a repeated year would have been.
+
+Separately, "B.Tech completed" asserted a graduation Krishna has never
+confirmed, and duplicated the "B.Tech begins" node. The About section states
+the 2021–2026 range; the timeline now claims nothing beyond it.
+
+**Consequences / Trade-offs:**
+- Visual parity with the reference's clock mechanic is given up deliberately.
+- Six timeline nodes became five.
+- The shape of the rail now honestly reflects a final-year student's history:
+  a long foundation, then a dense burst of work.
+
+**Status:** Active
+
+---
+
+### 2026-09-21 — Timeline rows are not buttons; project cards are
+
+**Decision:** `renderJourney()` emits `<div class="jn">`. Project cards remain
+`<button>`.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** Phase 3 built timeline rows as `<button>` on the
+reasoning that buttons are keyboard-reachable. Phase 6 gave them an active
+state — and it became clear that activating one does nothing a reader needs.
+
+**Options considered:**
+- Keep them as buttons for keyboard reachability
+- Make them non-interactive content
+
+**Chosen approach:** Non-interactive.
+
+**Reasoning:** Every row is fully readable at all times; the highlight is
+decoration. A `<button>` that performs no action is announced to a screen
+reader as an actionable control and does nothing when activated — worse than
+plain text, not better. The distinction that matters is whether activation
+*does* something: a project card opens a case study, so it stays a button.
+
+**Consequences / Trade-offs:**
+- Keyboard users no longer move the highlight. Acceptable: the highlight
+  carries no information, and the scene still responds to scroll for everyone.
+- The tab order is shorter and contains only controls that act.
+
+**Status:** Active

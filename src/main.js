@@ -15,6 +15,7 @@ import { art, placeholder, probeFile } from './lib/assets.js';
 import { initDialog, openProject } from './lib/dialog.js';
 import { initHero } from './scenes/hero.js';
 import { initAbout } from './scenes/about.js';
+import { initJourney } from './scenes/journey.js';
 import { reveal } from './lib/reveal.js';
 
 const root = document.documentElement;
@@ -54,24 +55,27 @@ function renderJourney() {
 
   for (const node of timeline) {
     const li = el('li');
-    // A real <button>: keyboard reachable and announced, so the timeline is
-    // navigable without a pointer even before any animation exists.
-    const b = el('button', 'jn');
-    b.type = 'button';
-    b.setAttribute('aria-label', `${node.year} — ${node.label}`);
 
-    b.append(el('span', 'jn__year', node.year));
+    // NOT a <button>. Highlighting a milestone changes nothing and reveals
+    // nothing — every entry is fully readable at all times — so an
+    // interactive control here would be a control that does nothing, which
+    // is worse for a screen-reader or keyboard user than plain text. The
+    // scene reacts to hover and scroll; the information never depends on it.
+    const row = el('div', 'jn');
+    row.setAttribute('data-reveal', '');
+
+    row.append(el('span', 'jn__year', node.year));
 
     const mid = el('span');
     mid.append(el('span', 'jn__label', node.label));
     const lines = el('span', 'jn__lines');
     for (const l of node.lines) lines.append(el('i', null, l));
     mid.append(lines);
-    b.append(mid);
+    row.append(mid);
 
-    b.append(el('span', 'jn__key', node.key));
+    row.append(el('span', 'jn__key', node.key));
 
-    li.append(b);
+    li.append(row);
     rail.append(li);
   }
 }
@@ -303,7 +307,11 @@ function startScenes() {
   // chance to throw, so the copy is never left hidden by a failed canvas.
   reveal(document);
 
-  for (const [name, init] of [['hero', initHero], ['about', initAbout]]) {
+  for (const [name, init] of [
+    ['hero', initHero],
+    ['about', initAbout],
+    ['journey', initJourney],
+  ]) {
     // Each scene is isolated: one failing must never take the others, or the
     // portfolio, down with it.
     init().catch((e) => {

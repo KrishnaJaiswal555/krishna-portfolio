@@ -183,6 +183,8 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   position: absolute; inset: 0; width: 100%; height: 100%;
   display: block; z-index: 0; pointer-events: none;
 }
+.journey > *:not(.journey__stage) { position: relative; z-index: 1; }
+
 .journey__rail {
   position: relative; z-index: 1;
   display: grid; gap: 0;
@@ -191,16 +193,24 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
 }
 .jn {
   display: grid;
-  grid-template-columns: 96px 1fr auto;
+  grid-template-columns: 132px 1fr auto;
   gap: clamp(14px, 3vw, 40px);
   align-items: baseline;
   width: 100%;
   padding: 26px 8px;
-  background: none; border: 0; border-bottom: 1px solid var(--line);
-  color: inherit; font: inherit; text-align: left; cursor: default;
-  transition: background .3s var(--ease-out), padding-left .3s var(--ease-out);
+  border-bottom: 1px solid var(--line);
+  /* A marker for the active milestone, animated from the left rather than
+     toggled, so walking the rail reads as one thread moving. */
+  box-shadow: inset 2px 0 0 -2px var(--accent);
+  transition: background .3s var(--ease-out), padding-left .3s var(--ease-out),
+              box-shadow .3s var(--ease-out);
 }
-.jn:hover, .jn.is-active { background: var(--accent-dim); padding-left: 18px; }
+.jn.is-active {
+  background: var(--accent-dim);
+  padding-left: 18px;
+  box-shadow: inset 2px 0 0 0 var(--accent);
+}
+.jn.is-active .jn__label { color: var(--accent-hot); }
 .jn__year {
   font-family: var(--mono); font-size: 13px;
   color: var(--accent); letter-spacing: .06em;
