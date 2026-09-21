@@ -168,6 +168,35 @@ export function createField(gl, count) {
 }
 
 /**
+ * Measure a heading as it is actually painted, and sample its ink.
+ *
+ * Shared by the hero and the finale, which both condense particles into a
+ * wordmark. The measurement is fiddly — computed font, element rects relative
+ * to the section, and the baseline offset fillText expects — and getting it
+ * subtly wrong shifts the whole field off the letterforms. One copy means one
+ * place to correct it.
+ *
+ * @param section   the positioned ancestor both canvas and heading sit in
+ * @param lineEls   the per-line elements of the heading, in order
+ */
+export function sampleHeading(section, lineEls, canvas, count, dpr) {
+  const secRect = section.getBoundingClientRect();
+  const lines = [...lineEls].map((el) => {
+    const r = el.getBoundingClientRect();
+    const cs = getComputedStyle(el);
+    return {
+      text: el.textContent.trim(),
+      font: `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`,
+      x: r.left - secRect.left,
+      // fillText draws from the alphabetic baseline; the element's box top
+      // plus its ascent is where that baseline sits.
+      y: r.top - secRect.top + parseFloat(cs.fontSize) * 0.78,
+    };
+  });
+  return sampleInk(lines, canvas.clientWidth, canvas.clientHeight, count, dpr);
+}
+
+/**
  * Sample the ink of rendered text into particle target positions.
  *
  * Rather than building a glyph atlas, the lines are drawn into an offscreen
@@ -180,7 +209,7 @@ export function createField(gl, count) {
  *              baseline origin in CSS px, relative to the canvas.
  * @returns Float32Array of length count*2, in device px
  */
-export function sampleInk(lines, w, h, count, dpr) {
+function sampleInk(lines, w, h, count, dpr) {
   // Sample at half resolution: we need a few thousand points, not every pixel,
   // and this quarters the getImageData cost on a large hero.
   const SCALE = 0.5;

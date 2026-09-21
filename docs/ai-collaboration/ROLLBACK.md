@@ -10,6 +10,29 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 10: Contact and footer (finale scene)
+
+- Revert to commit: **`c9eb66d`** — the Phase 9 state, verified green.
+- Files added by Phase 10:
+  - `src/scenes/finale.js`
+  - `docs/ai-collaboration/features/FEATURE-007.md`
+- Files modified by Phase 10:
+  - `src/gl/particles.js` — **`sampleHeading()` extracted** from hero.js
+  - `src/scenes/hero.js` — now calls the shared `sampleHeading()`
+  - `index.html` — closing wordmark, reveal hooks, `#finYear`, back-to-top
+  - `src/main.js` — finale registered; copyright year set from the clock
+  - `src/styles/scenes.css` — wordmark and footer-end treatment
+- **Shared-code warning:** this phase moved heading measurement out of
+  `hero.js` into `particles.js`. Deleting `finale.js` alone leaves `hero.js`
+  importing `sampleHeading` — which still exists, so the hero keeps working —
+  but reverting `particles.js` alone breaks `hero.js`'s import. Revert the
+  commit as a unit, never file by file.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `11 checks passed`, exit 0
+  - `node --check src/scenes/hero.js` → expected: silent, exit 0
+  - Serve and load `/` → expected: hero sequence intact, footer present and
+    readable without a closing wordmark, no console errors
+
 ## 2026-09-21 — Phase 9: Skills and résumé
 
 - Revert to commit: **`e21f075`** — the Phase 8 state, verified green.

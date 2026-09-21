@@ -147,6 +147,26 @@ Trigger: `startScenes()` registry → `scenes/universe.js → initUniverse()`.
 
 **Currently modifying:** none.
 
+## Finale scene (FEATURE-007)
+
+Trigger: `startScenes()` registry → `scenes/finale.js → initFinale()`.
+
+1. `createGL(#finStage)`. On null → `is-fallback`, return null. The footer is
+   plain readable content either way.
+2. → `await document.fonts.ready`, for the same reason as the hero: sampling
+   before the webfont is in use bakes the fallback face's letterforms in.
+3. → `retarget()` → `gl/particles.js → sampleHeading()` against the
+   `.fin__markLine` spans — **the same shared measurement the hero uses**.
+4. → `field.scatter()`, then `gate(section, …)`.
+5. Each frame the gather is driven by the footer's **scroll progress**, not by
+   a clock. The visitor arrives here at the end of a long page, and tying the
+   closing shot to their descent makes the ending feel earned rather than
+   triggered.
+6. `pull` tops out well below the hero's, and the drift never stops, so the
+   name stays slightly unresolved — an ending rather than an arrival.
+
+**Currently modifying:** none.
+
 ## Artwork resolution
 
 Trigger: `renderUniverse()` or `renderCase()` needs a project image.

@@ -118,6 +118,21 @@ looking perfectly fine on disk, so this is checked explicitly.
 | Résumé absent | With no PDF in `public/resume/` | The entire résumé block is absent — not an empty heading with a dead button | — |
 | Résumé present | Drop the PDF in, reload | Titled block appears with its description and a working download | — |
 
+### Finale and footer (FEATURE-007)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Closing bookend | Scroll to the very bottom | Particles gather into "KRISHNA JAISWAL", echoing the opening | — |
+| Gather tracks scroll | Scroll down and back up slowly | The gather follows your scroll position; it is not on a timer | — |
+| Never fully settles | Rest at the bottom | The field keeps drifting — looser than the hero, deliberately unresolved | — |
+| Wordmark alignment | Look at the gathered field | Particles align to the actual letterforms, not offset from them. A shift here means `sampleHeading()`'s baseline offset needs correcting — **in one place, shared with the hero** | — |
+| Not announced twice | Screen-reader pass over the footer | The closing wordmark is `aria-hidden`; the name is announced once, by the page `<h1>` | — |
+| Copyright year | Read the footer | Shows the current year, set from the clock — not a frozen 2026 | — |
+| No-JS year | Disable JavaScript | A sensible year still shows from the markup | — |
+| Back to top | Click "Back to top" | Returns to the hero | — |
+| Contact links | Click each | Email opens a mail client; LinkedIn and GitHub open in a new tab | — |
+| No WebGL | Force-disable WebGL | Footer fully readable; wordmark visible as static type, no gathering | — |
+
 ### Case studies
 
 | Check | Steps | Expected result | Actual |

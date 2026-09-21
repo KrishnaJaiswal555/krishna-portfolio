@@ -17,6 +17,7 @@ import { initHero } from './scenes/hero.js';
 import { initAbout } from './scenes/about.js';
 import { initJourney } from './scenes/journey.js';
 import { initUniverse } from './scenes/universe.js';
+import { initFinale } from './scenes/finale.js';
 import { reveal } from './lib/reveal.js';
 
 const root = document.documentElement;
@@ -265,6 +266,12 @@ function renderContact() {
   wrap.append(link('Email', `mailto:${email}`, false));
   wrap.append(link('LinkedIn', linkedin, true));
   wrap.append(link('GitHub', github, true));
+
+  // A hardcoded copyright year silently goes stale on 1 January. The markup
+  // carries a sensible value so a no-JS visitor still sees a year, and this
+  // corrects it to whatever year it actually is.
+  const year = $('finYear');
+  if (year) year.textContent = String(new Date().getFullYear());
 }
 
 /** The résumé button appears only if the PDF is actually there. */
@@ -326,6 +333,7 @@ function startScenes() {
     ['about', initAbout],
     ['journey', initJourney],
     ['universe', initUniverse],
+    ['finale', initFinale],
   ]) {
     // Each scene is isolated: one failing must never take the others, or the
     // portfolio, down with it.

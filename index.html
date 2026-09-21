@@ -177,11 +177,28 @@
 <footer class="fin" id="contact" aria-labelledby="contactTitle">
   <canvas class="fin__stage" id="finStage" aria-hidden="true"></canvas>
   <div class="fin__in">
-    <p class="scene__over">Scene 06</p>
-    <h2 class="scene__title" id="contactTitle">Get in touch</h2>
-    <p class="fin__line">Open to Data Analyst, Data Scientist and entry-level AI/ML roles.</p>
+    <p class="scene__over" data-reveal>Scene 06</p>
+    <h2 class="scene__title" id="contactTitle" data-reveal>Get in touch</h2>
+    <p class="fin__line" data-reveal>
+      Open to Data Analyst, Data Scientist and entry-level AI/ML roles.
+    </p>
     <nav class="fin__links" id="contactLinks" aria-label="Contact"></nav>
-    <small class="fin__c">&copy; 2026 Krishna Jaiswal</small>
+
+    <!-- The closing wordmark. aria-hidden because the page's <h1> already
+         announces this name; repeating it here is composition, not content,
+         and a screen reader should not read it twice. It exists so the
+         finale has letterforms to gather into. -->
+    <p class="fin__mark" aria-hidden="true">
+      <span class="fin__markLine">KRISHNA</span>
+      <span class="fin__markLine">JAISWAL</span>
+    </p>
+
+    <div class="fin__end">
+      <small class="fin__c">
+        &copy; <span id="finYear">2026</span> Krishna Jaiswal
+      </small>
+      <a class="fin__top" href="#top">Back to top</a>
+    </div>
   </div>
 </footer>
 

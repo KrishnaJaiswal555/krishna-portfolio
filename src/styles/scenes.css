@@ -370,13 +370,40 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
 .fin__in { position: relative; z-index: 1; max-width: var(--maxw); margin: 0 auto; }
 .fin__line { color: var(--dim); max-width: 46ch; margin: 0 0 36px; }
 
-.fin__links { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 64px; }
+.fin__links { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: clamp(60px, 12vh, 120px); }
 
-.fin__c {
-  display: block;
-  font-family: var(--mono); font-size: 11.5px; color: var(--dimmer);
-  padding-top: 26px; border-top: 1px solid var(--line);
+/* The closing wordmark: the letterforms the finale's particles gather into.
+   It is set large and low-contrast so the gathering field reads against it
+   rather than competing with it. */
+.fin__mark {
+  font-family: var(--disp);
+  font-size: clamp(44px, 13vw, 168px);
+  line-height: .86;
+  letter-spacing: .005em;
+  color: var(--paper);
+  opacity: .12;
+  margin: 0 0 clamp(40px, 8vh, 90px);
+  user-select: none;
 }
+.fin__markLine { display: block; }
+.fin__markLine:last-child { color: var(--accent); }
+
+.fin__end {
+  display: flex; flex-wrap: wrap; gap: 16px;
+  align-items: center; justify-content: space-between;
+  padding-top: 26px;
+  border-top: 1px solid var(--line);
+}
+.fin__c {
+  font-family: var(--mono); font-size: 11.5px; color: var(--dimmer);
+}
+.fin__top {
+  font-family: var(--mono); font-size: 11.5px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: var(--dim);
+  transition: color .2s linear;
+}
+.fin__top:hover { color: var(--accent); }
 
 /* ==========================================================================
    Portrait / small screens — recomposition

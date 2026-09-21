@@ -41,18 +41,27 @@ Three structural properties define the system:
 | `src/scenes/about.js` | Scene 2 — field as a jittered lattice | same |
 | `src/scenes/journey.js` | Scene 3 — field as a spine beside the milestone rail | same |
 | `src/scenes/universe.js` | Scene 4 — field as a constellation between project cards; also owns the deck's entrance, parallax and hover | same, plus the `.pc` cards |
+| `src/scenes/finale.js` | Scene 6 — reuses the wordmark configuration as a closing bookend; gather is driven by scroll, not a clock | same |
 | `src/styles/*` | `app` tokens + header · `scenes` composition · `project` overlay | none |
 | `tools/serve.py` | Dev server with caching disabled | filesystem |
 | `tools/check_content.mjs` | Content integrity assertions | `content.js` |
 
-The finale scene (`#finStage`) is **not yet written**. Its canvas already
-exists in the markup, and adding it is one entry in the `startScenes()`
-registry.
+**Every canvas on the site is now wired.** There are five scenes across four
+particle configurations: wordmark (hero **and** finale), lattice (about),
+spine (journey), constellation (universe).
 
-The four particle configurations are now complete and the set is closed:
-wordmark (hero), lattice (about), spine (journey), constellation (universe).
-A fifth scene should reuse one of them rather than invent a new one — the
-coherence of the set is the point.
+The set is closed at four. The finale is the proof that closing it costs
+nothing: it reuses the hero's configuration as a deliberate bookend — the film
+ends on the shot it opened with — and differs in feel rather than mechanism.
+It gathers loosely and never stops drifting, where the hero condenses hard and
+settles. Any further scene should reuse a configuration in the same way.
+
+Heading measurement is shared: `particles.js → sampleHeading()` is called by
+both the hero and the finale. It is fiddly enough (computed font, rects
+relative to the section, the baseline offset `fillText` expects) that two
+copies would mean two places to correct the same subtle error. `sampleInk()`
+sits behind it and is deliberately **not** exported — it has no caller outside
+the module.
 
 ### Property ownership between CSS and JS
 Where JS writes a style property every frame, CSS must not also set or

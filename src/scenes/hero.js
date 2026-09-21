@@ -16,7 +16,7 @@
 // screen-reader complete — the canvas is atmosphere behind it.
 
 import { createGL, resizeCanvas } from '../gl/renderer.js';
-import { createField, sampleInk } from '../gl/particles.js';
+import { createField, sampleHeading } from '../gl/particles.js';
 import { gate, prefersReduced } from '../lib/scene.js';
 import { span, smoothstep, damp, clamp } from '../lib/ease.js';
 
@@ -76,20 +76,6 @@ export async function initHero() {
   function retarget() {
     size = resizeCanvas(gl, canvas);
 
-    const secRect = section.getBoundingClientRect();
-    const lines = [...h1.querySelectorAll('.hero__line')].map((el) => {
-      const r = el.getBoundingClientRect();
-      const cs = getComputedStyle(el);
-      return {
-        text: el.textContent.trim(),
-        font: `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`,
-        x: r.left - secRect.left,
-        // fillText draws from the alphabetic baseline; the element's box top
-        // plus its ascent is where that baseline sits.
-        y: r.top - secRect.top + parseFloat(cs.fontSize) * 0.78,
-      };
-    });
-
     const need = countFor(window.innerWidth);
     if (need !== field.count) {
       field.dispose();
@@ -97,9 +83,11 @@ export async function initHero() {
       field.scatter(size.w, size.h);
     }
 
-    field.tgt.set(
-      sampleInk(lines, canvas.clientWidth, canvas.clientHeight, field.count, size.dpr),
-    );
+    // Measurement lives in particles.js, shared with the finale — both
+    // condense into a wordmark, and one copy means one place to correct it.
+    field.tgt.set(sampleHeading(
+      section, h1.querySelectorAll('.hero__line'), canvas, field.count, size.dpr,
+    ));
   }
 
   retarget();
