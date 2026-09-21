@@ -218,6 +218,9 @@ function renderSkills() {
   const grid = $('skillsGrid');
   for (const g of skills) {
     const col = el('div', 'sk');
+    // reveal() runs after every render function, so hooks added here are
+    // picked up exactly as the ones written into index.html are.
+    col.setAttribute('data-reveal', '');
     col.append(el('h3', 'about__h', g.group));
     const items = el('div', 'sk__items');
     for (const s of g.items) items.append(el('span', 'tag', s));
@@ -229,7 +232,9 @@ function renderSkills() {
   for (const e of experience) {
     const box = el('div', 'xp');
     box.append(el('div', 'xp__role', e.role));
-    box.append(el('div', 'xp__org', `${e.org} · ${e.period}`));
+    // Location is carried in content.js but was never rendered; it is part of
+    // how an employment entry reads on a CV.
+    box.append(el('div', 'xp__org', `${e.org} · ${e.location} · ${e.period}`));
     const pts = el('ul', 'xp__points');
     for (const p of e.points) pts.append(el('li', null, p));
     box.append(pts);

@@ -67,6 +67,38 @@ ok('projects described from the brief carry a disclaimer', () => {
   }
 });
 
+ok('experience entries carry every field the renderer prints', () => {
+  // renderSkills() prints role, org, location and period into one line, and
+  // iterates points. A missing field renders the literal string "undefined"
+  // rather than failing -- the same silent-absence trap that hid the missing
+  // project architecture until it was audited by hand.
+  for (const e of experience) {
+    for (const f of ['role', 'org', 'location', 'period']) {
+      assert.ok(typeof e[f] === 'string' && e[f].length,
+        `experience "${e.role ?? '?'}" is missing "${f}"`);
+    }
+    assert.ok(Array.isArray(e.points) && e.points.length,
+      `experience "${e.role}" has no points`);
+  }
+});
+
+ok('certifications carry the fields the renderer prints', () => {
+  for (const c of certifications) {
+    assert.ok(c.name && c.issuer, `certification "${c.name ?? '?'}" is incomplete`);
+  }
+});
+
+ok('timeline entries carry the fields the rail prints', () => {
+  for (const t of timeline) {
+    for (const f of ['year', 'key', 'label']) {
+      assert.ok(typeof t[f] === 'string' && t[f].length,
+        `timeline "${t.label ?? '?'}" is missing "${f}"`);
+    }
+    assert.ok(Array.isArray(t.lines) && t.lines.length,
+      `timeline "${t.label}" has no lines`);
+  }
+});
+
 ok('contact details are present and well formed', () => {
   assert.match(profile.contact.email, /^[^@\s]+@[^@\s]+\.[^@\s]+$/);
   assert.match(profile.contact.linkedin, /^https:\/\//);

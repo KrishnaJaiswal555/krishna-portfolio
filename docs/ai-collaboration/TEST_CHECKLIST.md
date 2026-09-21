@@ -12,7 +12,8 @@ What to run and check before any change counts as done. A change is done only wh
 
 | Check | Command | Expected output | Last run |
 |---|---|---|---|
-| Content integrity | `node tools/check_content.mjs` | **8** named checks print `ok`, then `8 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
+| Content integrity | `node tools/check_content.mjs` | **11** named checks print `ok`, then `11 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
+| Rendered-field assertions | For every field a renderer prints, an assertion exists that it is present | A missing field must fail the check, not render `undefined` | ✅ 2026-09-21 — projects, experience, certifications and timeline all covered |
 | Element contract | After adding markup a module reads by id / dataset, grep both sides | Every id, `data-*` and hook the JS consumes exists in the markup | ✅ 2026-09-21 — matched. A mismatch here yields controls that are silently dead, with no error |
 | Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **14** modules | ✅ 2026-09-21 — matched |
 | Property ownership | For each style property JS writes per frame, grep CSS for a rule setting or transitioning it | Exactly one writer. `transform` on `.pc` and the deck belongs to `universe.js`; CSS must not transition it | ✅ 2026-09-21 — single writer confirmed. Two writers on one animated property is a race that resolves differently per frame, and neither rule looks wrong on its own |
@@ -105,6 +106,17 @@ looking perfectly fine on disk, so this is checked explicitly.
 | JS disabled | Disable JavaScript, reload | Deck is plain, complete and every card clickable — not hidden | — |
 | Reduced motion | Reduce motion, reload | Cards settled and visible, no parallax; network drawn once and still | — |
 | Reflow | Resize across 620px and 1100px | Grid reflows, depths re-solve, the constellation re-strings to the new centres | — |
+
+### Skills and résumé (FEATURE-006)
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Reveals | Scroll into Skills | Heading, skill groups, experience and certifications arrive staggered, once | — |
+| Groups distinct | Look at the skills grid | Five categories separated by hairline rules — not one undifferentiated field of pills | — |
+| No invented ratings | Read the skills | Skills are **listed only**. No bars, percentages, star ratings or implied ranking anywhere | — |
+| Experience line | Read the Experience block | "Prism IT Solutions · Pune, Maharashtra · Feb – Jun 2026" — no `undefined` | — |
+| Résumé absent | With no PDF in `public/resume/` | The entire résumé block is absent — not an empty heading with a dead button | — |
+| Résumé present | Drop the PDF in, reload | Titled block appears with its description and a working download | — |
 
 ### Case studies
 

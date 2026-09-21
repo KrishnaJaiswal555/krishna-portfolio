@@ -29,13 +29,19 @@ Read at the start of every session. Keep it current, not complete.
   five projects (the only genuine gap against the brief's §8 list), rendered
   as an ordered pipeline; prev/next stepping between case studies with arrow
   keys; a new content assertion, so the check now reports **8**, not 7.
+- Phase 9 — Skills and résumé (FEATURE-006): reveal hooks across the one
+  section that had none; skill groups separated; the résumé given a titled
+  block; `location` finally rendered on the experience line. Three further
+  assertions added so every field a renderer prints is now asserted — the
+  check reports **11**. No proficiency scores, bars or ranking: no verified
+  data exists for any of it.
 
 **The four particle configurations are complete and the set is closed:**
 wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
-- Nothing. Phase 8 complete.
+- Nothing. Phase 9 complete.
 
 ## Broken / Blockers
 - None known.
@@ -79,13 +85,12 @@ Krishna has directed that all remaining development phases be completed
 first, with a full browser verification on localhost afterwards. Phases are
 being committed individually to preserve rollback granularity.
 
-1. Phase 9 — Skills and résumé section.
-2. Phase 10 — Contact and footer. This wires the last canvas (`#finStage`),
+1. Phase 10 — Contact and footer. This wires the last canvas (`#finStage`),
    which must **reuse** one of the four existing particle configurations
    rather than invent a fifth; the closed set is the point.
-3. Phase 11 — Responsive design audit across every scene.
-4. Phase 12 — Performance and accessibility audit.
-5. Phase 13 — deployment files, then the browser verification: desktop
+2. Phase 11 — Responsive design audit across every scene.
+3. Phase 12 — Performance and accessibility audit.
+4. Phase 13 — deployment files, then the browser verification: desktop
    layout, mobile responsiveness, navigation and scrolling, animations and
    particle effects, interactive elements, console errors, and performance.
    **No row in the Manual Checks tables may be marked done unless the site

@@ -308,7 +308,17 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   margin-bottom: clamp(48px, 8vh, 90px);
 }
+/* A hairline rule per group, so five tag clouds read as five distinct
+   categories rather than one undifferentiated field of pills. */
+.sk {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
 .sk__items { display: flex; flex-wrap: wrap; gap: 7px; }
+.sk .tag {
+  transition: border-color .22s linear, color .22s linear;
+}
+.sk:hover .tag { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
 
 .skills__side {
   display: grid; gap: clamp(32px, 6vw, 80px);
@@ -331,7 +341,17 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   content: ''; position: absolute; left: 0; top: .66em;
   width: 5px; height: 1px; background: var(--dimmer);
 }
-.skills__resume { margin-top: clamp(36px, 6vh, 64px); }
+.skills__resume {
+  margin-top: clamp(36px, 6vh, 64px);
+  padding-top: clamp(28px, 5vh, 48px);
+  border-top: 1px solid var(--line);
+  max-width: 46ch;
+}
+.skills__resumeNote {
+  color: var(--dim);
+  font-size: 14.5px;
+  margin: 0 0 20px;
+}
 
 /* ==========================================================================
    Scene 6 — finale

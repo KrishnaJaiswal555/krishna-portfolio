@@ -142,26 +142,32 @@
   <!-- ==================================================================== -->
   <!-- SCENE 5 — skills, experience, certifications -->
   <section class="skills" id="skills" aria-labelledby="skillsTitle">
-    <p class="scene__over">Scene 05</p>
-    <h2 class="scene__title" id="skillsTitle">Skills</h2>
+    <p class="scene__over" data-reveal>Scene 05</p>
+    <h2 class="scene__title" id="skillsTitle" data-reveal>Skills</h2>
 
     <div class="skills__grid" id="skillsGrid"></div>
 
     <div class="skills__side">
-      <div>
+      <div data-reveal>
         <h3 class="about__h">Experience</h3>
         <div id="experienceList"></div>
       </div>
-      <div>
+      <div data-reveal>
         <h3 class="about__h">Certifications</h3>
         <ul class="about__list" id="certList"></ul>
       </div>
     </div>
 
-    <!-- Hidden unless the PDF is actually present — see assets.probeFile(). -->
-    <p class="skills__resume" id="resumeWrap" hidden>
-      <a class="btn" id="resumeLink" href="#" download>Download résumé (PDF)</a>
-    </p>
+    <!-- The whole block stays hidden unless the PDF is actually present —
+         see assets.probeFile(). A download control that 404s is worse than
+         no download control. -->
+    <div class="skills__resume" id="resumeWrap" hidden>
+      <h3 class="about__h">Résumé</h3>
+      <p class="skills__resumeNote">
+        The full résumé, including education, experience and project detail.
+      </p>
+      <a class="btn" id="resumeLink" href="#" download>Download PDF</a>
+    </div>
   </section>
 
 </main>

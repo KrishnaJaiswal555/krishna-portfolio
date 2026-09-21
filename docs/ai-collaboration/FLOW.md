@@ -21,7 +21,10 @@ Trigger: browser parses `index.html` and reaches
    `projects[]` entry into `#universeDeck`; each calls
    `lib/assets.js → art()` for its artwork. These *are* buttons, because they
    open a case study.
-7. `main()` → `renderSkills()`, `renderContact()`, `wireChrome()`.
+7. `main()` → `renderSkills()` — skill groups, experience (role, org,
+   location, period, points) and certifications. Each generated block is
+   marked `data-reveal`, which works because `reveal()` runs after every
+   render function. Then `renderContact()`, `wireChrome()`.
 8. `main()` → `startScenes()`:
    - `lib/reveal.js → reveal(document)` **first**, before anything that can
      throw. A scene failing must never leave revealed copy hidden.

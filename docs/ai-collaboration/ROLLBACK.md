@@ -10,6 +10,23 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-21 — Phase 9: Skills and résumé
+
+- Revert to commit: **`e21f075`** — the Phase 8 state, verified green.
+- Files added by Phase 9: `docs/ai-collaboration/features/FEATURE-006.md`
+- Files modified by Phase 9:
+  - `index.html` — reveal hooks on the Skills section; the résumé block
+    restructured from a bare `<p>` + button into a titled block
+  - `src/main.js` — `renderSkills()` marks generated blocks `data-reveal`
+  - `src/styles/scenes.css` — skills group and résumé block treatment
+- **No behavioural risk:** this phase adds no new scene, no canvas and no
+  scheduler. Everything added is markup, CSS, and reveal hooks that the
+  existing `lib/reveal.js` already handles.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `8 checks passed`, exit 0
+  - Serve and load `/` → expected: Skills section present and readable,
+    simply without staggered reveals
+
 ## 2026-09-21 — Phase 8: Project detail pages (architecture + case-study navigation)
 
 - Revert to commit: **`8c49d97`** — the Phase 7 state, verified green.
