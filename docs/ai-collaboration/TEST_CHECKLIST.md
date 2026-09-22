@@ -233,19 +233,27 @@ actually *renders*.
 
 ### Work-section artwork and backdrop (2026-09-22 round)
 
-**The five project images and the background image do not exist yet.**
-`public/assets/projects/` is empty, so every card and case study currently
-renders the generated schematic, and the backdrop renders its CSS-gradient
-layers with the photograph layer simply failing. The paths are wired; adding
-the files requires no code change. Rows below marked **(needs assets)** cannot
-be judged until they are supplied.
+**All six images were supplied on 2026-09-22, as `.jpeg`.** Every code
+reference was updated from `.jpg` to `.jpeg` rather than duplicating files.
+
+Verified over HTTP: all six return `200` / `image/jpeg` with byte counts
+matching disk (167231 / 184525 / 243674 / 293162 / 177848 / 231810), and the
+old `.jpg` URLs return `404`, confirming no duplicates were created.
+`check_content.mjs` asserts each file exists on disk.
+
+**What that proves and what it does not.** The path, MIME type and bytes are
+correct, so the browser will receive a valid JPEG at every URL the page
+requests. Whether the image then *paints* — and whether it looks right — is a
+rendering question that only a browser can answer. The rows below are still
+unverified.
 
 | Check | Steps | Expected result | Actual |
 |---|---|---|---|
 | All five cards render | Scroll to Work | Five cards, numbered 01–05, none blank | — |
 | Artwork present | Look at each card | A schematic fills the upper area edge to edge — no empty dark rectangle | — |
-| Images load **(needs assets)** | Drop the five JPGs into `public/assets/projects/` and reload | Each card shows its own photograph instead of the schematic | — |
-| Correct image per project **(needs assets)** | Open all five case studies | Each shows *its own* image — never the same one twice | — |
+| Images load | Open the Work section | Each card shows its **photograph**, not the generated schematic. A schematic means the image 404'd or failed to decode — check the console for the `[portfolio] no artwork loaded for …` warning | — |
+| Correct image per project | Open all five case studies in turn | 01 product-search · 02 career-copilot · 03 retail-analytics · 04 skin-lesion-cnn · 05 upi-sentinel. Never the same image twice | — |
+| Background visible | Scroll any section | The photograph is perceptible behind the wash but the page still reads black. Tuning knob: the `rgba(5,7,10,…)` alphas in `app.css` `body::before` | — |
 | Case-study visual is larger | Open any project | Substantially larger than the card image, with a dark frame and cyan edge | — |
 | Case-study parallax | Move the pointer inside an open case study | The visual drifts a few px. No zoom, no jitter | — |
 | Card hover | Hover one card | It rises, cyan edge strengthens, image scales ~1.02, siblings dim slightly, text stays readable | — |

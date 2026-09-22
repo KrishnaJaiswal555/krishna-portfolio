@@ -72,8 +72,12 @@
 ## 2026-09-22 — artwork wiring, site backdrop, spatial hover
 
 ### The blocking fact
+*(Resolved 2026-09-22 — the assets were subsequently supplied as `.jpeg`; see
+"Asset integration" at the end of this file.)*
+
 The brief specified `/public/assets/projects/*.jpg` and
-`/public/assets/portfolio-background.jpg`. **None of them exist** —
+`/public/assets/portfolio-background.jpg`. **At the time, none of them
+existed** —
 `public/assets/` was absent and the repository contained zero image files of
 any kind. Writing those paths without checking would have produced 404s, i.e.
 precisely the empty rectangles the change was meant to remove.

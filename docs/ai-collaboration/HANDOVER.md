@@ -33,7 +33,11 @@ Read at the start of every session. Keep it current, not complete.
   README instructions, and a pre-deployment audit that came back **clean** —
   no root-relative references (which would 404 on a GitHub Pages *project*
   site while working perfectly on localhost), no secrets, no `localhost` in
-  shipped files. 18 files, 134.1 KB — re-measured 2026-09-22, because the
+  shipped files. **24 files, 1412.0 KB** (code 144.2 KB + media 1267.8 KB) —
+  re-measured 2026-09-22 after the artwork arrived. The earlier figure of
+  18 files / 134.1 KB counted no images at all, and understated the real
+  payload roughly tenfold once they existed; `deploy-audit.mjs` now counts
+  media. Re-measured also because the
   "shipped" set now excludes `tools/` and the site grew with the BUG-001 fix;
   see FEATURE-010. **Not deployed:** no remote is configured and nothing has
   been pushed.
@@ -83,12 +87,21 @@ than invent another — the coherence of the set is the point.
 - All thirteen development phases remain written and committed.
 
 ## Assets Krishna still needs to supply
-- `public/assets/projects/product-search.jpg`
-- `public/assets/projects/career-copilot.jpg`
-- `public/assets/projects/retail-analytics.jpg`
-- `public/assets/projects/skin-lesion-cnn.jpg`
-- `public/assets/projects/upi-sentinel.jpg`
-- `public/assets/portfolio-background.jpg`
+**Delivered 2026-09-22** — all six supplied as `.jpeg`, not `.jpg`, and every
+code reference was updated to match rather than duplicating the files:
+
+- ✅ `public/assets/projects/product-search.jpeg` (167 KB)
+- ✅ `public/assets/projects/career-copilot.jpeg` (185 KB)
+- ✅ `public/assets/projects/retail-analytics.jpeg` (244 KB)
+- ✅ `public/assets/projects/skin-lesion-cnn.jpeg` (293 KB)
+- ✅ `public/assets/projects/upi-sentinel.jpeg` (178 KB)
+- ✅ `public/assets/portfolio-background.jpeg` (232 KB)
+
+All six verified over HTTP: `200`, `image/jpeg`, byte counts matching disk.
+`check_content.mjs` now asserts each file **exists on disk**, so a rename or
+typo fails loudly instead of degrading silently to the generated schematic.
+
+Still outstanding:
 - `public/resume/Krishna_Jaiswal_Resume.pdf`
 
 The filename→project mapping lives in `content.js` as `art:`; it is **not**

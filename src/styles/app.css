@@ -98,9 +98,13 @@ body::before {
     /* faint blueprint grid */
     repeating-linear-gradient(to right,  rgba(124, 138, 152, .035) 0 1px, transparent 1px 96px),
     repeating-linear-gradient(to bottom, rgba(124, 138, 152, .035) 0 1px, transparent 1px 96px),
-    /* the wash that keeps it almost black regardless of the photograph */
-    linear-gradient(rgba(5, 7, 10, .93), rgba(5, 7, 10, .965)),
-    url('../../public/assets/portfolio-background.jpg');
+    /* The wash that keeps the page almost black regardless of what the
+       photograph contains. THIS IS THE TUNING KNOB: lower the alphas to let
+       more of the image through, raise them to push it further back. It was
+       .93/.965 while no image existed, which would now leave the photograph
+       barely perceptible. */
+    linear-gradient(rgba(5, 7, 10, .88), rgba(5, 7, 10, .93)),
+    url('../../public/assets/portfolio-background.jpeg');
   background-repeat: no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat;
   background-size: auto, auto, auto, auto, auto, cover;
   background-position: center;

@@ -57,7 +57,7 @@ the page generates a placeholder instead. To fill them in:
 
 | What | Where | Effect |
 |---|---|---|
-| Project screenshot | `public/projects/<project-id>.png` | Replaces the generated placeholder on that card and its case study |
+| Project artwork | `public/assets/projects/<filename>` | Shown on that card and its case study. The filename is **not** derived from the id — it is mapped explicitly by `art:` in `src/data/content.js`, and `check_content.mjs` asserts the file exists |
 | Résumé | `public/resume/Krishna_Jaiswal_Resume.pdf` | Reveals the download button, which is hidden while the file is missing |
 | Project links | `links: {}` in `src/data/content.js` | Adds Source / Demo buttons to that case study |
 

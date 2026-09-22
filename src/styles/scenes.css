@@ -356,7 +356,10 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
 
 .pc__art {
   position: relative;
-  aspect-ratio: 16 / 10;
+  /* 3/2 rather than 16/10: with the body copy beneath it this puts the
+     artwork at roughly 55-60% of the card, which is where the brief asks for
+     it. 16/10 landed nearer 53%. */
+  aspect-ratio: 3 / 2;
   background: var(--bg-2);
   overflow: hidden;
   border-bottom: 1px solid var(--line);
@@ -368,7 +371,9 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
 }
 
 .pc__art img, .pc__art canvas {
-  width: 100%; height: 100%; object-fit: cover; display: block;
+  width: 100%; height: 100%; display: block;
+  object-fit: cover;
+  object-position: center;
   /* Transforming the IMAGE is safe. universe.js owns `transform` on `.pc`
      itself, not on its contents — different element, no writer conflict.
      Kept to 1.02: enough to feel alive, not a zoom. */

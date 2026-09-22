@@ -148,7 +148,7 @@ export const projects = [
     id: 'ai-product-search',
     // Artwork filename under public/assets/projects/. Named explicitly
     // because it does not match the id; see assets.js → artSources().
-    art: 'product-search.jpg',
+    art: 'product-search.jpeg',
     num: '01',
     title: 'AI-Powered Smart Product Search',
     subtitle: 'Semantic search & recommendation platform',
@@ -202,7 +202,7 @@ export const projects = [
 
   {
     id: 'ai-career-copilot',
-    art: 'career-copilot.jpg',
+    art: 'career-copilot.jpeg',
     num: '02',
     title: 'AI Career Copilot',
     subtitle: 'Job-market data science meets generative AI',
@@ -254,7 +254,7 @@ export const projects = [
 
   {
     id: 'retail-sales-analytics',
-    art: 'retail-analytics.jpg',
+    art: 'retail-analytics.jpeg',
     num: '03',
     title: 'Retail Sales Analytics Dashboard',
     subtitle: 'SQL and Power BI business intelligence',
@@ -296,7 +296,7 @@ export const projects = [
 
   {
     id: 'skin-lesion-cnn',
-    art: 'skin-lesion-cnn.jpg',
+    art: 'skin-lesion-cnn.jpeg',
     num: '04',
     title: 'Skin Lesion Classification using CNNs',
     subtitle: 'Comparative study of preprocessing strategies',
@@ -347,7 +347,7 @@ export const projects = [
 
   {
     id: 'upi-sentinel-ai',
-    art: 'upi-sentinel.jpg',
+    art: 'upi-sentinel.jpeg',
     num: '05',
     title: 'UPI Sentinel AI',
     subtitle: 'Fraud detection & investigation platform',

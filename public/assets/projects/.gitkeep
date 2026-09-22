@@ -1,0 +1,20 @@
+# Project artwork lives here.
+#
+# The filenames are NOT derived from the project id. Each project names its
+# own file via `art:` in src/data/content.js, and tools/check_content.mjs
+# asserts that the named file actually exists on disk.
+#
+# Current mapping:
+#
+#   product-search.jpeg    -> 01  AI-Powered Smart Product Search
+#   career-copilot.jpeg    -> 02  AI Career Copilot
+#   retail-analytics.jpeg  -> 03  Retail Sales Analytics Dashboard
+#   skin-lesion-cnn.jpeg   -> 04  Skin Lesion Classification
+#   upi-sentinel.jpeg      -> 05  UPI Sentinel AI
+#
+# To swap a project's artwork, either replace the file in place or change the
+# `art:` value in content.js. A PNG named <project-id>.png in this directory
+# is also picked up as a fallback.
+#
+# The site renders a generated schematic for any project whose artwork cannot
+# be loaded, and logs a console warning naming the paths it tried.

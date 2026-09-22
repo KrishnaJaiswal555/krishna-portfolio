@@ -10,6 +10,36 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-22 — Asset integration: the six images, supplied as .jpeg
+
+- Revert to commit: **`9a165a6`**.
+- Files modified:
+  - `src/data/content.js` — five `art:` values `.jpg` → `.jpeg`
+  - `src/styles/app.css` — background url `.jpeg`; wash lightened .93/.965 → .88/.93
+  - `src/styles/scenes.css` — `.pc__art` 16/10 → 3/2; `object-position: center`
+  - `src/lib/assets.js` — console warning when every candidate fails; second
+    candidate retargeted to `public/assets/projects/<id>.png`
+  - `tools/check_content.mjs` — asserts each artwork **exists on disk** (14 checks)
+  - `tools/deploy-audit.mjs` — counts media in the shipped payload
+  - `public/assets/projects/.gitkeep` — rewritten; it carried stale filenames
+  - README, HANDOVER, TEST_CHECKLIST, FEATURE-010, FEATURE-011
+- Files added (untracked before this commit): `public/assets/` — six JPEGs,
+  1267.8 KB total.
+- File deleted: `public/projects/.gitkeep` — that directory was **renamed** to
+  `public/assets/projects/` when the artwork arrived.
+- **Reverting will break the artwork.** The images live at paths this commit
+  introduced. A revert restores `.jpg` references against `.jpeg` files, so
+  every card falls back to the generated schematic and logs the console
+  warning. If you need to undo the *styling* only, change the CSS rather than
+  reverting the commit.
+- **Tuning knob, not a bug:** the backdrop wash alphas in `app.css`
+  `body::before`. Raise them to push the photograph further back, lower them
+  to bring it forward.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: **13** checks, and the on-disk
+    artwork assertion will be gone
+  - Every project image request → expected: `404`
+
 ## 2026-09-22 — Work section visuals: artwork wiring, fixed backdrop, spatial hover
 
 - Revert to commit: **`e333853`**.

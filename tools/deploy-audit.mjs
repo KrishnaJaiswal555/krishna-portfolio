@@ -108,9 +108,25 @@ for (const p of shipped) {
 if (!local) console.log('  ok — none');
 
 console.log('\n=== 5. shipped payload ===');
-let bytes = 0;
-for (const p of shipped) bytes += statSync(p).size;
-console.log(`  ${shipped.length} files, ${(bytes / 1024).toFixed(1)} KB uncompressed`);
+
+// Images are part of what a visitor downloads, so they belong in this figure.
+// They are counted but NOT text-scanned above: reading a JPEG as utf8 yields
+// noise that can trip the secrets regex, and scanning binaries is pointless.
+const media = files.filter(
+  (p) => /\.(jpe?g|png|webp|avif|gif|svg|woff2?|pdf)$/i.test(p)
+    && !rel(p).startsWith('docs/'),
+);
+
+let codeBytes = 0;
+for (const p of shipped) codeBytes += statSync(p).size;
+let mediaBytes = 0;
+for (const p of media) mediaBytes += statSync(p).size;
+
+const kb = (b) => `${(b / 1024).toFixed(1)} KB`;
+console.log(`  code   ${String(shipped.length).padStart(3)} files  ${kb(codeBytes)}`);
+console.log(`  media  ${String(media.length).padStart(3)} files  ${kb(mediaBytes)}`);
+console.log(`  TOTAL  ${String(shipped.length + media.length).padStart(3)} files  ${kb(codeBytes + mediaBytes)} uncompressed`);
+for (const p of media) console.log(`         ${kb(statSync(p).size).padStart(10)}  ${rel(p)}`);
 
 const total = problems + secrets;
 console.log(`\n${total === 0 ? 'AUDIT CLEAN' : `AUDIT FOUND ${total} PROBLEM(S)`}`);

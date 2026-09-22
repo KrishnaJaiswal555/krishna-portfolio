@@ -7,7 +7,7 @@
 // tiny and dependency-free -- it exists to fail loudly, not to be a framework.
 
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 import { profile, projects, timeline, skills, experience, certifications }
   from '../src/data/content.js';
 
@@ -45,6 +45,22 @@ ok('every project names its artwork file', () => {
     assert.ok(!seen.has(p.art), `${p.art} is mapped to more than one project`);
     seen.add(p.art);
   }
+});
+
+ok('every artwork file named in content.js exists on disk', () => {
+  // Naming a file is not the same as having it. Until the assets arrived this
+  // check could not exist; now that they do, a rename or a typo must fail
+  // loudly rather than silently degrading to the generated schematic — which
+  // looks identical to "not supplied yet".
+  for (const p of projects) {
+    const path = new URL(`../public/assets/projects/${p.art}`, import.meta.url);
+    assert.ok(existsSync(path),
+      `${p.id}: public/assets/projects/${p.art} does not exist`);
+    assert.ok(statSync(path).size > 1024,
+      `${p.id}: ${p.art} is suspiciously small — truncated upload?`);
+  }
+  const bg = new URL('../public/assets/portfolio-background.jpeg', import.meta.url);
+  assert.ok(existsSync(bg), 'public/assets/portfolio-background.jpeg does not exist');
 });
 
 ok('project ids are unique (they are used as URL fragments)', () => {

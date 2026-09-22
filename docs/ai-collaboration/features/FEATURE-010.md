@@ -59,8 +59,27 @@ testing. It had to be audited by reading the references themselves.
 - Actual: ✅ none (the dev-server URL lives only in docs)
 
 - Check: shipped payload
-- Actual: ✅ **18 files, 134.1 KB** uncompressed, before Google Fonts
-  *(re-measured 2026-09-22)*
+- Actual: ✅ **24 files, 1412.0 KB** uncompressed, before Google Fonts
+  *(re-measured 2026-09-22, after the artwork was supplied)*
+
+  | | files | size |
+  |---|---|---|
+  | code (html/js/css) | 18 | 144.2 KB |
+  | media (jpeg) | 6 | 1267.8 KB |
+  | **total** | **24** | **1412.0 KB** |
+
+  **The audit previously excluded images entirely**, reporting 134.1 KB — a
+  figure that described only what the *text* files weigh while claiming to
+  describe what a visitor downloads. Once real artwork arrived that
+  understated the payload roughly tenfold. `deploy-audit.mjs` now counts media
+  in the total and enumerates it, while still text-scanning only code (reading
+  a JPEG as utf8 produces noise that can trip the secrets regex).
+
+  Mitigations already in place: project images carry `loading="lazy"` and
+  `decoding="async"`, and `.pc__art` reserves its box via `aspect-ratio`, so
+  they neither block first paint nor cause layout shift. The background
+  (226 KB) is a CSS `url()` and is **not** lazy — it is the one image fetched
+  eagerly.
 
   This originally read `19 files, 129.6 KB`. Both halves changed, for
   different reasons, and neither was a defect:

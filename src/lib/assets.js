@@ -1,9 +1,9 @@
 // Asset loading that treats every file as optional.
 //
-// The site must be complete and deployable with `public/projects/` entirely
-// empty. Nothing here ever throws on a missing file: a failed image becomes a
-// generated placeholder, and a missing document simply hides its own button.
-// Dropping a real screenshot in later needs no code change.
+// The site must be complete and deployable with `public/assets/projects/`
+// entirely empty. Nothing here ever throws on a missing file: a failed image
+// becomes a generated schematic, and a missing document simply hides its own
+// button. Dropping real artwork in later needs no code change.
 
 /**
  * Draw a placeholder card for a project with no artwork yet.
@@ -200,17 +200,22 @@ export function placeholder(project, w = 800, h = 500) {
 /**
  * Where a project's artwork may live, in preference order.
  *
- * The supplied filenames do not match the project ids (`product-search.jpg`
+ * The supplied filenames do not match the project ids (`product-search.jpeg`
  * vs `ai-product-search`), so the path cannot be derived — `content.js`
  * carries the mapping explicitly and `check_content.mjs` asserts it.
  *
- * The second entry keeps the original `public/projects/<id>.png` convention
- * working, so anything already dropped there is not orphaned by this change.
+ * The second entry is a same-directory fallback under the project id, so a
+ * PNG can be dropped in beside the JPEGs without editing `content.js`.
+ *
+ * It previously pointed at `public/projects/<id>.png`. That directory was
+ * renamed to `public/assets/projects/` when the artwork arrived, which left
+ * the fallback aimed at a path that no longer exists — harmless only because
+ * the first candidate now always succeeds.
  */
 export function artSources(project) {
   return [
     project.art ? `public/assets/projects/${project.art}` : null,
-    `public/projects/${project.id}.png`,
+    `public/assets/projects/${project.id}.png`,
   ].filter(Boolean);
 }
 
@@ -226,7 +231,17 @@ export function art(project, sources) {
   return new Promise((resolve) => {
     let i = 0;
     const tryNext = () => {
-      if (i >= list.length) { resolve(placeholder(project)); return; }
+      if (i >= list.length) {
+        // Warn only once every candidate has failed. Warning on each attempt
+        // would fire for the intermediate fallback, which is expected to miss
+        // and would train the reader to ignore this message.
+        console.warn(
+          `[portfolio] no artwork loaded for "${project.id}" — tried: ${list.join(', ')}.`
+          + ' Falling back to the generated schematic.',
+        );
+        resolve(placeholder(project));
+        return;
+      }
       const img = new Image();
       img.decoding = 'async';
       img.loading = 'lazy';
