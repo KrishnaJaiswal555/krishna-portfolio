@@ -66,6 +66,55 @@ h1, h2, h3 { margin: 0; font-weight: 400; }
 p { margin: 0 0 1em; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
 
+/* ==========================================================================
+   Fixed site backdrop
+
+   One layer for the whole page, behind everything. `position: fixed` anchors
+   it to the viewport, so it is stationary while the page scrolls — it is not
+   attached to any section and cannot travel with the project cards.
+
+   `pointer-events: none` and `z-index: 0` together guarantee it can never
+   intercept a pointer event or participate in any hover / active state, so
+   the cyan indicator is structurally unreachable from here.
+
+   The photograph is the BOTTOM layer and sits under a near-opaque wash, so
+   the page stays essentially black whatever the image contains. If the file
+   is absent the url layer simply fails and every gradient above it still
+   paints — the backdrop degrades to the CSS-only version rather than to
+   nothing. The grid pitch matches `.universe::before` (96px) so the two
+   cannot produce a moiré where they overlap.
+   ========================================================================== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    /* two dim pools, off-centre so the field is not symmetrical */
+    radial-gradient(ellipse 60% 45% at 16% 18%, rgba(79, 209, 224, .05), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 84% 82%, rgba(79, 209, 224, .032), transparent 70%),
+    /* faint blueprint grid */
+    repeating-linear-gradient(to right,  rgba(124, 138, 152, .035) 0 1px, transparent 1px 96px),
+    repeating-linear-gradient(to bottom, rgba(124, 138, 152, .035) 0 1px, transparent 1px 96px),
+    /* the wash that keeps it almost black regardless of the photograph */
+    linear-gradient(rgba(5, 7, 10, .93), rgba(5, 7, 10, .965)),
+    url('../../public/assets/portfolio-background.jpg');
+  background-repeat: no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat;
+  background-size: auto, auto, auto, auto, auto, cover;
+  background-position: center;
+}
+
+/* `.flow` already declares its own stacking in scenes.css, which loads after
+   this file. Nothing further is needed here: the backdrop is at z-index 0 and
+   every section establishes z-index 1+ for its own content.
+
+   A `.stage-wrap` rule was written here and removed — that class belongs to
+   the reference implementation and does not exist in this markup, so the rule
+   matched nothing. A selector that matches nothing is silently inert, never
+   an error, which is why it is on the checklist. */
+
 a { color: inherit; text-decoration: none; }
 a:focus-visible,
 button:focus-visible,

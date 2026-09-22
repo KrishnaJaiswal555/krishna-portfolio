@@ -10,6 +10,12 @@
 // Stepping between projects REPLACES the history entry rather than pushing,
 // so reading all five does not bury the deck under five back-presses.
 
+// Read once at module scope. The parallax below is an enhancement, so a
+// reduced-motion or touch visitor simply never gets it; nothing depends on
+// the offset being applied.
+const reducedMQ = matchMedia('(prefers-reduced-motion: reduce)');
+const coarseMQ = matchMedia('(pointer: coarse)');
+
 let dialogEl;
 let bodyEl;
 let prevEl;
@@ -51,6 +57,26 @@ export function initDialog({ dialog, body, close, prev, next, projects, renderCa
       && e.clientY >= r.top && e.clientY <= r.bottom;
     if (!inside) dialogEl.close();
   });
+
+  // Subtle pointer parallax on the case-study visual.
+  //
+  // The custom properties are set on the `.cs__art` FRAME, not the image —
+  // the <img> is appended asynchronously once it loads, so it may not exist
+  // when a pointer event arrives. Custom properties inherit, so the image
+  // picks them up whenever it does appear, and the default `0` in the CSS
+  // means the visual is correct before any pointer has moved.
+  dialogEl.addEventListener('pointermove', (e) => {
+    if (reducedMQ.matches || coarseMQ.matches) return;
+    const frame = bodyEl.querySelector('.cs__art');
+    if (!frame) return;
+    const r = dialogEl.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width) * 2 - 1;
+    const y = ((e.clientY - r.top) / r.height) * 2 - 1;
+    // Deliberately small, and the image is already scaled 1.04 in CSS so the
+    // offset never exposes an edge. Depth, not a zoom.
+    frame.style.setProperty('--px', `${(x * -9).toFixed(1)}px`);
+    frame.style.setProperty('--py', `${(y * -7).toFixed(1)}px`);
+  }, { passive: true });
 
   dialogEl.addEventListener('close', () => {
     openId = null;

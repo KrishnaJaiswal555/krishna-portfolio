@@ -11,7 +11,7 @@
 
 import { profile, projects, timeline, skills, experience, certifications }
   from './data/content.js';
-import { art, placeholder, probeFile } from './lib/assets.js';
+import { art, artSources, probeFile } from './lib/assets.js';
 import { initDialog, openProject } from './lib/dialog.js';
 import { initHero } from './scenes/hero.js';
 import { initAbout } from './scenes/about.js';
@@ -114,9 +114,9 @@ async function renderUniverse() {
 
     const artWrap = el('span', 'pc__art');
     artWrap.append(el('span', 'pc__num', p.num));
-    // Artwork resolves to a real image if one exists, or a generated
-    // placeholder if not. Neither path can fail.
-    art(p, `public/projects/${p.id}.png`).then((node) => artWrap.append(node));
+    // Artwork tries the supplied asset, then the original convention, then a
+    // generated schematic. Neither path can fail and the area is never empty.
+    art(p, artSources(p)).then((node) => artWrap.append(node));
     card.append(artWrap);
 
     const body = el('span', 'pc__body');
@@ -145,8 +145,10 @@ function renderCase(p) {
   out.push(h);
   out.push(el('p', 'cs__sub', p.subtitle));
 
+  // Same resolution as the card, so a project's case study and its card can
+  // never disagree about which image belongs to it.
   const artWrap = el('div', 'cs__art');
-  art(p, `public/projects/${p.id}.png`).then((n) => artWrap.append(n));
+  art(p, artSources(p)).then((n) => artWrap.append(n));
   out.push(artWrap);
 
   const section = (title, node) => {

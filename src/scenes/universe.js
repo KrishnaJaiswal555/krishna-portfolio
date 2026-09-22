@@ -208,7 +208,13 @@ export async function initUniverse() {
           + `rotateZ(${tilt.toFixed(2)}deg) `
           + `scale(${((0.9 + mat * 0.1) * hs).toFixed(4)})`;
 
-        el.style.opacity = Math.min(1, mat * 1.6).toFixed(3);
+        // Surrounding cards recede slightly while one is hovered, so the
+        // hovered card reads as nearer. This CANNOT live in CSS: opacity on
+        // `.pc` is written here every frame, and an inline style beats any
+        // stylesheet rule — the two would fight exactly as transform did.
+        // Scaled by `live` so it cannot disturb the entrance.
+        const dim = hover >= 0 && !hot ? 0.28 : 0;
+        el.style.opacity = (Math.min(1, mat * 1.6) * (1 - dim * live)).toFixed(3);
       }
 
       // ---- the constellation (canvas only) -------------------------------

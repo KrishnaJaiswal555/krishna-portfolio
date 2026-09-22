@@ -75,7 +75,24 @@ than invent another — the coherence of the set is the point.
     constellation, plus a fixed CSS-gradient backdrop on the Work section
     (zero bytes, zero requests), scoped to `.universe` so it cannot reach the
     Journey indicator.
+  - Work-section visuals (2026-09-22) — artwork paths wired to the supplied
+    filenames, fixed site backdrop, spatial card hover, enlarged case-study
+    visual with pointer parallax. **The six image files do not exist**, so
+    cards and case studies still render generated schematics; the paths pick
+    the images up with no code change once supplied.
 - All thirteen development phases remain written and committed.
+
+## Assets Krishna still needs to supply
+- `public/assets/projects/product-search.jpg`
+- `public/assets/projects/career-copilot.jpg`
+- `public/assets/projects/retail-analytics.jpg`
+- `public/assets/projects/skin-lesion-cnn.jpg`
+- `public/assets/projects/upi-sentinel.jpg`
+- `public/assets/portfolio-background.jpg`
+- `public/resume/Krishna_Jaiswal_Resume.pdf`
+
+The filename→project mapping lives in `content.js` as `art:`; it is **not**
+derived from the id, and `check_content.mjs` asserts it.
 
 ## Broken / Blockers
 - None known.

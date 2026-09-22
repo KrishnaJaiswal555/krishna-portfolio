@@ -69,8 +69,81 @@
 - Check: backdrop cannot reach the Journey section
 - Actual output: ✅ `.universe::before` only; no `.journey::before` exists
 
+## 2026-09-22 — artwork wiring, site backdrop, spatial hover
+
+### The blocking fact
+The brief specified `/public/assets/projects/*.jpg` and
+`/public/assets/portfolio-background.jpg`. **None of them exist** —
+`public/assets/` was absent and the repository contained zero image files of
+any kind. Writing those paths without checking would have produced 404s, i.e.
+precisely the empty rectangles the change was meant to remove.
+
+So the work done was everything that does *not* depend on the files, with the
+paths wired so the images drop in with no code change.
+
+### Artwork resolution
+The supplied filenames do not match the project ids (`product-search.jpg` vs
+`ai-product-search`), so the path cannot be derived. `content.js` carries an
+explicit `art:` per project, `assets.js → artSources()` builds the candidate
+list, and `art()` now takes an ordered list and resolves with the first that
+loads:
+
+1. `public/assets/projects/<art>` — the supplied asset
+2. `public/projects/<id>.png` — the original convention, so anything already
+   dropped there is not orphaned
+3. the generated schematic
+
+`check_content.mjs` asserts every project names an artwork file and that no
+two share one, so a missing mapping fails loudly instead of silently
+degrading to the schematic — indistinguishable from "not supplied yet".
+
+### The occlusion bug this uncovered
+`scenes.css` declared `.flow { …; background: var(--bg); }` at z-index 2. That
+fill was inherited from an architecture where the hero is a `position: fixed`
+full-viewport layer the flow must scroll over and hide. **This hero is
+`position: relative`** and scrolls away normally, so the fill was vestigial —
+and it would have hidden the new fixed backdrop for About, Journey, Work and
+Skills, i.e. four of six sections. A "site-wide" backdrop covering one
+section. Removed; `html, body` still paints `--bg`.
+
+A `.stage-wrap` rule was also written and then removed: that class belongs to
+the reference implementation and does not exist in this markup, so it matched
+nothing — silently inert, never an error.
+
+### Property ownership, held to
+`universe.js` writes `transform` **and** `opacity` to `.pc` every frame. So:
+- **card rise** → JS (already present)
+- **sibling dimming** → JS, added to the per-frame opacity, scaled by `live`
+  so it cannot disturb the entrance
+- **image scale 1.02** → CSS, because it targets the `<img>` *inside* the
+  card. Different element, no writer conflict.
+
+Putting either of the first two in CSS would have recreated the exact race
+fixed earlier, where an inline per-frame write and a stylesheet rule resolve
+against each other differently on each frame.
+
+### Case-study parallax
+`dialog.js` sets `--px`/`--py` on the `.cs__art` **frame**, not the image —
+the `<img>` is appended asynchronously once it loads and may not exist when a
+pointer event arrives. Custom properties inherit, so the image picks them up
+whenever it appears, and the `0` defaults mean the visual is correct before
+any pointer has moved. Skipped entirely for reduced-motion and coarse
+pointers.
+
+### Verification — 2026-09-22
+- ✅ `13 checks passed` (up from 12; the new artwork-mapping assertion)
+- ✅ 18/18 modules parse
+- ✅ `--px`/`--py` contract matches: `dialog.js:77–78` ↔ `project.css:128`
+- ✅ `hot` and `live` in scope at the rewritten opacity line
+- ✅ `reducedMQ`/`coarseMQ` declared once and used — they were referenced
+  before being declared when first written, which `node --check` cannot catch
+- ✅ stylesheet braces balanced (47 / 49 / 124)
+- ✅ `.stage-wrap` gone; `.flow` no longer opaque
+- ✅ journey-interaction, art-smoke, deploy-audit all green
+
 ### Not verified
-Nothing visual has been confirmed. Whether the backdrop actually reads as
-"subtle", whether the card art is legible at card size, and whether
-`background-attachment: fixed` costs anything on a low-end machine are all
-browser questions, and browser automation is unavailable in this session.
+Nothing visual has been confirmed. Whether the backdrop reads as "almost
+black", whether the card treatment looks integrated rather than pasted on,
+whether the hover feels smooth, and whether the negative margin on the
+case-study frame overflows at narrow widths are all browser questions, and
+browser automation is unavailable in this session.

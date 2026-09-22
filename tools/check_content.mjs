@@ -34,6 +34,19 @@ ok('every project documents its architecture', () => {
   }
 });
 
+ok('every project names its artwork file', () => {
+  // The filenames do not match the ids, so the path cannot be derived. A
+  // missing mapping would silently fall through to the generated schematic —
+  // indistinguishable from "the image has not been supplied yet".
+  const seen = new Set();
+  for (const p of projects) {
+    assert.ok(typeof p.art === 'string' && /\.(jpg|jpeg|png|webp|avif)$/i.test(p.art),
+      `${p.id}: art must be a filename with an image extension`);
+    assert.ok(!seen.has(p.art), `${p.art} is mapped to more than one project`);
+    seen.add(p.art);
+  }
+});
+
 ok('project ids are unique (they are used as URL fragments)', () => {
   const ids = projects.map((p) => p.id);
   assert.equal(new Set(ids).size, ids.length, 'duplicate project id');

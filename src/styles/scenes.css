@@ -7,7 +7,15 @@
 
 section, footer.fin { position: relative; }
 
-.flow { position: relative; z-index: 2; background: var(--bg); }
+/* No background here, deliberately.
+   This carried `background: var(--bg)`, inherited from an architecture where
+   the hero was a `position: fixed` full-viewport layer that the flow had to
+   scroll over and hide. This hero is `position: relative` and scrolls away
+   normally, so the opaque fill was vestigial — and it sat at z-index 2
+   directly over the fixed site backdrop, hiding it for About, Journey, Work
+   and Skills. `html, body` still paints `--bg`, so the page is black either
+   way; now the backdrop shows through. */
+.flow { position: relative; z-index: 2; }
 
 /* ==========================================================================
    Scene 1 — hero
@@ -351,14 +359,56 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   aspect-ratio: 16 / 10;
   background: var(--bg-2);
   overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  transition: border-color .3s linear;
 }
+.pc:hover .pc__art,
+.pc:focus-visible .pc__art {
+  border-bottom-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
 .pc__art img, .pc__art canvas {
   width: 100%; height: 100%; object-fit: cover; display: block;
+  /* Transforming the IMAGE is safe. universe.js owns `transform` on `.pc`
+     itself, not on its contents — different element, no writer conflict.
+     Kept to 1.02: enough to feel alive, not a zoom. */
+  transform: scale(1);
+  transition: transform .55s var(--ease-out), filter .55s var(--ease-out);
+  will-change: transform;
 }
+.pc:hover .pc__art img, .pc:hover .pc__art canvas,
+.pc:focus-visible .pc__art img, .pc:focus-visible .pc__art canvas {
+  transform: scale(1.02);
+}
+
+/* Dark gradient over the artwork so the card body reads as continuous with
+   it, plus a cyan edge that strengthens on hover. Sits BELOW .pc__num. */
+.pc__art::after {
+  content: '';
+  position: absolute; inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(to bottom,
+      rgba(5, 7, 10, .12) 0%,
+      rgba(5, 7, 10, .30) 55%,
+      rgba(5, 7, 10, .72) 100%),
+    radial-gradient(120% 90% at 50% 0%, transparent 55%, rgba(5, 7, 10, .55) 100%);
+  box-shadow: inset 0 0 0 1px rgba(79, 209, 224, .07);
+  transition: box-shadow .4s var(--ease-out);
+}
+.pc:hover .pc__art::after,
+.pc:focus-visible .pc__art::after {
+  box-shadow: inset 0 0 0 1px rgba(79, 209, 224, .22),
+              inset 0 -40px 60px -40px rgba(79, 209, 224, .3);
+}
+
 .pc__num {
   position: absolute; top: 12px; left: 14px;
+  z-index: 2;
   font-family: var(--mono); font-size: 11px;
   color: var(--accent); letter-spacing: .1em;
+  text-shadow: 0 1px 6px rgba(5, 7, 10, .9);
 }
 
 .pc__body { padding: 20px 22px 24px; display: grid; gap: 10px; }

@@ -197,16 +197,45 @@ export function placeholder(project, w = 800, h = 500) {
  * Resolves to an <img> if the file exists, or a placeholder <canvas> if not.
  * Never rejects — a missing screenshot is an expected state, not an error.
  */
-export function art(project, src) {
+/**
+ * Where a project's artwork may live, in preference order.
+ *
+ * The supplied filenames do not match the project ids (`product-search.jpg`
+ * vs `ai-product-search`), so the path cannot be derived — `content.js`
+ * carries the mapping explicitly and `check_content.mjs` asserts it.
+ *
+ * The second entry keeps the original `public/projects/<id>.png` convention
+ * working, so anything already dropped there is not orphaned by this change.
+ */
+export function artSources(project) {
+  return [
+    project.art ? `public/assets/projects/${project.art}` : null,
+    `public/projects/${project.id}.png`,
+  ].filter(Boolean);
+}
+
+/**
+ * Resolve a project's artwork from an ordered list of candidates.
+ *
+ * Tries each in turn and resolves with the first that loads; if none do,
+ * resolves with a generated schematic. Never rejects — a missing screenshot
+ * is an expected state, and the visual area must never end up empty.
+ */
+export function art(project, sources) {
+  const list = (Array.isArray(sources) ? sources : [sources]).filter(Boolean);
   return new Promise((resolve) => {
-    if (!src) { resolve(placeholder(project)); return; }
-    const img = new Image();
-    img.decoding = 'async';
-    img.loading = 'lazy';
-    img.alt = '';
-    img.onload = () => resolve(img);
-    img.onerror = () => resolve(placeholder(project));
-    img.src = src;
+    let i = 0;
+    const tryNext = () => {
+      if (i >= list.length) { resolve(placeholder(project)); return; }
+      const img = new Image();
+      img.decoding = 'async';
+      img.loading = 'lazy';
+      img.alt = '';
+      img.onload = () => resolve(img);
+      img.onerror = () => { i += 1; tryNext(); };
+      img.src = list[i];
+    };
+    tryNext();
   });
 }
 

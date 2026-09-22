@@ -231,6 +231,34 @@ actually *renders*.
 | Deep link on host | Open `…/#project/upi-sentinel-ai` directly on the deployed URL | Case study opens — fragments never reach the server, so no redirect rules are needed | — |
 | No unintended links | Open all five case studies on the deployed site | Only links Krishna has explicitly added appear | — |
 
+### Work-section artwork and backdrop (2026-09-22 round)
+
+**The five project images and the background image do not exist yet.**
+`public/assets/projects/` is empty, so every card and case study currently
+renders the generated schematic, and the backdrop renders its CSS-gradient
+layers with the photograph layer simply failing. The paths are wired; adding
+the files requires no code change. Rows below marked **(needs assets)** cannot
+be judged until they are supplied.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| All five cards render | Scroll to Work | Five cards, numbered 01–05, none blank | — |
+| Artwork present | Look at each card | A schematic fills the upper area edge to edge — no empty dark rectangle | — |
+| Images load **(needs assets)** | Drop the five JPGs into `public/assets/projects/` and reload | Each card shows its own photograph instead of the schematic | — |
+| Correct image per project **(needs assets)** | Open all five case studies | Each shows *its own* image — never the same one twice | — |
+| Case-study visual is larger | Open any project | Substantially larger than the card image, with a dark frame and cyan edge | — |
+| Case-study parallax | Move the pointer inside an open case study | The visual drifts a few px. No zoom, no jitter | — |
+| Card hover | Hover one card | It rises, cyan edge strengthens, image scales ~1.02, siblings dim slightly, text stays readable | — |
+| No hover stutter | Move on and off cards quickly | Smooth. Stutter means CSS has regained `transform` or `opacity` on `.pc` | — |
+| Backdrop is fixed | Scroll the whole page | The grid and pools stay put; they do not travel with any section | — |
+| Backdrop stays black | Look at every section | Still reads black/white/cyan. The backdrop must not brighten the page | — |
+| Backdrop is visible past the hero | Scroll to About/Journey/Work | The backdrop shows through. `.flow` carried an opaque background that hid it | — |
+| Backdrop never touches the indicator | Hover/click the Journey rail | Cyan indicator behaves exactly as before | — |
+| Text readability | Read body copy in every section | Full contrast retained over the backdrop | — |
+| No horizontal scrollbar | 320 → 1440px | Never. The case-study frame uses a negative margin — check it at 360px | — |
+| Mobile layout | 380px | Single-column cards, artwork still correctly cropped | — |
+| Console clean | DevTools on load and after opening a case study | No errors. 404s for the six missing images are expected until supplied | — |
+
 ### Case studies
 
 | Check | Steps | Expected result | Actual |

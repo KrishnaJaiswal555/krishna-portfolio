@@ -10,6 +10,36 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-22 — Work section visuals: artwork wiring, fixed backdrop, spatial hover
+
+- Revert to commit: **`e333853`**.
+- Files modified:
+  - `src/data/content.js` — `art:` filename per project
+  - `src/lib/assets.js` — `artSources()`; `art()` takes an ordered candidate list
+  - `src/main.js` — card and case-study art resolved through `artSources()`
+  - `src/lib/dialog.js` — pointer parallax on the case-study visual
+  - `src/scenes/universe.js` — sibling cards dim while one is hovered
+  - `src/styles/app.css` — fixed site backdrop (`body::before`)
+  - `src/styles/scenes.css` — card artwork treatment; `.flow` background removed
+  - `src/styles/project.css` — enlarged case-study frame
+  - `tools/check_content.mjs` — asserts every project names its artwork
+- **The images do not exist yet.** `public/assets/projects/` is empty, so every
+  card and case study currently renders the generated schematic. The paths are
+  wired and will pick up the JPGs the moment they are added — no code change.
+- **Two things this change corrected, which a revert would reintroduce:**
+  - `.flow` carried `background: var(--bg)` at z-index 2, inherited from an
+    architecture where the hero was `position: fixed`. It is not, so the fill
+    was vestigial — and it hid any fixed backdrop for four of six sections.
+  - A `.stage-wrap` rule was added and removed; that class belongs to the
+    reference implementation and does not exist in this markup.
+- **Property ownership:** `transform` and `opacity` on `.pc` are written by
+  `universe.js` every frame. Card rise and sibling dimming therefore live in
+  JS, never CSS. Image scale is CSS because it targets the `<img>` inside the
+  card — a different element, so no writer conflict.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: **12** checks (not 13)
+  - `node tools/journey-interaction.mjs` → expected: all pass
+
 ## 2026-09-21 — Fix: timeline indicator regression + project overview visuals
 
 - Revert to commit: **`f7e3a1c`** — the Phase 13 state.
