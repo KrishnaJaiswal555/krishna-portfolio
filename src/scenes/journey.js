@@ -55,12 +55,25 @@ export async function initJourney() {
   let pinned = -1;        // set by click/Enter; survives pointer and scroll
   let hovering = -1;
 
+  /**
+   * Publish the pinned state to assistive technology.
+   *
+   * Deliberately NOT part of setActive(). This depends on `pinned`, while
+   * setActive() guards on `active` — two different pieces of state. Folding
+   * them together meant that clicking an already-active row (which is what
+   * hovering then clicking always produces) flipped `pinned` and then hit
+   * setActive's `i === active` early return, so the pin was painted but never
+   * announced. A guard may only protect the concern it is about.
+   */
+  function syncPinned() {
+    rows.forEach((r, k) => r.setAttribute('aria-pressed', String(k === pinned)));
+  }
+
   function setActive(i) {
     if (i === active || i < 0 || i >= rows.length) return;
     rows[active]?.classList.remove('is-active');
     active = i;
     rows[active]?.classList.add('is-active');
-    rows.forEach((r, k) => r.setAttribute('aria-pressed', String(k === pinned)));
   }
 
   const coarse = matchMedia('(pointer: coarse)');
@@ -70,6 +83,9 @@ export async function initJourney() {
     // scroll-following, so the control is never a one-way trap.
     row.addEventListener('click', () => {
       pinned = pinned === i ? -1 : i;
+      // syncPinned() runs here, where `pinned` actually changes — not inside
+      // setActive(), which may legitimately do nothing on this call.
+      syncPinned();
       setActive(i);
     });
     // Keyboard parity comes free from <button>, but focus should preview the
@@ -88,6 +104,7 @@ export async function initJourney() {
   });
 
   setActive(0);
+  syncPinned();
 
   // -------------------------------------------------------------------------
   // The spine. Everything below is decoration and may legitimately be absent.

@@ -59,7 +59,20 @@ testing. It had to be audited by reading the references themselves.
 - Actual: ✅ none (the dev-server URL lives only in docs)
 
 - Check: shipped payload
-- Actual: ✅ 19 files, **129.6 KB** uncompressed, before Google Fonts
+- Actual: ✅ **18 files, 134.1 KB** uncompressed, before Google Fonts
+  *(re-measured 2026-09-22)*
+
+  This originally read `19 files, 129.6 KB`. Both halves changed, for
+  different reasons, and neither was a defect:
+
+  - **19 → 18 files.** "Shipped" now excludes `tools/` as well as `docs/`,
+    because a visitor's browser never requests either. The old count included
+    `tools/check_content.mjs`, and once the test harnesses moved into `tools/`
+    the figure would have grown by their size while claiming to describe what
+    users download. The audit was also scanning its own source, and dutifully
+    reporting the word "localhost" out of its own comments.
+  - **129.6 → 134.1 KB.** The site genuinely grew, by the BUG-001 fix and the
+    per-project card art.
 
 ### Manual — NOT performed
 Deployment itself has not been done and must not be reported as done. No

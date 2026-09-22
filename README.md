@@ -26,6 +26,30 @@ node tools/check_content.mjs
 Fails loudly if a project is missing a field the renderer reads, if a metric is
 malformed, or if a link looks guessed or placeholder-shaped.
 
+## Other checks
+
+```bash
+node tools/journey-interaction.mjs   # timeline indicator state machine
+node tools/art-smoke.mjs             # per-project card art
+node tools/deploy-audit.mjs          # paths, secrets, payload
+```
+
+`journey-interaction` drives the real `initJourney()` against a DOM stub whose
+`getContext()` returns `null` — forcing the no-WebGL path — and fires genuine
+click, pointerenter and pointerleave events. It exists because it caught a
+defect that every static check had passed clean: an `aria-pressed` sync folded
+in behind an early return that guarded a different piece of state.
+
+`art-smoke` runs every project's generated card art against a stubbed 2D
+context that rejects non-finite coordinates, and reports any project whose
+motif is missing and has silently fallen back to the generic field.
+
+`deploy-audit` looks for root-relative references, which work on localhost and
+404 on a GitHub Pages project site, plus secrets and stray `localhost` URLs.
+
+None of these is a browser test. They verify state and structure; they cannot
+tell you whether anything renders.
+
 ## Adding your own assets
 
 Every asset on this site is optional. Nothing breaks when a file is absent —
@@ -80,6 +104,9 @@ src/gl/renderer.js      WebGL2 helpers and the degrade path
 src/styles/             app (tokens, header) · scenes · project
 tools/serve.py          dev server
 tools/check_content.mjs content integrity check
+tools/journey-interaction.mjs  timeline indicator state machine (headless)
+tools/art-smoke.mjs     per-project card art smoke test
+tools/deploy-audit.mjs  pre-deployment path and secrets audit
 docs/ai-collaboration/  project documentation
 ```
 
@@ -137,7 +164,10 @@ configuration.
 ### Before going live
 
 ```bash
-node tools/check_content.mjs     # expects: 12 checks passed
+node tools/check_content.mjs         # expects: 12 checks passed
+node tools/deploy-audit.mjs          # expects: AUDIT CLEAN
+node tools/journey-interaction.mjs   # expects: ALL INTERACTION CHECKS PASSED
+node tools/art-smoke.mjs             # expects: SMOKE TEST CLEAN
 ```
 
 Then confirm in the browser that the résumé button appears (or is correctly

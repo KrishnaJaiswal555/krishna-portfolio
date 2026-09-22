@@ -115,16 +115,30 @@ The indicator is a per-row `box-shadow`, not a separately positioned bar, so
 it cannot drift out of alignment and has no hardcoded coordinates. Precedence
 is **pin > hover > scroll**.
 
+The *state machine* behind these rows is covered by an automated headless test:
+
+```bash
+node tools/journey-interaction.mjs
+```
+
+It drives the real `initJourney()` with `getContext()` stubbed to `null` and
+fires genuine click / pointerenter / pointerleave events. It caught a defect
+the static checks had passed clean. Rows marked **⚙** are verified by it; the
+rest are browser-only, because no simulation can tell you whether something
+actually *renders*.
+
 | Check | Steps | Expected result | Actual |
 |---|---|---|---|
-| Click moves it | Click each of the five rows in turn | The cyan bar and tint move to the clicked row **every time**. This is the reported bug | — |
-| All five work | Test every row, including first and last | No row is dead; none is stuck | — |
-| Click again releases | Click the pinned row a second time | Pin releases; the indicator resumes following scroll | — |
-| Scroll cannot override a pin | Pin row 3, then scroll the section | Row 3 stays lit. Before the fix, the frame loop reset it every frame | — |
-| Hover previews | Hover across rows without clicking | Highlight follows the pointer; on leaving, it returns to the pinned row (or to scroll) | — |
+| Click moves it ⚙ | Click each of the five rows in turn | The cyan bar and tint move to the clicked row **every time**. This is the reported bug | ⚙ state verified; appearance browser-only |
+| All five work ⚙ | Test every row, including first and last | No row is dead; none is stuck | ⚙ all five verified |
+| Hover then click ⚙ | Hover a row, then click that same row | It pins, and reports `aria-pressed="true"`. **This exact path was broken** and static checks missed it | ⚙ verified |
+| Click again releases ⚙ | Click the pinned row a second time | Pin releases; the indicator resumes following scroll | ⚙ verified |
+| Hover previews ⚙ | Hover across rows without clicking | Highlight follows the pointer; hovering alone does not pin | ⚙ verified |
+| Pin survives pointer leave ⚙ | Pin a row, hover elsewhere, leave the rail | Indicator returns to the pinned row | ⚙ verified |
+| Works without WebGL ⚙ | Force-disable WebGL, reload | **Indicator still works.** It used to sit behind the WebGL guard and vanished entirely | ⚙ verified — the harness stubs `getContext()` to null |
+| Scroll cannot override a pin | Pin row 3, then scroll the section | Row 3 stays lit. Before the fix, the frame loop reset it every frame | — real scrolling is browser-only |
 | Keyboard | Tab onto a row, press Enter/Space | Pins it, same as a click; focus ring visible | — |
-| Announced state | Screen reader over a pinned row | Reported as a pressed toggle button (`aria-pressed="true"`) | — |
-| Works without WebGL | Force-disable WebGL, reload | **Indicator still works.** It used to be behind the WebGL guard and vanished entirely | — |
+| Announced state | Screen reader over a pinned row | Actually *spoken* as a pressed toggle button. The attribute value is automated; the announcement is not | — |
 | Alignment | Compare bar to row at several widths | Bar spans exactly the selected row's height at every viewport | — |
 | Responsive | Narrow below 620px | Rows stack; indicator still tracks the selected row | — |
 | Reveal animation | Scroll the rail into view | Rows fade/slide in. A `transition` conflict was silently killing this | — |

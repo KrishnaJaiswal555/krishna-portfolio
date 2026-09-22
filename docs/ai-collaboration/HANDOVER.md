@@ -33,8 +33,10 @@ Read at the start of every session. Keep it current, not complete.
   README instructions, and a pre-deployment audit that came back **clean** —
   no root-relative references (which would 404 on a GitHub Pages *project*
   site while working perfectly on localhost), no secrets, no `localhost` in
-  shipped files. 19 files, 129.6 KB. **Not deployed:** no remote is
-  configured and nothing has been pushed.
+  shipped files. 18 files, 134.1 KB — re-measured 2026-09-22, because the
+  "shipped" set now excludes `tools/` and the site grew with the BUG-001 fix;
+  see FEATURE-010. **Not deployed:** no remote is configured and nothing has
+  been pushed.
 - Phase 12 — Performance and accessibility (FEATURE-009): `--dimmer` raised
   from a measured ≈3.0:1 to ≈5.7:1 (it carried small secondary text and was
   below the 4.5:1 AA floor), with a **standing contrast assertion** that reads

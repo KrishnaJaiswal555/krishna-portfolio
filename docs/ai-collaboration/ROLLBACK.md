@@ -221,11 +221,14 @@ Add an entry before any large or risky change.
 
 ## 2026-09-20 — Phase 4: cinematic hero particle field
 
-- Revert to commit: **none — no repository exists.**
-- Snapshot taken before the change:
-  `C:\Users\rushv\AppData\Local\Temp\claude\C--Users-rushv\3047e710-d587-4e91-aa2f-ad626be96b42\scratchpad\phase4-snapshot\`
-  **Note:** this is a session scratchpad and is not durable. Copy it somewhere
-  permanent, or initialise git, before relying on it.
+- Revert to commit: **`d626ed5`** — *"Portfolio scaffold and cinematic hero
+  (Phases 1-4)"*, which is the Phase 4 state.
+- **Corrected 2026-09-22.** This entry was written before `git init` and read
+  *"Revert to commit: none — no repository exists"*, pointing instead at a
+  file snapshot in a session scratch directory. Both statements stopped being
+  true the moment version control was initialised, and the scratch path is now
+  gone. The snapshot is superseded by the commit above; the sha256 list below
+  is kept only as a record of what the change touched.
 - Files to restore (sha256, first 16 chars, as they were before Phase 4):
   - `src/main.js` — `263d71fcf03741ff`
   - `src/styles/scenes.css` — `1b20be0b328d98be`
