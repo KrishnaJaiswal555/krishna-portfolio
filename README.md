@@ -30,9 +30,22 @@ malformed, or if a link looks guessed or placeholder-shaped.
 
 ```bash
 node tools/journey-interaction.mjs   # timeline indicator state machine
-node tools/art-smoke.mjs             # per-project card art
+node tools/art-smoke.mjs             # per-project card art (drawing)
+node tools/art-loader.mjs            # artwork loader contract (~8s)
 node tools/deploy-audit.mjs          # paths, secrets, payload
 ```
+
+`art-loader` asserts one absolute property: **`art()` always settles**,
+whatever the image does — loads, errors, or hangs. It exists because nothing
+tested the loader, and that is where BUG-002 lived: `loading = 'lazy'` on a
+*detached* `Image` meant neither `onload` nor `onerror` ever fired, so the
+promise never settled, no artwork was appended, and the cards sat empty with
+**no console error**. The hang case is why the run takes ~8 seconds.
+
+There is also a browser diagnostic at `/tools/debug-art.html` — serve the site
+and open it. It runs the real loader against the real content, races each call
+against a timer, and reports what resolved, its `src`, and its computed
+styles. A page of `TIMEOUT` rows is the signature of that deadlock returning.
 
 `journey-interaction` drives the real `initJourney()` against a DOM stub whose
 `getContext()` returns `null` — forcing the no-WebGL path — and fires genuine

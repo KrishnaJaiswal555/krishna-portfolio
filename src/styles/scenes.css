@@ -374,6 +374,15 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
   width: 100%; height: 100%; display: block;
   object-fit: cover;
   object-position: center;
+  /* Explicit, so the order against `.pc__art::after` is deterministic rather
+     than incidental. The overlay is absolutely positioned and would paint
+     above a non-positioned sibling regardless of source order; meanwhile
+     universe.js writes a transform to every `.pc` each frame and the deck sets
+     `transform-style: preserve-3d`, both of which create stacking contexts.
+     Stating the image's position and index removes that interaction from the
+     question entirely. */
+  position: relative;
+  z-index: 0;
   /* Transforming the IMAGE is safe. universe.js owns `transform` on `.pc`
      itself, not on its contents — different element, no writer conflict.
      Kept to 1.02: enough to feel alive, not a zoom. */

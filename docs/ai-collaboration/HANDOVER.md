@@ -69,6 +69,16 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
+- **BUG-002 — card artwork never painted.** Root cause: `art()` set
+  `loading = 'lazy'` on a **detached** `Image`. Lazy loading applies to images
+  connected to a document, so the fetch could be deferred forever: neither
+  `onload` nor `onerror` fired, the promise never settled, nothing was
+  appended, and **nothing was logged** because nothing failed. The frame sat
+  empty. This also explains the "empty dark areas" reported *before* any image
+  existed — the generated schematic was never appearing either.
+  Fixed, plus a stall guard so the promise always settles, plus
+  `tools/art-loader.mjs`, the loader test that was missing.
+  **Awaiting browser confirmation.**
 - **Post-phase fix round, awaiting browser confirmation.**
   - BUG-001 — the cyan milestone indicator was stuck. A regression I
     introduced in `4f2fa6e` (Phase 6): the `.jn:hover` CSS affordance was

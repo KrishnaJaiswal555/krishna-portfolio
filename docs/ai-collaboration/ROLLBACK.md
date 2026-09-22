@@ -10,6 +10,27 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-22 — BUG-002: card artwork never painted (detached lazy image)
+
+- Revert to commit: **`83e01e1`**.
+- Files modified:
+  - `src/lib/assets.js` — removed `loading = 'lazy'` from the detached image;
+    added a stall guard so the promise always settles
+  - `src/styles/scenes.css` — explicit `position`/`z-index` on the artwork
+    image, so its order against the overlay is stated rather than incidental
+  - `tools/debug-art.html` — added; a diagnostic page, not part of the site
+- **Do not re-add `loading = 'lazy'` in `art()`.** That is the bug. Lazy
+  loading is defined for images connected to a document; the image there is
+  detached until it resolves, so the hint can defer the fetch indefinitely —
+  neither `onload` nor `onerror` fires, the promise never settles, nothing is
+  appended, and the frame stays empty **with no console error**, because
+  nothing failed. Lazy loading on the *rendered* `<img>` would be fine; it is
+  the detached-plus-lazy combination that deadlocks.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `14 checks passed`
+  - Open `/tools/debug-art.html` → expected: section 2 shows **TIMEOUT** for
+    every project, which is the signature of this bug
+
 ## 2026-09-22 — Asset integration: the six images, supplied as .jpeg
 
 - Revert to commit: **`9a165a6`**.

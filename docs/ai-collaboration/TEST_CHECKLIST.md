@@ -267,6 +267,28 @@ unverified.
 | Mobile layout | 380px | Single-column cards, artwork still correctly cropped | — |
 | Console clean | DevTools on load and after opening a case study | No errors. 404s for the six missing images are expected until supplied | — |
 
+### Card artwork rendering — BUG-002
+
+The asset layer is proven: all six images return `200 image/jpeg` with byte
+counts matching disk. **That was never the question.** The bug was downstream,
+in the loader, and HTTP success told us nothing about it. These rows are about
+whether pixels reach the screen.
+
+⚙ = covered by `node tools/art-loader.mjs`.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Loader always settles ⚙ | `node tools/art-loader.mjs` | All four cases pass, including a hung image settling at ~8s | ⚙ verified |
+| Diagnostic page | Open `/tools/debug-art.html` | Section 1 (plain `<img>` control) shows five photographs. Section 2 shows "resolved: real image" for all five — **not** TIMEOUT, **not** "generated schematic" | — |
+| Card artwork visible | Scroll to Work | Each of the five cards shows its **photograph**. This is the reported bug | — |
+| Correct image per card | Compare against the mapping | 01 product-search · 02 career-copilot · 03 retail-analytics · 04 skin-lesion-cnn · 05 upi-sentinel | — |
+| Not the schematic | Look closely at any card | If you see faint cyan line-art and "SCHEMATIC — VISUAL PENDING", the image failed — check the console for the loader's warning | — |
+| No stall warning | Console on load | No `neither loaded nor failed within 8000ms`. That message means the deadlock returned by another route | — |
+| Case-study artwork | Open all five case studies | Each shows its own photograph, larger than the card version | — |
+| Overlay not opaque | Look at a card's artwork | Darkened toward the bottom but clearly visible — the overlay is a gradient, never a solid fill | — |
+| Artwork area height | Measure a card | Artwork occupies roughly 55–60% of the card, not collapsed to 0 | — |
+| Background unaffected | Scroll the page | The fixed backdrop still renders as before — this round did not touch it | — |
+
 ### Case studies
 
 | Check | Steps | Expected result | Actual |

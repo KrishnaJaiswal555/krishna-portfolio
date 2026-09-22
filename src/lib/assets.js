@@ -226,15 +226,28 @@ export function artSources(project) {
  * resolves with a generated schematic. Never rejects — a missing screenshot
  * is an expected state, and the visual area must never end up empty.
  */
+/**
+ * How long a single candidate may hang before it is treated as failed.
+ *
+ * This is a stall guard, not a load budget: a real image that is merely slow
+ * still fires `onload` and wins the race. It exists so that a candidate which
+ * neither loads nor errors — the state a detached lazy image can reach —
+ * cannot leave the frame empty and silent forever.
+ */
+const STALL_MS = 8000;
+
 export function art(project, sources) {
   const list = (Array.isArray(sources) ? sources : [sources]).filter(Boolean);
   return new Promise((resolve) => {
     let i = 0;
+    let settled = false;
     const tryNext = () => {
       if (i >= list.length) {
         // Warn only once every candidate has failed. Warning on each attempt
         // would fire for the intermediate fallback, which is expected to miss
         // and would train the reader to ignore this message.
+        if (settled) return;
+        settled = true;
         console.warn(
           `[portfolio] no artwork loaded for "${project.id}" — tried: ${list.join(', ')}.`
           + ' Falling back to the generated schematic.',
@@ -244,11 +257,46 @@ export function art(project, sources) {
       }
       const img = new Image();
       img.decoding = 'async';
-      img.loading = 'lazy';
       img.alt = '';
-      img.onload = () => resolve(img);
-      img.onerror = () => { i += 1; tryNext(); };
-      img.src = list[i];
+
+      // `loading = 'lazy'` is deliberately NOT set here, and must not be
+      // re-added. Lazy loading is defined for images CONNECTED to a document.
+      // This image is detached — it is only appended once it resolves — so a
+      // lazy hint can defer the fetch indefinitely: neither onload nor onerror
+      // fires, the promise never settles, nothing is ever appended, and the
+      // frame sits empty showing only its background. No error is logged,
+      // because nothing failed; it simply never finished.
+      //
+      // A deadlock that produces silence is worse than one that throws, so the
+      // timeout below guarantees this promise always settles regardless.
+      // `timer` is declared before `done` so that `done` closes over a binding
+      // that is already initialised by the time anything can call it.
+      let timer = 0;
+
+      const done = (node) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        resolve(node);
+      };
+
+      const attempted = list[i];
+      timer = setTimeout(() => {
+        console.warn(
+          `[portfolio] artwork for "${project.id}" neither loaded nor failed within `
+          + `${STALL_MS}ms (${attempted}). Falling back to the generated schematic.`,
+        );
+        done(placeholder(project));
+      }, STALL_MS);
+
+      img.onload = () => done(img);
+      img.onerror = () => {
+        if (settled) return;
+        clearTimeout(timer);
+        i += 1;
+        tryNext();
+      };
+      img.src = attempted;
     };
     tryNext();
   });
