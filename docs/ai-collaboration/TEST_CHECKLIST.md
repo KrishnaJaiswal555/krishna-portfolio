@@ -289,6 +289,28 @@ whether pixels reach the screen.
 | Artwork area height | Measure a card | Artwork occupies roughly 55–60% of the card, not collapsed to 0 | — |
 | Background unaffected | Scroll the page | The fixed backdrop still renders as before — this round did not touch it | — |
 
+### Background: one layer, no grid (2026-09-22 cleanup)
+
+There is now exactly **one** decorative background: `body::before` in
+`app.css`, which is the photograph under a single dark wash. No section has
+its own background layer, and no grid gradients exist anywhere.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Background visible | Load the page | The photograph reads through the wash | — |
+| Earth visible | Look at the backdrop | Visible, not washed out to black | — |
+| Constellation from the JPEG | Look at the backdrop | The image's own network lines and glowing points show | — |
+| **No rectangular grid** | Scroll slowly through every section | **No box/grid pattern over the artwork.** This is the reported bug — two 96px grids with different origins beating against each other | — |
+| No second grid | Look at the Work section specifically | Work is no longer darker than the rest; `.universe::before` and its opaque wash are gone | — |
+| Background fixed | Scroll Hero → Contact | Stationary; it does not travel with any section or with the cards | — |
+| Consistent throughout | Scroll all six sections | The backdrop reads the same everywhere — no section-specific tinting | — |
+| Text readable | Read body copy in every section | Full contrast retained. If not, raise the wash alphas in `body::before` | — |
+| Not too dark | Compare against the JPEG itself | Detail still visible. If flat black, lower the wash alphas | — |
+| Cards unaffected | Hover and click project cards | Images, cyan glow, hover and case studies all behave exactly as before | — |
+| Indicator unaffected | Hover/click the Journey rail | Cyan indicator behaves exactly as before | — |
+| No horizontal scrollbar | 320 → 1440px | Never | — |
+| Console clean | DevTools on load | No errors | — |
+
 ### Case studies
 
 | Check | Steps | Expected result | Actual |

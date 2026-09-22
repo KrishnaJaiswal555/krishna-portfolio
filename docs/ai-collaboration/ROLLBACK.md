@@ -10,6 +10,34 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-22 — Remove the decorative grid overlay; one background only
+
+- Revert to commit: **`6bebd51`**.
+- Files modified: `src/styles/app.css`, `src/styles/scenes.css`
+- Removed:
+  - two `repeating-linear-gradient` grid layers from `body::before`
+  - two cyan radial "pools" from `body::before` — the photograph supplies its
+    own glow and constellation
+  - **`.universe::before` in its entirety**, a second full-section background
+    layer carrying its own 96px grid and an *opaque* charcoal wash at
+    `opacity: .85`
+  - the `prefers-reduced-motion` rule that existed only to serve it
+- Changed: the backdrop wash from `.88/.93` to **`.38/.52`**, so the Earth and
+  constellation in the photograph read through it.
+- **Why two grids produced boxes:** both were 96px, but one was fixed to the
+  viewport and the other anchored to its section, so their origins diverged on
+  every scroll and they beat against each other continuously. A comment in
+  app.css had asserted that equal pitch made a moiré impossible; equal pitch
+  only prevents interference between grids that *share an origin*. That
+  reasoning is kept in the comment so the idea is not reinvented.
+- **Do not re-add a section-level background.** There is one decorative
+  background on this site: `body::before`. Sections do not get their own.
+- **Tuning knob:** the wash alphas in `body::before`. Raise to push the
+  photograph back, lower to bring it forward.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `14 checks passed`
+  - Scroll the page → expected: the box/grid pattern returns over the artwork
+
 ## 2026-09-22 — BUG-002: card artwork never painted (detached lazy image)
 
 - Revert to commit: **`83e01e1`**.

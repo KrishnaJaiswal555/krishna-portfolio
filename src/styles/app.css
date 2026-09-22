@@ -77,12 +77,20 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
    intercept a pointer event or participate in any hover / active state, so
    the cyan indicator is structurally unreachable from here.
 
-   The photograph is the BOTTOM layer and sits under a near-opaque wash, so
-   the page stays essentially black whatever the image contains. If the file
-   is absent the url layer simply fails and every gradient above it still
-   paints — the backdrop degrades to the CSS-only version rather than to
-   nothing. The grid pitch matches `.universe::before` (96px) so the two
-   cannot produce a moiré where they overlap.
+   The photograph is the BOTTOM layer, under a single dark wash. The wash is
+   deliberately NOT near-opaque any more: the artwork's Earth, constellation
+   and glow are meant to read through it. If the file is absent the url layer
+   fails and the wash still paints, so the page degrades to plain dark rather
+   than to nothing.
+
+   This comment previously claimed that matching the grid pitch to
+   `.universe::before` (both 96px) meant the two "cannot produce a moiré where
+   they overlap". That was wrong, and it is worth recording why: equal pitch
+   only prevents interference between grids that share an origin. One was
+   fixed to the viewport and the other anchored to a section, so their offsets
+   diverged on every scroll and they beat against each other continuously.
+   Both grids have been removed; the reasoning is kept so the idea is not
+   reinvented.
    ========================================================================== */
 body::before {
   content: '';
@@ -92,21 +100,22 @@ body::before {
   pointer-events: none;
   background-color: var(--bg);
   background-image:
-    /* two dim pools, off-centre so the field is not symmetrical */
-    radial-gradient(ellipse 60% 45% at 16% 18%, rgba(79, 209, 224, .05), transparent 70%),
-    radial-gradient(ellipse 55% 45% at 84% 82%, rgba(79, 209, 224, .032), transparent 70%),
-    /* faint blueprint grid */
-    repeating-linear-gradient(to right,  rgba(124, 138, 152, .035) 0 1px, transparent 1px 96px),
-    repeating-linear-gradient(to bottom, rgba(124, 138, 152, .035) 0 1px, transparent 1px 96px),
-    /* The wash that keeps the page almost black regardless of what the
-       photograph contains. THIS IS THE TUNING KNOB: lower the alphas to let
-       more of the image through, raise them to push it further back. It was
-       .93/.965 while no image existed, which would now leave the photograph
-       barely perceptible. */
-    linear-gradient(rgba(5, 7, 10, .88), rgba(5, 7, 10, .93)),
+    /* THE WASH — the only tuning knob here. Raise the alphas to push the
+       photograph back, lower them to bring it forward. Two layers, that is
+       all: one dark wash over one image.
+
+       Removed deliberately, and not to be re-added:
+       - a 96px blueprint grid (two repeating-linear-gradients). A second 96px
+         grid existed on `.universe::before`; one was fixed to the viewport and
+         the other anchored to its section, so they slid out of phase while
+         scrolling and read as a moving pattern of transparent boxes.
+       - two cyan radial "pools". The photograph already carries its own
+         glow, constellation and highlights; layering synthetic ones over it
+         competed with the artwork instead of supporting it. */
+    linear-gradient(rgba(5, 7, 10, .38), rgba(5, 7, 10, .52)),
     url('../../public/assets/portfolio-background.jpeg');
-  background-repeat: no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat;
-  background-size: auto, auto, auto, auto, auto, cover;
+  background-repeat: no-repeat, no-repeat;
+  background-size: auto, cover;
   background-position: center;
 }
 

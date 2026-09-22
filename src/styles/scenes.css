@@ -283,33 +283,22 @@ html.is-reveal-ready [data-reveal]:not(.is-in) {
    only, never a pseudo-element, so this ::before keeps z-index 0 and stays
    behind every card and label.
    -------------------------------------------------------------------------- */
-.universe::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-attachment: fixed;
-  background-image:
-    /* two soft pools, off-centre so the field is not symmetrical */
-    radial-gradient(ellipse 70% 55% at 18% 22%, rgba(79, 209, 224, .055), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 82% 78%, rgba(79, 209, 224, .035), transparent 70%),
-    /* blueprint grid */
-    repeating-linear-gradient(to right,  rgba(124, 138, 152, .05) 0 1px, transparent 1px 96px),
-    repeating-linear-gradient(to bottom, rgba(124, 138, 152, .05) 0 1px, transparent 1px 96px),
-    /* charcoal wash, so the grid never sits on pure black */
-    linear-gradient(160deg, #0a0e14 0%, #06090d 55%, #05070a 100%);
-  /* Kept low so body copy and card text never lose contrast. */
-  opacity: .85;
-  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
-}
+/* `.universe::before` was removed on 2026-09-22 and must not come back.
+   It was a SECOND full-section background layer, added while no background
+   photograph existed. Once the real one arrived it did two visible kinds of
+   harm:
 
-@media (prefers-reduced-motion: reduce) {
-  /* `fixed` backgrounds repaint on scroll; for reduced-motion users pin it to
-     the section instead, which is cheaper and completely still. */
-  .universe::before { background-attachment: scroll; }
-}
+   1. It carried its own 96px blueprint grid. The site backdrop carried
+      another. One was fixed to the viewport, this one anchored to its
+      section, so the two slid out of phase on scroll and read as a moving
+      pattern of transparent boxes over the artwork.
+   2. Its charcoal wash was OPAQUE (`linear-gradient(160deg, #0a0e14 …)`) at
+      `opacity: .85`, which smothered the photograph in the Work section
+      specifically — the section where the artwork matters most.
+
+   There is one decorative background on this site: `body::before` in
+   app.css. Sections do not get their own. */
+
 
 .universe__deck {
   position: relative; z-index: 1;

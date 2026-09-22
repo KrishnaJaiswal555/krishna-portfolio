@@ -69,6 +69,15 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
+- **Background grid overlay removed (2026-09-22).** Two 96px
+  `repeating-linear-gradient` grids existed — one in `body::before`, one in
+  `.universe::before`. One was fixed to the viewport and the other anchored to
+  its section, so their origins diverged on scroll and they beat against each
+  other, reading as a moving pattern of transparent boxes over the artwork.
+  Both removed, along with `.universe::before` entirely (a second background
+  layer with an opaque wash) and the cyan pools. The wash was lightened
+  `.88/.93` → `.38/.52`. **There is one decorative background: `body::before`.
+  Sections do not get their own.** Awaiting browser confirmation.
 - **BUG-002 — card artwork never painted.** Root cause: `art()` set
   `loading = 'lazy'` on a **detached** `Image`. Lazy loading applies to images
   connected to a document, so the fetch could be deferred forever: neither
