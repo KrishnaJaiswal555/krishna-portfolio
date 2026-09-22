@@ -69,6 +69,16 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
+- **Vercel deployment fixed (2026-09-22) — awaiting Krishna's redeploy.** The
+  first real deploy failed: Vercel's framework auto-detection expected a
+  `dist/` directory, which this project does not and should not produce. Added
+  `vercel.json` with `"framework": null`, `"outputDirectory": "."` and
+  `"buildCommand": "npm run build"`. **No site file was touched** — no HTML,
+  CSS, JS, asset or content change. Verified first that no bundler is required:
+  **zero bare module specifiers**, no dependencies, no lockfile, no bundler
+  config. Dashboard settings, if any override remains: Framework Preset
+  **Other**, Build Command `npm run build`, Output Directory `.` — note a
+  dashboard override beats `vercel.json`. See FEATURE-010.
 - **Background grid overlay removed (2026-09-22).** Two 96px
   `repeating-linear-gradient` grids existed — one in `body::before`, one in
   `.universe::before`. One was fixed to the viewport and the other anchored to
@@ -203,13 +213,17 @@ Add a ROLLBACK entry before any further change.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.
-- Date: 2026-09-21
+- Date: 2026-09-22
 - AI model: Claude Opus 5 (1M context)
-- Did: Phases 1–7. Reference found unlicensed; architecture approved; scaffold,
-  hero, About lattice, Journey spine and Project Universe constellation built.
-  Caught and fixed a live CSS/JS transform race in the deck.
-- Left: A browser pass, then Phase 8 (project detail pages).
-- Watch out for: Projects 04 and 05 were described from Krishna's brief and
+- Did: Fixed the failing Vercel deploy by adding `vercel.json`
+  (`framework: null`, `outputDirectory: "."`) after confirming no bundler is
+  required — zero bare module specifiers, zero dependencies. No site file
+  changed. Full check suite green.
+- Left: Krishna's redeploy on Vercel, and the browser pass — still the whole
+  remaining risk, across all thirteen phases.
+- Watch out for: **Do not create a `dist/` directory and do not convert this to
+  Vite/React to satisfy a host** — the error text invites both and neither is
+  warranted. Projects 04 and 05 were described from Krishna's brief and
   **not** inspected — their `source: 'provided'` flag and disclaimers must
   survive any edit. All `links: {}` are deliberately empty; do not populate
   them from local git remotes or guesses. Krishna has supplied no photograph

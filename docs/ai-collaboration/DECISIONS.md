@@ -487,3 +487,62 @@ JS side can see.
   face the same question.
 
 **Status:** Active
+
+---
+
+### 2026-09-22 — Commit a `vercel.json` that disables framework detection
+
+**Decision:** Add `vercel.json` with `"framework": null`,
+`"outputDirectory": "."` and `"buildCommand": "npm run build"`. This reverses
+FEATURE-010's rejection of the same file.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** Krishna's first real deploy to Vercel failed: it
+expected a `dist/` directory. `npm run build` runs the content check and the
+deploy audit and emits no files, so `dist/` never existed and never should.
+
+**Options considered:**
+- Create a `dist/` directory — **rejected as fabrication.** It would make the
+  error disappear while making the repository lie about how it is built.
+- Convert the project to Vite so `dist/` genuinely exists — rejected. It would
+  add a bundler, a lockfile and a dependency tree to satisfy a host setting,
+  reversing the project's founding architectural decision for no technical
+  reason.
+- Change the dashboard setting only — rejected. It works, but the fix lives in
+  a web UI where it is invisible to the repository and to the next person.
+- **Commit `vercel.json`** — chosen.
+
+**Chosen approach:** `vercel.json`, verified first that no bundler is needed.
+
+**Reasoning:** The decisive evidence is that `src/` contains **zero bare module
+specifiers** — every import is `./` or `../`, which browsers resolve natively —
+alongside no dependencies, no lockfile and no bundler config. So the `dist/`
+expectation was never about this project's needs; it came from Vercel's
+framework auto-detection, which sees a `package.json` with a `build` script and
+infers a bundled app. `"framework": null` turns the inference off, which is the
+actual root cause rather than the symptom.
+
+`buildCommand` is kept pointed at the checks deliberately: it emits nothing,
+but it makes Vercel fail the deploy if content validation breaks — real value
+from a step that would otherwise be inert.
+
+**Precondition — what would make this wrong:** this holds *while the project
+has no bundler and no bare module specifiers*. If a dependency is ever added
+that must be resolved at build time, `outputDirectory: "."` becomes wrong and
+this entry must be reopened rather than worked around. Stated explicitly
+because FEATURE-010's original rejection of this very file was a well-reasoned
+conclusion whose precondition ("both hosts serve a static root with no
+configuration") was false about Vercel and went unexamined — the failure mode
+recorded as observation #0011.
+
+**Consequences / Trade-offs:**
+- Deployment configuration is now reproducible and reviewable in the repo.
+- **A dashboard override still beats `vercel.json`** — if `dist/` is set there,
+  this file will not save the deploy.
+- `docs/` and `tools/` are published, since a `.vercelignore` excluding
+  `tools/` would break `buildCommand`. Harmless, but `tools/debug-art.html` is
+  a reachable diagnostic page; flagged to Krishna rather than silently changed.
+- Netlify still needs no configuration file; this is a Vercel-specific fix.
+
+**Status:** Active

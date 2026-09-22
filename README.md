@@ -160,8 +160,38 @@ produces no output, so the published files are the repository as-is.
 
 ### Vercel
 
-Import the repository, framework preset **Other**, output directory the root.
-Build command empty, or `npm run build` as above.
+Import the repository. **The settings come from `vercel.json`** — you should
+not need to configure anything in the dashboard:
+
+```json
+{
+  "framework": null,
+  "buildCommand": "npm run build",
+  "outputDirectory": "."
+}
+```
+
+Each key is there for a reason:
+
+- **`framework: null`** stops Vercel's auto-detection. Detection is what
+  produced the failing deploy: it inferred a bundled project and looked for a
+  `dist/` directory that this project has no reason to produce.
+- **`outputDirectory: "."`** — the published site *is* the repository root.
+  `index.html` is at the root and loads `src/` and `public/` by relative path,
+  so there is nothing to assemble.
+- **`buildCommand: "npm run build"`** runs the content check and deploy audit.
+  It emits no files. It is kept because it makes Vercel **fail the deploy if
+  content validation breaks**, which is worth having from a step that would
+  otherwise do nothing.
+
+If the dashboard still shows an Output Directory of `dist`, clear the override
+there — a dashboard setting wins over `vercel.json`.
+
+There is deliberately **no `.vercelignore`**. Adding one to exclude `tools/`
+would break the build command, since the validation scripts live there.
+`docs/` and `tools/` are therefore published too; they are harmless, but if
+you would rather they were not public, exclude `docs/` only and set
+`buildCommand` to empty.
 
 Both platforms may default to `npm run build` on detecting a `package.json`,
 which is why that script exists — see "Before going live".

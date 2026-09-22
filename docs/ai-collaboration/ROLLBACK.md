@@ -10,6 +10,34 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-22 — Add vercel.json so Vercel stops looking for dist/
+
+- Revert to commit: **`f0c773e`**.
+- Files added: `vercel.json`
+- Files modified: `README.md` — the Vercel deployment section
+- **Nothing in the site changed.** No HTML, CSS, JS, asset or content file was
+  touched. This affects only how a host is told to serve the repository, so a
+  revert cannot alter what the page does — it can only make the Vercel deploy
+  fail again the same way.
+- **What the failure was:** Vercel's framework auto-detection inferred a
+  bundled project and looked for a `dist/` output directory. This project has
+  no bundler and produces no output, so the deploy failed on a directory that
+  was never going to exist. `"framework": null` is the line that stops the
+  detection; `"outputDirectory": "."` states that the published site *is* the
+  repository root.
+- **Do not "fix" a recurrence by creating a `dist/` directory**, and do not
+  convert the project to Vite or another bundler to satisfy the host. Verified
+  at the time of this change: every import in `src/` is relative, there are
+  **zero bare module specifiers**, and `package.json` declares no dependencies
+  — so nothing here requires a build.
+- **A dashboard setting overrides `vercel.json`.** If the deploy still looks
+  for `dist/` after this commit, the Output Directory override in the Vercel
+  project settings is the cause, not this file.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: `14 checks passed` (unchanged;
+    this commit does not touch anything the content check reads)
+  - Redeploy on Vercel → expected: the original failure returns
+
 ## 2026-09-22 — Remove the decorative grid overlay; one background only
 
 - Revert to commit: **`6bebd51`**.
