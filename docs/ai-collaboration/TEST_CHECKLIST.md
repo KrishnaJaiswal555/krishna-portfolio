@@ -12,7 +12,8 @@ What to run and check before any change counts as done. A change is done only wh
 
 | Check | Command | Expected output | Last run |
 |---|---|---|---|
-| Content integrity | `node tools/check_content.mjs` | **11** named checks print `ok`, then `11 checks passed`; exit 0 | ✅ 2026-09-21 — matched |
+| Content integrity | `node tools/check_content.mjs` | **14** named checks print `ok`, then `14 checks passed`; exit 0 | ✅ 2026-09-22 — matched |
+| Production build | `npm run build` | Content check then deploy audit; ends `AUDIT CLEAN`, exit 0. Produces no output — there is nothing to compile | ✅ 2026-09-22 — matched |
 | Rendered-field assertions | For every field a renderer prints, an assertion exists that it is present | A missing field must fail the check, not render `undefined` | ✅ 2026-09-21 — projects, experience, certifications and timeline all covered |
 | Element contract | After adding markup a module reads by id / dataset, grep both sides | Every id, `data-*` and hook the JS consumes exists in the markup | ✅ 2026-09-21 — matched. A mismatch here yields controls that are silently dead, with no error |
 | Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **14** modules | ✅ 2026-09-21 — matched |
@@ -222,7 +223,7 @@ actually *renders*.
 
 | Check | Steps | Expected result | Actual |
 |---|---|---|---|
-| Content check before publishing | `node tools/check_content.mjs` | `12 checks passed`, exit 0 | ✅ automated |
+| Content check before publishing | `npm run build` (or `node tools/check_content.mjs`) | `14 checks passed` then `AUDIT CLEAN`, exit 0 | ✅ automated |
 | No root-relative paths | Pre-deployment audit script | None — all references relative, so a subpath deploy resolves | ✅ automated |
 | No secrets | Pre-deployment audit script | No keys, tokens or credentials in any shipped file | ✅ automated |
 | Subpath deploy | Publish to GitHub Pages as a **project** site, load `https://<user>.github.io/<repo>/` | Styles, modules and fonts all load. This is where a root-relative path would 404 while localhost looked fine | — |

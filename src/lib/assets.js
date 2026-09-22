@@ -207,7 +207,10 @@ export function placeholder(project, w = 800, h = 500) {
  * The second entry is a same-directory fallback under the project id, so a
  * PNG can be dropped in beside the JPEGs without editing `content.js`.
  *
- * It previously pointed at `public/projects/<id>.png`. That directory was
+ * It previously pointed into the old top-level projects directory, which was
+ * (path deliberately not written out here: tools/deploy-audit.mjs inventories
+ * asset references by scanning source text, and a path-shaped string in a
+ * comment is reported as though it were a live reference.) That directory was
  * renamed to `public/assets/projects/` when the artwork arrived, which left
  * the fallback aimed at a path that no longer exists — harmless only because
  * the first candidate now always succeeds.

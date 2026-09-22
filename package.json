@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Cinematic portfolio for Krishna Jaiswal — AI, Data Science, Machine Learning",
   "scripts": {
+    "build": "node tools/check_content.mjs && node tools/deploy-audit.mjs",
     "check": "node tools/check_content.mjs",
     "test:journey": "node tools/journey-interaction.mjs",
     "test:art": "node tools/art-smoke.mjs",

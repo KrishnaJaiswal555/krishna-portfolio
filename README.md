@@ -154,12 +154,17 @@ Two things matter here:
 ### Netlify
 
 Drag the folder onto the Netlify dashboard, or connect the repository. Publish
-directory: the repository root. Build command: leave **empty**.
+directory: the repository root. Build command: either leave it **empty**, or
+use `npm run build` — that runs the content check and deploy audit and
+produces no output, so the published files are the repository as-is.
 
 ### Vercel
 
-Import the repository, framework preset **Other**. Build command empty, output
-directory the root.
+Import the repository, framework preset **Other**, output directory the root.
+Build command empty, or `npm run build` as above.
+
+Both platforms may default to `npm run build` on detecting a `package.json`,
+which is why that script exists — see "Before going live".
 
 ### Any other static host
 
@@ -177,11 +182,20 @@ configuration.
 ### Before going live
 
 ```bash
-node tools/check_content.mjs         # expects: 12 checks passed
+npm run build                        # content check + deploy audit, exits 0
+node tools/check_content.mjs         # expects: 14 checks passed
 node tools/deploy-audit.mjs          # expects: AUDIT CLEAN
 node tools/journey-interaction.mjs   # expects: ALL INTERACTION CHECKS PASSED
 node tools/art-smoke.mjs             # expects: SMOKE TEST CLEAN
+node tools/art-loader.mjs            # expects: ART LOADER CONTRACT HOLDS (~8s)
 ```
+
+There is **nothing to compile** — `npm run build` does not produce output. It
+exists because Netlify and Vercel commonly default to running `npm run build`
+when they detect a `package.json`, and a missing script can fail the deploy.
+Pointing it at the checks means the command succeeds on a healthy repo and
+**fails the deploy if content validation breaks**, which is the behaviour you
+want from a build step that has nothing to build.
 
 Then confirm in the browser that the résumé button appears (or is correctly
 absent), and that no case study shows a link you did not intend to publish.
