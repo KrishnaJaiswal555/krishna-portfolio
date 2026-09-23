@@ -104,14 +104,20 @@ body::before {
   position: fixed;
   /* Vertical SLACK, not a visual change: the layer is taller than the viewport
      so the parallax translate below can never pull an uncovered edge into
-     view. 24vh each side against a maximum travel of 20vh (desktop) or 6vh
+     view. 38vh each side against a maximum travel of 35vh (desktop) or 10vh
      (touch) — see TRAVEL_FINE / TRAVEL_COARSE in lib/backdrop.js. If either
      budget is ever raised, raise this first.
 
      Was 7vh, against a 5vh budget that turned out to be imperceptible: the
      travel is spent across the WHOLE document, so it worked out at ~11px per
-     screenful and read as no movement at all. */
-  inset: -24vh 0;
+     screenful and read as no movement at all. Then 24vh, which measured 56px
+     per screenful in a real browser and STILL read as static.
+
+     Note this also sets the framing: `background-size: cover` scales the
+     photograph to this box, so a taller layer crops slightly tighter. That is
+     the cost of the travel budget, and it is why the slack is not simply made
+     enormous. */
+  inset: -38vh 0;
   z-index: 0;
   pointer-events: none;
   background-color: var(--bg);

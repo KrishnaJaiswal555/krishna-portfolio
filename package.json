@@ -11,6 +11,7 @@
     "test:art": "node tools/art-smoke.mjs",
     "test:loader": "node tools/art-loader.mjs",
     "test:backdrop": "node tools/backdrop-motion.mjs",
+    "test:browser": "node tools/browser-verify.mjs",
     "audit:deploy": "node tools/deploy-audit.mjs",
     "serve": "python tools/serve.py 5173"
   }

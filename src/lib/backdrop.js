@@ -45,12 +45,22 @@ import { prefersReduced } from './scene.js';
 // For reference, the iOS artifact this is meant to match moves roughly 80px
 // over a ~200px scroll: about thirty times the per-pixel rate.
 //
-// So these are sized from the RATE, not the total. 0.40 gives ~45px per
-// screenful here — visible as depth, still not distracting. Both values stay
-// inside the 24vh of vertical slack app.css reserves; raise that first if
-// these ever go up, and backdrop-motion.mjs asserts the relationship.
-const TRAVEL_FINE = 0.40;   // mouse / desktop
-const TRAVEL_COARSE = 0.12; // touch — the iOS viewport artifact adds its own
+// So these are sized from the RATE, not the total.
+//
+// MEASURED IN A REAL BROWSER (tools/browser-verify.mjs), 1440x900, this page:
+//   0.10 -> 11px per screenful   invisible; the original bug
+//   0.40 -> 56px per screenful   real, but still read as "static" to the eye
+//   0.70 -> ~97px per screenful  clearly perceptible, which is the requirement
+//
+// The numbers below are the third row. They are deliberately close to the
+// iOS URL-bar artifact this is meant to match, because that artifact is the
+// reference the site is being judged against.
+//
+// Both values stay inside the 38vh of vertical slack app.css reserves; raise
+// that FIRST if these ever go up. backdrop-motion.mjs asserts the relationship
+// and browser-verify.mjs measures the rendered result.
+const TRAVEL_FINE = 0.70;   // mouse / desktop
+const TRAVEL_COARSE = 0.20; // touch — the iOS viewport artifact adds its own
 
 export function initBackdrop() {
   const root = document.documentElement;

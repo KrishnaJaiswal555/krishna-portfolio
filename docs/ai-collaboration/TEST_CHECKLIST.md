@@ -342,12 +342,37 @@ you whether the result looks right.
 
 | Check | Steps | Expected result | Actual |
 |---|---|---|---|
-| Offset changes with scroll ⚙ | `node tools/backdrop-motion.mjs` | Travels 360px between top and bottom; 0px would be the bug | ⚙ verified |
-| **Perceptible per screenful ⚙** | same | **45.6px per viewport of scrolling.** This is the assertion that was missing — the first fix travelled 89.96px in total and still read as static, because total says nothing about rate | ⚙ verified |
+| Offset changes with scroll ⚙ | `node tools/backdrop-motion.mjs` | Travels 630px between top and bottom; 0px would be the bug | ⚙ verified |
+| **Perceptible per screenful ⚙** | same | **79.9px per viewport (stub model).** This is the assertion that was missing — the first fix travelled 89.96px in total and still read as static, because total says nothing about rate | ⚙ verified |
 | Eased, not stepped ⚙ | same | One frame after a full-page jump does not land on the final value | ⚙ verified |
-| Stays inside the slack ⚙ | same | Peak 179.98px against 216px of `inset: -24vh` | ⚙ verified |
+| Stays inside the slack ⚙ | same | Peak 314.98px against 342px of `inset: -38vh` | ⚙ verified |
 | Loop stops when settled ⚙ | same | No frame queued once still; a scroll restarts it | ⚙ verified |
-| Touch budget is smaller ⚙ | same | 108px vs 360px | ⚙ verified |
+| Touch budget is smaller ⚙ | same | 189px vs 630px | ⚙ verified |
+
+### Rendered verification — real Chrome (`node tools/browser-verify.mjs`)
+
+**This is the only check in the project that can see anything.** It drives the
+installed Chrome over the DevTools Protocol against a live server, so it
+resolves the real cascade — including `--bg-y` inheriting into a
+pseudo-element, which no stub can model.
+
+🌐 = verified in a real browser, 2026-09-24, at 1440×900 and 390×844.
+
+| Check | Expected | Actual |
+|---|---|---|
+| `::before` transform resolves 🌐 | a real matrix, not `none` | 🌐 `matrix(1, 0, 0, 1, 0, 311.74)` |
+| `--bg-y` is written and inherited 🌐 | same value on `<html>` and in the computed pseudo-element | 🌐 `311.74px` both |
+| **One screenful moves the backdrop 🌐** | clearly perceptible | 🌐 **97.6px** |
+| Full-page travel 🌐 | bounded, no edge exposed | 🌐 628.3px; layer 1584px vs 900px viewport |
+| Mobile still moves 🌐 | present but smaller | 🌐 62.1px per screenful, no h-scroll at 390px |
+| Journey renders 🌐 | 7 rows, row 2 `Dec 2025` | 🌐 confirmed |
+| Reduced motion disables it 🌐 | no movement, page still readable | 🌐 confirmed, 7 rows present |
+| Screenshots compared by eye 🌐 | backdrop visibly higher after one screenful | 🌐 Earth limb, city-glow and star nodes all rise ~100px |
+
+**The harness must keep forcing `prefers-reduced-motion: no-preference`.**
+Headless Chrome defaults to `reduce`, under which `app.css` kills the transform
+with `!important`. The first run reported `transform: none` and 0.0px travel —
+a completely false diagnosis caused by the emulation default, not the page.
 | Reduced motion writes nothing ⚙ | same | Returns null, requests no frame, never sets `--bg-y` | ⚙ verified |
 | **Desktop motion visible** | Scroll the page on a desktop browser | The Earth and constellation visibly shift against the content. This is the whole report | — |
 | Subtle, not distracting | Read body copy while scrolling | The motion never pulls attention off the text | — |

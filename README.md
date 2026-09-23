@@ -34,7 +34,27 @@ node tools/art-smoke.mjs             # per-project card art (drawing)
 node tools/art-loader.mjs            # artwork loader contract (~8s)
 node tools/backdrop-motion.mjs       # backdrop scroll parallax
 node tools/deploy-audit.mjs          # paths, secrets, payload
+
+python tools/serve.py 5173 &         # then, in another shell:
+node tools/browser-verify.mjs        # REAL Chrome — the only check that sees
 ```
+
+`browser-verify` is the one harness that renders. It drives the installed
+Chrome over the DevTools Protocol — **no dependencies**, because Node 22+ ships
+a global `WebSocket` and `fetch` — loads the real page, reads computed styles
+out of the live cascade, scrolls, emulates mobile and reduced motion, and saves
+screenshots.
+
+It exists because every other check in this project stubs the DOM, and a stub
+cannot answer the question that mattered: whether `--bg-y` actually inherits
+into `body::before` and resolves to a transform matrix. That resolution *is*
+the behaviour under test.
+
+**It forces `prefers-reduced-motion: no-preference`, and must keep doing so.**
+Headless Chrome defaults to `reduce`, under which `app.css` disables the
+parallax with `!important` — so without the override the harness measures the
+accessibility path, reports a motionless backdrop, and looks exactly like the
+bug it was written to detect.
 
 `backdrop-motion` drives the real `initBackdrop()` against a stubbed DOM with a
 manual animation-frame queue, and measures the published offset at both ends of

@@ -609,10 +609,15 @@ this entry should be reopened rather than copied.
   the viewport. The test asserts the travel budget stays inside it.
 - **Amended 2026-09-24.** The travel budget is denominated in viewport height
   but spent across the whole document, so the perceived rate is
-  `TRAVEL × vh × (vh / scrollRange)` — not `TRAVEL × vh`. The original 0.40/0.12
-  values were 0.10/0.045, which delivered ~11px per screenful and read as no
-  motion at all. Any future change to these must be reasoned about as a **rate**
-  and validated against the per-screenful assertion, never against total travel.
+  `TRAVEL × vh × (vh / scrollRange)` — not `TRAVEL × vh`. The values went
+  0.10/0.045 → 0.40/0.12 → **0.70/0.20**, measuring 11px → 55.7px → **97.6px**
+  per screenful. Any future change must be reasoned about as a **rate**, and
+  validated in `browser-verify.mjs` against the rendered result — the first two
+  values both passed every stub assertion and both looked static to a person.
+- **Amended again 2026-09-24: the amplitude sets the framing.** A larger budget
+  means a larger resting offset, which sits the photograph lower at scroll 0.
+  `TRAVEL_FINE`, `inset` and the hero crop trade against each other and cannot
+  be tuned independently.
 - Under reduced motion the module returns `null` and writes nothing, so CSS's
   `0px` fallback positions the backdrop exactly as before.
 

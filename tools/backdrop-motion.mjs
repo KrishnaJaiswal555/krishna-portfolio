@@ -152,8 +152,8 @@ check('  and is centred on zero, so neither edge is favoured',
 // --- 3. stays inside the slack app.css reserves -----------------------------
 
 console.log('\n=== the translate never exposes an edge ===');
-// app.css gives body::before `inset: -24vh 0`, so |offset| must stay under 24vh.
-const SLACK = VH * 0.24;
+// app.css gives body::before `inset: -38vh 0`, so |offset| must stay under 38vh.
+const SLACK = VH * 0.38;
 let worst = 0;
 for (const frac of [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1]) {
   window.scrollY = MAX * frac;
@@ -181,7 +181,7 @@ check('one frame does not land on the final value',
   `jumped straight to ${afterOne.toFixed(2)} — that is a step, not a parallax`);
 pump();
 // Half the desktop budget, negative: TRAVEL_FINE * VH / 2.
-const settleTo = -(0.40 * VH) / 2;
+const settleTo = -(0.70 * VH) / 2;
 check('  but it does converge', Math.abs(offset() - settleTo) < 1,
   `settled at ${offset().toFixed(2)}, expected ≈ ${settleTo}`);
 

@@ -10,6 +10,36 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-24 (later) — Real browser verification; amplitude raised again
+
+- Revert to commit: **`8a43f72`**.
+- Files added: `tools/browser-verify.mjs` — real Chrome via DevTools Protocol
+- Files modified:
+  - `src/lib/backdrop.js` — `TRAVEL_FINE` 0.40 → **0.70**, `TRAVEL_COARSE`
+    0.12 → **0.20**
+  - `src/styles/app.css` — `inset: -24vh 0` → **`-38vh 0`**
+  - `tools/backdrop-motion.mjs` — slack and settle constants follow
+  - `package.json` — `test:browser` script
+- **`browser-verify.mjs` is the only check in this project that can see.**
+  Every other harness stubs the DOM. Do not delete it as redundant.
+- **It must keep `Emulation.setEmulatedMedia` forcing
+  `prefers-reduced-motion: no-preference`.** Headless Chrome defaults to
+  `reduce`, and app.css disables the parallax under that with `!important`.
+  Without the override the harness measures the accessibility path and reports
+  a static backdrop — which is indistinguishable from the bug it exists to
+  catch. This cost one full false diagnosis.
+- **Reverting the amplitude gives back a measured 55.7px per screenful**, which
+  Krishna reported as static. Nothing will fail; it will simply be too subtle
+  again.
+- **`TRAVEL_FINE`, `inset` and the framing move together.** A larger budget
+  means a larger resting offset, which sits the photograph lower in the hero.
+  Lowering the travel restores the original crop.
+- Re-check after rollback:
+  - `node tools/browser-verify.mjs` → expected: passes, but one screenful
+    measures ~55px rather than ~97px
+  - `node tools/backdrop-motion.mjs` → expected: fails the slack assertion
+    unless `inset` is reverted in the same step
+
 ## 2026-09-24 — Raise the parallax amplitude; abbreviate one Journey date
 
 - Revert to commit: **`4719704`**.

@@ -76,13 +76,21 @@ than invent another — the coherence of the set is the point.
   iOS artifact (the collapsing URL bar resizes the visual viewport, which
   re-centres a `cover` background), not a feature. `src/lib/backdrop.js` now
   publishes a damped, scroll-linked `--bg-y` that `body::before` translates by.
-  Touch gets 12% of viewport height, mice 40%, because the iOS artifact still
-  composes on top. The loop stops when settled. **Amplitude corrected
+  Touch gets 20% of viewport height, mice 70%, because the iOS artifact still
+  composes on top. The loop stops when settled. **Amplitude corrected twice on
   2026-09-24:** the first values (4.5% / 10%) were spent across the whole
-  document rather than per screen, giving ~11px of movement per screenful —
-  working, and invisible. Now 45.6px. `tools/backdrop-motion.mjs` gained the
-  per-screenful rate assertion that total-travel checks could never catch.
-  **Awaiting browser confirmation.**
+  document rather than per screen, giving ~11px per screenful — working, and
+  invisible; 40% measured 55.7px and was still reported as static. Now
+  **97.6px per screenful, measured in real Chrome.**
+- **BROWSER VERIFICATION NOW EXISTS — `tools/browser-verify.mjs`.** The claim
+  that browser automation was unavailable was **wrong for the entire project**.
+  Chrome is installed, and Node 22+ has a global `WebSocket`, so the DevTools
+  Protocol needs no dependencies at all. It loads the real page, reads computed
+  styles out of the live cascade, drives scroll, emulates mobile and reduced
+  motion, and saves screenshots. Run it before believing any visual claim.
+  **It must keep forcing `prefers-reduced-motion: no-preference`** — headless
+  Chrome defaults to `reduce`, which silently disables the parallax and cost
+  one entirely false diagnosis.
 - **Two Journey milestones added (2026-09-23) — FEATURE-012.** Skin Lesion
   Classification (`Dec 2025`, inserted chronologically at index 1) and AI
   Career Copilot. A `content.js`-only change; the rail, its styling and its
@@ -237,13 +245,16 @@ Add a ROLLBACK entry before any further change.
 Rewrite these five lines at the end of every session.
 - Date: 2026-09-24
 - AI model: Claude Opus 5 (1M context)
-- Did: Raised the parallax amplitude after Krishna reported the deployed fix
-  still showed no movement — the budget was spent per-document rather than per
-  screen, so it worked and was invisible. Added the per-screenful rate
-  assertion that would have caught it. Abbreviated the Skin Lesion date to
-  `Dec 2025`. Pushed; local and remote in sync.
-- Left: The browser pass — now the whole remaining risk, and the only thing
-  that can confirm the parallax is actually visible.
+- Did: **Built real browser verification and used it.** Discovered browser
+  automation was available all along (installed Chrome + Node's built-in
+  WebSocket = dependency-free CDP). Confirmed in real Chrome that the backdrop
+  does consume `--bg-y`, then raised the amplitude to 97.6px per screenful
+  after 55.7px was still reported as static. Abbreviated the date to
+  `Dec 2025`.
+- Left: Krishna confirming the deployed site matches — both prior complaints
+  were fixes that existed in source but were reported as missing, so **check
+  which build is being served and whether the OS has reduce-motion on** before
+  changing code again.
 - Watch out for: **`TRAVEL_*`, `inset` and the rate assertion move together** —
   the budget is denominated in viewport height but spent across the whole
   document, so reason about it as a rate, never as total travel. **If the
