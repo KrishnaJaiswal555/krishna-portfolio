@@ -106,9 +106,9 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | Bulge glides | Scroll slowly through | The bulge moves smoothly between milestones; never jumps | — |
 | Scroll drives | Keep the pointer away from the rail | The active milestone follows the viewport centre | — |
 | Hover overrides | Hover a row, then leave | Hover takes over immediately; leaving returns control to scroll | — |
-| Dates correct | Read the rail | `2021`, `December 2025`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026`, `2026` — in that order. Seven rows since FEATURE-012 | — |
+| Dates correct | Read the rail | `2021`, `December 2025`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026`, `Sep 2026` — in that order. Seven rows since FEATURE-012 | — |
 | Skin Lesion dated exactly | Read row 2 | **`December 2025`** — not another month, not a bare year | — |
-| Career Copilot present | Read the last row | `AI Career Copilot`, keyed `Generative AI`. Its `2026` is deliberately month-less and **needs replacing** once Krishna supplies the real date | — |
+| Career Copilot present | Read the last row | `AI Career Copilot`, keyed `Generative AI`, dated **`Sep 2026`** (confirmed 2026-09-23; it carried a bare `2026` before that) | — |
 | New rows match the old | Compare rows 2 and 7 against the rest | Identical type, spacing, hairline rule, hover tint and reveal stagger. They are the same component with different data | — |
 | No graduation claim | Read the rail | No milestone asserts the degree was completed | — |
 | Spine on-canvas | Narrow to 380px | The spine stays visible on the canvas; rail stacks | — |

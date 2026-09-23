@@ -158,13 +158,11 @@ export const timeline = [
     source: 'verified',
   },
   {
-    // DATE UNCONFIRMED — the only honest value available. Nothing in this
-    // repository dates this project: it carries no date in `projects` below,
-    // none on the resume-derived entries above, and none was supplied. A bare
-    // '2026' asserts the year without inventing a month, which is the least
-    // specific claim that is still true. Krishna: replace with the real month
-    // (e.g. 'Sep 2026') and move the entry if that changes its order.
-    year: '2026',
+    // Confirmed by Krishna on 2026-09-23. This carried a bare '2026' until
+    // then, because nothing in the repository dates this project and a month
+    // would have been invented. Sep 2026 follows Aug 2026, so the entry stays
+    // last and the rail remains chronological.
+    year: 'Sep 2026',
     key: 'Generative AI',
     label: 'AI Career Copilot',
     lines: [

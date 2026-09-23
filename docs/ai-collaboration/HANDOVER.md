@@ -83,9 +83,10 @@ than invent another — the coherence of the set is the point.
   Classification (`December 2025`, inserted chronologically at index 1) and AI
   Career Copilot. A `content.js`-only change; the rail, its styling and its
   animations were not touched, and new rows pick up reveal, pin, hover and the
-  spine automatically. **AI Career Copilot's date is unconfirmed** — nothing in
-  the repo dates it, so it carries a bare `'2026'` rather than an invented
-  month. Krishna needs to supply the real one.
+  spine automatically. AI Career Copilot is dated **`Sep 2026`**, confirmed by
+  Krishna on 2026-09-23; it carried a bare `'2026'` until then rather than an
+  invented month. Sep follows Aug, so it stays last and the rail is still
+  chronological.
 - **Vercel deployment fixed (2026-09-22) — awaiting Krishna's redeploy.** The
   first real deploy failed: Vercel's framework auto-detection expected a
   `dist/` directory, which this project does not and should not produce. Added
@@ -236,8 +237,8 @@ Rewrite these five lines at the end of every session.
   never a parallax system to re-enable, and that the "working" mobile motion was
   an iOS viewport artifact. Added two Journey milestones (FEATURE-012) as a
   data-only edit. New contract test; full suite green.
-- Left: **AI Career Copilot's Journey date** — a bare `'2026'` until Krishna
-  supplies the month. Then the browser pass, still the whole remaining risk.
+- Left: The browser pass — now the whole remaining risk. Every Journey date is
+  confirmed (AI Career Copilot resolved to `Sep 2026` on 2026-09-23).
 - Watch out for: **`inset: -7vh 0` on `body::before` is the slack the parallax
   translates within** — restoring `inset: 0` lets the layer's edge swing into
   view. **Do not create a `dist/` directory and do not convert this to

@@ -1,8 +1,8 @@
 # FEATURE-012: Two further Journey milestones
 
-- Status: Complete, with one date awaiting confirmation
-- Next step: **Krishna to supply the real month for AI Career Copilot.** See
-  "The one thing that is not verified" below.
+- Status: Complete
+- Next step: Browser confirmation that both rows render with the existing
+  styling and reveal stagger.
 
 ## Scope
 
@@ -39,7 +39,7 @@ Read off the existing entries rather than invented:
 
 | Field | Convention | Skin Lesion | Career Copilot |
 |---|---|---|---|
-| `year` | the milestone's REAL granularity, not a calendar year | `December 2025` | `2026` |
+| `year` | the milestone's REAL granularity, not a calendar year | `December 2025` | `Sep 2026` |
 | `key` | one or two words, the milestone's category | `Deep learning` | `Generative AI` |
 | `label` | the project or event name | as given | as given |
 | `lines[0]` | technologies, `·` separated | `DenseNet201 · MobileNetV2 · TensorFlow` | `LangGraph · FastAPI · ChromaDB` |
@@ -53,8 +53,11 @@ the 2021 B.Tech start and the Feb 2026 internship, so chronological order is
 preserved by inserting there. No existing entry changed position relative to
 any other.
 
+**AI Career Copilot — `Sep 2026`**, appended. September follows August, so it
+remains the most recent milestone and no entry moved.
+
 The rail now reads: 2021 → December 2025 → Feb–Jun 2026 → May 2026 → Jun 2026
-→ Aug 2026 → 2026.
+→ Aug 2026 → Sep 2026.
 
 ## Facts used, and where each came from
 
@@ -77,25 +80,26 @@ The Skin Lesion entry carries `source: 'provided'` to match the project's own
 flag — it was described from Krishna's brief, not read from source code — so
 the authoring guard stays consistent across the file.
 
-## The one thing that is not verified
+## The date that was held open, and why
 
-**AI Career Copilot has no date anywhere in this repository.** It carries none
-in `projects`, none was supplied with the request, and it does not appear on
-the resume-derived entries. Krishna gave an exact date for the other project
-and none for this one.
+**Resolved 2026-09-23: AI Career Copilot is `Sep 2026`**, confirmed by Krishna.
 
-`year: '2026'` is therefore the least specific claim that is still true: it
-places the project in the right year without inventing a month. The entry sits
-last, after `Aug 2026`.
+It is worth recording how it was handled before that, because the same
+situation will recur. Nothing in this repository dated the project — no date in
+`projects`, none on the resume-derived entries, and none supplied with the
+request, which specified an exact date for the *other* project and none for
+this one.
 
-This is flagged rather than quietly resolved, because guessing `Sep 2026` would
-have looked identical in the rail and would have been fabrication. A comment in
-`content.js` at that entry says the same thing, so the next person to read the
-file finds it without needing this document.
+It therefore shipped as a bare `year: '2026'`: the least specific claim that
+was still true, placing the project in the right year without inventing a
+month. Guessing `Sep 2026` would have rendered identically in the rail and
+would have happened to be correct — which is exactly why guessing was the wrong
+move. A fabricated value that turns out right is indistinguishable from a
+verified one, and nothing would have prompted anyone to check it.
 
-**To correct it:** change `year` to the real month and, if that places it
-before `Aug 2026`, move the entry up to keep the rail chronological. It is a
-one-line data edit.
+Holding it open cost one comment in `content.js`, one line in HANDOVER and one
+checklist row, and it turned an invisible invented fact into a question that
+got answered. Confirming it was then a one-line edit, plus removing the flags.
 
 ## Verification
 
