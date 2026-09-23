@@ -114,10 +114,10 @@ export const timeline = [
     source: 'verified',
   },
   {
-    // Placed here to keep the rail chronological: December 2025 falls between
-    // the 2021 start and the Feb 2026 internship. No existing entry moved
-    // relative to any other.
-    year: 'December 2025',
+    // Placed here to keep the rail chronological: Dec 2025 falls between the
+    // 2021 start and the Feb 2026 internship. No existing entry moved relative
+    // to any other. The month is abbreviated to match the rest of the column.
+    year: 'Dec 2025',
     key: 'Deep learning',
     label: 'Skin Lesion Classification using CNNs',
     lines: [

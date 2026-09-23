@@ -76,11 +76,15 @@ than invent another — the coherence of the set is the point.
   iOS artifact (the collapsing URL bar resizes the visual viewport, which
   re-centres a `cover` background), not a feature. `src/lib/backdrop.js` now
   publishes a damped, scroll-linked `--bg-y` that `body::before` translates by.
-  Touch gets 4.5% of viewport height, mice 10%, because the iOS artifact still
-  composes on top. The loop stops when settled. `tools/backdrop-motion.mjs`
-  asserts it actually moves. **Awaiting browser confirmation.**
+  Touch gets 12% of viewport height, mice 40%, because the iOS artifact still
+  composes on top. The loop stops when settled. **Amplitude corrected
+  2026-09-24:** the first values (4.5% / 10%) were spent across the whole
+  document rather than per screen, giving ~11px of movement per screenful —
+  working, and invisible. Now 45.6px. `tools/backdrop-motion.mjs` gained the
+  per-screenful rate assertion that total-travel checks could never catch.
+  **Awaiting browser confirmation.**
 - **Two Journey milestones added (2026-09-23) — FEATURE-012.** Skin Lesion
-  Classification (`December 2025`, inserted chronologically at index 1) and AI
+  Classification (`Dec 2025`, inserted chronologically at index 1) and AI
   Career Copilot. A `content.js`-only change; the rail, its styling and its
   animations were not touched, and new rows pick up reveal, pin, hover and the
   spine automatically. AI Career Copilot is dated **`Sep 2026`**, confirmed by
@@ -231,18 +235,22 @@ Add a ROLLBACK entry before any further change.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.
-- Date: 2026-09-23
+- Date: 2026-09-24
 - AI model: Claude Opus 5 (1M context)
-- Did: Added the backdrop scroll parallax (BUG-003) after establishing there was
-  never a parallax system to re-enable, and that the "working" mobile motion was
-  an iOS viewport artifact. Added two Journey milestones (FEATURE-012) as a
-  data-only edit. New contract test; full suite green.
-- Left: The browser pass — now the whole remaining risk. Every Journey date is
-  confirmed (AI Career Copilot resolved to `Sep 2026` on 2026-09-23).
-- Watch out for: **`inset: -7vh 0` on `body::before` is the slack the parallax
-  translates within** — restoring `inset: 0` lets the layer's edge swing into
-  view. **Do not create a `dist/` directory and do not convert this to
-  Vite/React to satisfy a host** — the error text invites both and neither is
+- Did: Raised the parallax amplitude after Krishna reported the deployed fix
+  still showed no movement — the budget was spent per-document rather than per
+  screen, so it worked and was invisible. Added the per-screenful rate
+  assertion that would have caught it. Abbreviated the Skin Lesion date to
+  `Dec 2025`. Pushed; local and remote in sync.
+- Left: The browser pass — now the whole remaining risk, and the only thing
+  that can confirm the parallax is actually visible.
+- Watch out for: **`TRAVEL_*`, `inset` and the rate assertion move together** —
+  the budget is denominated in viewport height but spent across the whole
+  document, so reason about it as a rate, never as total travel. **If the
+  backdrop does not move at all, check `prefers-reduced-motion` before
+  touching anything** — stillness under it is correct. **Do not create a
+  `dist/` directory and do not convert this to Vite/React to satisfy a host**
+  — the error text invites both and neither is
   warranted. Projects 04 and 05 were described from Krishna's brief and
   **not** inspected — their `source: 'provided'` flag and disclaimers must
   survive any edit. All `links: {}` are deliberately empty; do not populate

@@ -39,7 +39,7 @@ Read off the existing entries rather than invented:
 
 | Field | Convention | Skin Lesion | Career Copilot |
 |---|---|---|---|
-| `year` | the milestone's REAL granularity, not a calendar year | `December 2025` | `Sep 2026` |
+| `year` | the milestone's REAL granularity, not a calendar year, abbreviated month | `Dec 2025` | `Sep 2026` |
 | `key` | one or two words, the milestone's category | `Deep learning` | `Generative AI` |
 | `label` | the project or event name | as given | as given |
 | `lines[0]` | technologies, `·` separated | `DenseNet201 · MobileNetV2 · TensorFlow` | `LangGraph · FastAPI · ChromaDB` |
@@ -48,15 +48,19 @@ Read off the existing entries rather than invented:
 
 ## Placement
 
-**Skin Lesion — `December 2025`**, inserted at index 1. That date falls between
+**Skin Lesion — `Dec 2025`**, inserted at index 1. That date falls between
 the 2021 B.Tech start and the Feb 2026 internship, so chronological order is
 preserved by inserting there. No existing entry changed position relative to
 any other.
 
+It shipped as `December 2025` and was abbreviated on 2026-09-24 to match the
+column's established format (`Feb – Jun 2026`, `May 2026`, `Jun 2026`). The
+date itself did not change — only its rendering.
+
 **AI Career Copilot — `Sep 2026`**, appended. September follows August, so it
 remains the most recent milestone and no entry moved.
 
-The rail now reads: 2021 → December 2025 → Feb–Jun 2026 → May 2026 → Jun 2026
+The rail now reads: 2021 → Dec 2025 → Feb–Jun 2026 → May 2026 → Jun 2026
 → Aug 2026 → Sep 2026.
 
 ## Facts used, and where each came from

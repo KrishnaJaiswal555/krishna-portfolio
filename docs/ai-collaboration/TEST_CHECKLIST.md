@@ -106,8 +106,9 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | Bulge glides | Scroll slowly through | The bulge moves smoothly between milestones; never jumps | — |
 | Scroll drives | Keep the pointer away from the rail | The active milestone follows the viewport centre | — |
 | Hover overrides | Hover a row, then leave | Hover takes over immediately; leaving returns control to scroll | — |
-| Dates correct | Read the rail | `2021`, `December 2025`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026`, `Sep 2026` — in that order. Seven rows since FEATURE-012 | — |
-| Skin Lesion dated exactly | Read row 2 | **`December 2025`** — not another month, not a bare year | — |
+| Dates correct | Read the rail | `2021`, `Dec 2025`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026`, `Sep 2026` — in that order. Seven rows since FEATURE-012 | — |
+| Skin Lesion dated exactly | Read row 2 | **`Dec 2025`** — abbreviated to match `Feb – Jun 2026` / `May 2026`; it read `December 2025` until 2026-09-24 | — |
+| Month format consistent | Scan the whole year column | Every month is a three-letter abbreviation. No full month name anywhere | — |
 | Career Copilot present | Read the last row | `AI Career Copilot`, keyed `Generative AI`, dated **`Sep 2026`** (confirmed 2026-09-23; it carried a bare `2026` before that) | — |
 | New rows match the old | Compare rows 2 and 7 against the rest | Identical type, spacing, hairline rule, hover tint and reveal stagger. They are the same component with different data | — |
 | No graduation claim | Read the rail | No milestone asserts the degree was completed | — |
@@ -341,16 +342,18 @@ you whether the result looks right.
 
 | Check | Steps | Expected result | Actual |
 |---|---|---|---|
-| Offset changes with scroll ⚙ | `node tools/backdrop-motion.mjs` | Travels 89.96px between top and bottom; 0px would be the bug | ⚙ verified |
+| Offset changes with scroll ⚙ | `node tools/backdrop-motion.mjs` | Travels 360px between top and bottom; 0px would be the bug | ⚙ verified |
+| **Perceptible per screenful ⚙** | same | **45.6px per viewport of scrolling.** This is the assertion that was missing — the first fix travelled 89.96px in total and still read as static, because total says nothing about rate | ⚙ verified |
 | Eased, not stepped ⚙ | same | One frame after a full-page jump does not land on the final value | ⚙ verified |
-| Stays inside the slack ⚙ | same | Peak 44.98px against 63px of `inset: -7vh` | ⚙ verified |
+| Stays inside the slack ⚙ | same | Peak 179.98px against 216px of `inset: -24vh` | ⚙ verified |
 | Loop stops when settled ⚙ | same | No frame queued once still; a scroll restarts it | ⚙ verified |
-| Touch budget is smaller ⚙ | same | 40.5px vs 89.96px | ⚙ verified |
+| Touch budget is smaller ⚙ | same | 108px vs 360px | ⚙ verified |
 | Reduced motion writes nothing ⚙ | same | Returns null, requests no frame, never sets `--bg-y` | ⚙ verified |
 | **Desktop motion visible** | Scroll the page on a desktop browser | The Earth and constellation visibly shift against the content. This is the whole report | — |
 | Subtle, not distracting | Read body copy while scrolling | The motion never pulls attention off the text | — |
 | Smooth and continuous | Scroll slowly, then fast, then flick | No stepping, stutter or snapping at any speed | — |
-| No edge exposed | Scroll fully to the top, then fully to the bottom | No band of flat `--bg` at either edge. If one appears, `inset: -7vh` is too small for the travel budget | — |
+| No edge exposed | Scroll fully to the top, then fully to the bottom | No band of flat `--bg` at either edge. If one appears, `inset: -24vh` is too small for the travel budget | — |
+| **No motion at all?** | Console: `matchMedia('(prefers-reduced-motion: reduce)').matches` | If `true`, the stillness is **correct** — Windows Settings → Accessibility → Visual effects → Animation effects. Do not "fix" it. If `false`, check `--bg-y` changes while scrolling | — |
 | Mobile unchanged in feel | Scroll on iOS Safari | Still moves, still subtle. It must not now feel excessive — that is the risk of adding real motion on top of the viewport artifact | — |
 | Reduced motion still | Enable "reduce motion", reload, scroll | The backdrop does **not** move at all | — |
 | Sticky/scene behaviour intact | Scroll through every section | Scene transitions, canvas fades and the Journey indicator all behave exactly as before | — |

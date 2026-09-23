@@ -605,8 +605,14 @@ this entry should be reopened rather than copied.
   this entry are the record; `tools/backdrop-motion.mjs` asserts that it stops.
 - Touch devices deliberately get less than half the desktop amplitude, because
   the iOS viewport artifact is still present there and the two compose.
-- `body::before` needs `inset: -7vh 0` slack, so the layer is now taller than
+- `body::before` needs `inset: -24vh 0` slack, so the layer is now taller than
   the viewport. The test asserts the travel budget stays inside it.
+- **Amended 2026-09-24.** The travel budget is denominated in viewport height
+  but spent across the whole document, so the perceived rate is
+  `TRAVEL × vh × (vh / scrollRange)` — not `TRAVEL × vh`. The original 0.40/0.12
+  values were 0.10/0.045, which delivered ~11px per screenful and read as no
+  motion at all. Any future change to these must be reasoned about as a **rate**
+  and validated against the per-screenful assertion, never against total travel.
 - Under reduced motion the module returns `null` and writes nothing, so CSS's
   `0px` fallback positions the backdrop exactly as before.
 

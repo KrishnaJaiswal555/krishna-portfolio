@@ -10,6 +10,33 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-24 — Raise the parallax amplitude; abbreviate one Journey date
+
+- Revert to commit: **`4719704`**.
+- Files modified:
+  - `src/lib/backdrop.js` — `TRAVEL_FINE` 0.10 → **0.40**, `TRAVEL_COARSE`
+    0.045 → **0.12**
+  - `src/styles/app.css` — `inset: -7vh 0` → **`-24vh 0`**
+  - `tools/backdrop-motion.mjs` — new per-screenful rate assertion; slack and
+    settle constants updated to match
+  - `src/data/content.js` — `'December 2025'` → `'Dec 2025'` (formatting only)
+- **These two changes are unrelated** and can be reverted independently. The
+  date is `content.js` alone; the amplitude is the other three files.
+- **Reverting the amplitude restores a working-but-invisible effect**, not a
+  broken one. Nothing will throw and no check will fail — the parallax simply
+  drops to ~11px per screenful and reads as a static background again. That is
+  the whole reason this round existed.
+- **The three numbers move together.** `TRAVEL_FINE` (0.40) sets the budget,
+  `inset` (24vh) must exceed half of it, and `backdrop-motion.mjs` asserts both
+  the rate floor and the slack ceiling. Changing one alone will fail the test.
+- **Do not revert the rate assertion on its own.** `travelled > 60px` passed
+  against the defect; `perScreen > 25` is the check that catches it.
+- Re-check after rollback:
+  - `node tools/backdrop-motion.mjs` → expected: fails at
+    "moves 11.4px per screenful, which is perceptible"
+  - `node tools/check_content.mjs` → expected: **14** checks, unaffected
+  - Scroll on desktop → expected: the background appears static again
+
 ## 2026-09-23 — Backdrop scroll parallax, and two more Journey milestones
 
 - Revert to commit: **`93ca2d0`**.

@@ -43,8 +43,12 @@ never moves produces no error, no warning and no broken layout — a
 `position: fixed` layer with no transform is doing exactly what it was told.
 Only comparing the offset across two scroll positions separates "parallax
 working" from "parallax absent", which is what was wrong in BUG-003. It also
-asserts the loop **stops** when the value settles, and that the travel budget
-stays inside the `inset: -7vh` slack `app.css` reserves for it.
+asserts the loop **stops** when the value settles, that the travel budget stays
+inside the `inset: -24vh` slack `app.css` reserves for it, and — added after
+the first fix shipped working but invisible — that the movement **per
+screenful** clears a perceptibility floor. Total travel was the wrong quantity:
+the budget is spent across the whole document, so a long page dilutes it to
+nothing while every total-travel assertion still passes.
 
 `art-loader` asserts one absolute property: **`art()` always settles**,
 whatever the image does — loads, errors, or hangs. It exists because nothing

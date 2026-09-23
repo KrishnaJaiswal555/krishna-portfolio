@@ -30,11 +30,27 @@ import { clamp, damp } from './ease.js';
 import { prefersReduced } from './scene.js';
 
 // Fraction of viewport height the backdrop travels across the ENTIRE page.
-// Deliberately small: this is meant to read as depth, not as movement. Both
-// values sit well inside the 7vh of vertical slack app.css gives the layer, so
-// the translate can never pull an empty edge into view.
-const TRAVEL_FINE = 0.10;    // mouse / desktop
-const TRAVEL_COARSE = 0.045; // touch — the iOS viewport artifact adds its own
+//
+// THESE ARE SPENT OVER THE WHOLE DOCUMENT, NOT PER SCREEN, and that is the
+// trap. The budget is denominated in viewport height but paid out across the
+// full scroll range, so what a visitor actually perceives is
+//
+//     movement per screenful  =  TRAVEL * vh * (vh / scrollRange)
+//
+// On this page — ~900px viewport, ~7100px of scroll — the original 0.10
+// produced 90px of total excursion and about ELEVEN PIXELS per screenful,
+// which is invisible on a dark photograph under a 38-52% wash. The effect
+// shipped working and imperceptible, and it gets weaker as the page grows.
+//
+// For reference, the iOS artifact this is meant to match moves roughly 80px
+// over a ~200px scroll: about thirty times the per-pixel rate.
+//
+// So these are sized from the RATE, not the total. 0.40 gives ~45px per
+// screenful here — visible as depth, still not distracting. Both values stay
+// inside the 24vh of vertical slack app.css reserves; raise that first if
+// these ever go up, and backdrop-motion.mjs asserts the relationship.
+const TRAVEL_FINE = 0.40;   // mouse / desktop
+const TRAVEL_COARSE = 0.12; // touch — the iOS viewport artifact adds its own
 
 export function initBackdrop() {
   const root = document.documentElement;

@@ -104,10 +104,14 @@ body::before {
   position: fixed;
   /* Vertical SLACK, not a visual change: the layer is taller than the viewport
      so the parallax translate below can never pull an uncovered edge into
-     view. 7vh each side against a maximum travel of 5vh (desktop) or 2.25vh
+     view. 24vh each side against a maximum travel of 20vh (desktop) or 6vh
      (touch) — see TRAVEL_FINE / TRAVEL_COARSE in lib/backdrop.js. If either
-     budget is ever raised, raise this first. */
-  inset: -7vh 0;
+     budget is ever raised, raise this first.
+
+     Was 7vh, against a 5vh budget that turned out to be imperceptible: the
+     travel is spent across the WHOLE document, so it worked out at ~11px per
+     screenful and read as no movement at all. */
+  inset: -24vh 0;
   z-index: 0;
   pointer-events: none;
   background-color: var(--bg);

@@ -131,6 +131,18 @@ check('an offset is published at the bottom', Number.isFinite(yBottom));
 const travelled = Math.abs(yTop - yBottom);
 check('the backdrop MOVED between top and bottom', travelled > 60,
   `travelled only ${travelled.toFixed(2)}px — a static backdrop is the bug`);
+
+// THE ASSERTION THAT WAS MISSING, and the reason this file went green on a
+// defect. Total travel says nothing about what a visitor perceives, because
+// the budget is spent across the whole document: the original 0.10 satisfied
+// "travelled > 60px" with 90px, while delivering ~11px per screenful — which
+// is invisible. Perception tracks the RATE, so that is what gets asserted.
+const perScreen = travelled * (VH / MAX);
+check(`moves ${perScreen.toFixed(1)}px per screenful, which is perceptible`,
+  perScreen > 25,
+  'under ~25px per viewport of scrolling reads as a static background on a '
+  + 'dark image — the effect is then working and invisible, which is worse '
+  + 'than broken because nothing fails');
 check('  it moves upward as the page descends', yTop > 0 && yBottom < 0,
   `top=${yTop.toFixed(2)} bottom=${yBottom.toFixed(2)}`);
 check('  and is centred on zero, so neither edge is favoured',
@@ -140,8 +152,8 @@ check('  and is centred on zero, so neither edge is favoured',
 // --- 3. stays inside the slack app.css reserves -----------------------------
 
 console.log('\n=== the translate never exposes an edge ===');
-// app.css gives body::before `inset: -7vh 0`, so |offset| must stay under 7vh.
-const SLACK = VH * 0.07;
+// app.css gives body::before `inset: -24vh 0`, so |offset| must stay under 24vh.
+const SLACK = VH * 0.24;
 let worst = 0;
 for (const frac of [0, 0.15, 0.3, 0.5, 0.7, 0.85, 1]) {
   window.scrollY = MAX * frac;
@@ -168,8 +180,10 @@ check('one frame does not land on the final value',
   Math.abs(afterOne - settledTop) > 0.01 && afterOne > -40,
   `jumped straight to ${afterOne.toFixed(2)} — that is a step, not a parallax`);
 pump();
-check('  but it does converge', Math.abs(offset() + 45) < 1,
-  `settled at ${offset().toFixed(2)}, expected ≈ -45`);
+// Half the desktop budget, negative: TRAVEL_FINE * VH / 2.
+const settleTo = -(0.40 * VH) / 2;
+check('  but it does converge', Math.abs(offset() - settleTo) < 1,
+  `settled at ${offset().toFixed(2)}, expected ≈ ${settleTo}`);
 
 // --- 5. the loop stops when nothing is moving -------------------------------
 
