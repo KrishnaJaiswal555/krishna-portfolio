@@ -70,8 +70,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
    Fixed site backdrop
 
    One layer for the whole page, behind everything. `position: fixed` anchors
-   it to the viewport, so it is stationary while the page scrolls — it is not
-   attached to any section and cannot travel with the project cards.
+   it to the viewport — it is not attached to any section and cannot travel
+   with the project cards.
+
+   It is no longer STATIONARY, though, and the distinction matters. Being
+   fixed made it exactly immobile on desktop, while mobile Safari appeared to
+   animate it — that was never a feature, only iOS resizing the visual
+   viewport as the URL bar collapses. `lib/backdrop.js` now drives a real,
+   scroll-linked parallax through `--bg-y` below, so every platform gets the
+   same motion for the same reason.
 
    `pointer-events: none` and `z-index: 0` together guarantee it can never
    intercept a pointer event or participate in any hover / active state, so
@@ -95,7 +102,12 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 body::before {
   content: '';
   position: fixed;
-  inset: 0;
+  /* Vertical SLACK, not a visual change: the layer is taller than the viewport
+     so the parallax translate below can never pull an uncovered edge into
+     view. 7vh each side against a maximum travel of 5vh (desktop) or 2.25vh
+     (touch) — see TRAVEL_FINE / TRAVEL_COARSE in lib/backdrop.js. If either
+     budget is ever raised, raise this first. */
+  inset: -7vh 0;
   z-index: 0;
   pointer-events: none;
   background-color: var(--bg);
@@ -117,6 +129,19 @@ body::before {
   background-repeat: no-repeat, no-repeat;
   background-size: auto, cover;
   background-position: center;
+  /* Scroll parallax. `--bg-y` is written by lib/backdrop.js once per frame
+     while the page is actually moving.
+
+     The 0px fallback is the whole safety story: no JavaScript, a module that
+     throws, reduced motion, or a browser that never fires the scroll listener
+     all leave this at 0 and the backdrop simply sits still — exactly as it
+     behaved before. The failure mode is the old behaviour, never a blank or
+     mispositioned layer.
+
+     transform, not background-position: it composites on the GPU and never
+     triggers a repaint of the image, so this stays off the main thread. */
+  transform: translate3d(0, var(--bg-y, 0px), 0);
+  will-change: transform;
 }
 
 /* `.flow` already declares its own stacking in scenes.css, which loads after
@@ -278,6 +303,12 @@ html.is-menu .menu { opacity: 1; pointer-events: auto; }
     transition-duration: .001ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* The backdrop parallax is a transform, so the rules above do not touch it.
+     lib/backdrop.js already refuses to start under reduced motion and never
+     writes --bg-y; this is the belt-and-braces half, so the backdrop is
+     guaranteed still even if something else ever sets that property. */
+  body::before { transform: none !important; }
 }
 
 @media (max-width: 860px) {

@@ -546,3 +546,68 @@ recorded as observation #0011.
 - Netlify still needs no configuration file; this is a Vercel-specific fix.
 
 **Status:** Active
+
+---
+
+### 2026-09-23 — The backdrop parallax runs its own frame loop, outside lib/scene.js
+
+**Decision:** `src/lib/backdrop.js` owns a `requestAnimationFrame` loop that is
+not created by `gate()` and not gated by an `IntersectionObserver`. It is the
+only one in the project.
+
+**AI model / version:** Claude Opus 5 (1M context)
+
+**Context / Problem:** Krishna reported the site backdrop was static on desktop
+while appearing to move on mobile Safari (BUG-003). The fix needs a scroll-linked
+offset applied to `body::before`, which belongs to no section and is on screen
+for the entire page.
+
+**Options considered:**
+- **Route it through `gate()`** for consistency with every other animation.
+  Rejected: `gate()` starts and stops a scene by observing *a section's*
+  visibility. The backdrop has no section — it is fixed to the viewport and
+  visible from first paint to last. There is nothing to observe, and passing it
+  `document.body` would mean "always visible", i.e. an unconditional loop, which
+  is worse than what was built.
+- **CSS only** — `background-attachment`, or a scroll-linked animation.
+  Rejected: `background-attachment: scroll` on a fixed layer does not parallax,
+  and scroll-driven CSS animations are not available across the browser set this
+  project degrades for. The fallback would have been no motion at all, which is
+  the bug.
+- **Animate `background-position`.** Rejected: it repaints a 226 KB image on the
+  main thread every frame, and Krishna specifically asked that it not feel like a
+  background-position step.
+- **Its own bounded loop** — chosen.
+
+**Chosen approach:** A self-stopping rAF loop that damps toward a scroll-derived
+target, publishes it as `--bg-y` on `<html>`, and halts once the value settles.
+
+**Reasoning:** The architectural rule was "all `requestAnimationFrame` lives in
+`lib/scene.js`", and that rule exists to stop off-screen scenes burning battery.
+Its purpose is served here by a different mechanism — the loop stops on its own
+when nothing is moving, which is strictly stronger than visibility gating for an
+element that is *never* off screen. Following the letter of the rule would have
+produced an always-running loop and defeated its intent.
+
+Two details are load-bearing rather than stylistic. The offset is a **custom
+property** because the target is a pseudo-element and JS cannot set inline styles
+on `::before`. And `scrollHeight` is **cached and re-measured on resize**, never
+read per frame, because it forces a layout calculation — reading it during a
+scroll is precisely the forced synchronous reflow the brief ruled out.
+
+**Precondition — what would make this wrong:** this holds *while the backdrop is
+the only page-level animated element*. If a second one appears, the right move is
+a shared page-level scheduler, not a second independent loop — at which point
+this entry should be reopened rather than copied.
+
+**Consequences / Trade-offs:**
+- One rAF loop exists outside the documented home for them. ARCHITECTURE.md and
+  this entry are the record; `tools/backdrop-motion.mjs` asserts that it stops.
+- Touch devices deliberately get less than half the desktop amplitude, because
+  the iOS viewport artifact is still present there and the two compose.
+- `body::before` needs `inset: -7vh 0` slack, so the layer is now taller than
+  the viewport. The test asserts the travel budget stays inside it.
+- Under reduced motion the module returns `null` and writes nothing, so CSS's
+  `0px` fallback positions the backdrop exactly as before.
+
+**Status:** Active

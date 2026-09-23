@@ -13,10 +13,11 @@ What to run and check before any change counts as done. A change is done only wh
 | Check | Command | Expected output | Last run |
 |---|---|---|---|
 | Content integrity | `node tools/check_content.mjs` | **14** named checks print `ok`, then `14 checks passed`; exit 0 | ✅ 2026-09-22 — matched |
-| Production build | `npm run build` | Content check then deploy audit; ends `AUDIT CLEAN`, exit 0. Produces no output — there is nothing to compile | ✅ 2026-09-22 — matched |
+| Production build | `npm run build` | Content check then deploy audit; ends `AUDIT CLEAN`, exit 0. Produces no output — there is nothing to compile | ✅ 2026-09-23 — matched |
+| Backdrop parallax | `node tools/backdrop-motion.mjs` | Ends `BACKDROP PARALLAX CONTRACT HOLDS`, exit 0. Asserts the offset actually **changes** between top and bottom of the page — a static backdrop is BUG-003 | ✅ 2026-09-23 — matched |
 | Rendered-field assertions | For every field a renderer prints, an assertion exists that it is present | A missing field must fail the check, not render `undefined` | ✅ 2026-09-21 — projects, experience, certifications and timeline all covered |
 | Element contract | After adding markup a module reads by id / dataset, grep both sides | Every id, `data-*` and hook the JS consumes exists in the markup | ✅ 2026-09-21 — matched. A mismatch here yields controls that are silently dead, with no error |
-| Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **14** modules | ✅ 2026-09-21 — matched |
+| Module syntax | `node --check <each module under src/ and tools/>` | Prints nothing, exit 0, for all **15** modules under `src/` | ✅ 2026-09-23 — matched (`lib/backdrop.js` added) |
 | Property ownership | For each style property JS writes per frame, grep CSS for a rule setting or transitioning it | Exactly one writer. `transform` on `.pc` and the deck belongs to `universe.js`; CSS must not transition it | ✅ 2026-09-21 — single writer confirmed. Two writers on one animated property is a race that resolves differently per frame, and neither rule looks wrong on its own |
 | Import graph | `grep` every `^import` binding against the `^export`s of its source module | Every named import resolves | ✅ 2026-09-21 — matched. **Do not skip:** `node --check` parses each file in isolation, so a mistyped export name passes syntax and fails only in the browser |
 | Class-name contract | `grep` each class / custom property JS sets, confirm CSS matches | `is-gl`, `is-typed`, `is-reveal-ready`, `is-in`, `is-active`, `jn__*`, `--ri` present on both sides | ✅ 2026-09-21 — matched. A mismatch here produces no error at all, just content that never appears |
@@ -105,7 +106,10 @@ plus `max-height: 520px and (orientation: landscape)` and `pointer: coarse`.
 | Bulge glides | Scroll slowly through | The bulge moves smoothly between milestones; never jumps | — |
 | Scroll drives | Keep the pointer away from the rail | The active milestone follows the viewport centre | — |
 | Hover overrides | Hover a row, then leave | Hover takes over immediately; leaving returns control to scroll | — |
-| Dates correct | Read the rail | `2021`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026` — in that order, no repeated bare "2026" | — |
+| Dates correct | Read the rail | `2021`, `December 2025`, `Feb – Jun 2026`, `May 2026`, `Jun 2026`, `Aug 2026`, `2026` — in that order. Seven rows since FEATURE-012 | — |
+| Skin Lesion dated exactly | Read row 2 | **`December 2025`** — not another month, not a bare year | — |
+| Career Copilot present | Read the last row | `AI Career Copilot`, keyed `Generative AI`. Its `2026` is deliberately month-less and **needs replacing** once Krishna supplies the real date | — |
+| New rows match the old | Compare rows 2 and 7 against the rest | Identical type, spacing, hairline rule, hover tint and reveal stagger. They are the same component with different data | — |
 | No graduation claim | Read the rail | No milestone asserts the degree was completed | — |
 | Spine on-canvas | Narrow to 380px | The spine stays visible on the canvas; rail stacks | — |
 | Reduced motion | Reduce motion, reload | Spine drawn once and still; rail fully readable | — |
@@ -214,7 +218,7 @@ actually *renders*.
 | Focus ring | Tab through every control | A visible accent ring on each — links, buttons, project cards, dialog controls | — |
 | Canvas hidden from AT | Screen-reader pass | No canvas is announced; all five carry `aria-hidden="true"` | — |
 | Name announced once | Screen-reader pass over the footer | The closing wordmark is not read — the `<h1>` already announced it | — |
-| No ungated animation | Scroll past a scene, watch the CPU | Every `requestAnimationFrame` lives in `scene.js`; off-screen and hidden-tab scenes stop entirely | — |
+| No ungated animation | Scroll past a scene, watch the CPU | Every scene's `requestAnimationFrame` lives in `scene.js`; off-screen and hidden-tab scenes stop entirely. **One exception since BUG-003:** `lib/backdrop.js` runs its own loop, because the backdrop belongs to no section and is never off screen. It self-terminates when the offset settles instead — verified by `backdrop-motion.mjs` ⚙ | — |
 | Frame cost | DevTools performance profile while scrolling | Smooth scrolling; no long tasks from particle updates | — |
 | DPR cap | Load on a 3× display | Canvas buffers cap at 2× — sharp, without quadrupling fill cost | — |
 | Payload | Network tab, hard reload | ~125KB of JS+CSS+HTML, plus Google Fonts. No other third-party request | — |
@@ -259,7 +263,7 @@ unverified.
 | Case-study parallax | Move the pointer inside an open case study | The visual drifts a few px. No zoom, no jitter | — |
 | Card hover | Hover one card | It rises, cyan edge strengthens, image scales ~1.02, siblings dim slightly, text stays readable | — |
 | No hover stutter | Move on and off cards quickly | Smooth. Stutter means CSS has regained `transform` or `opacity` on `.pc` | — |
-| Backdrop is fixed | Scroll the whole page | The grid and pools stay put; they do not travel with any section | — |
+| Backdrop is fixed | Scroll the whole page | Anchored to the viewport — it does not travel *with* any section or with the cards. **Since BUG-003 it is no longer motionless:** it drifts slowly against the scroll. "Fixed" here means unattached, not still | — |
 | Backdrop stays black | Look at every section | Still reads black/white/cyan. The backdrop must not brighten the page | — |
 | Backdrop is visible past the hero | Scroll to About/Journey/Work | The backdrop shows through. `.flow` carried an opaque background that hid it | — |
 | Backdrop never touches the indicator | Hover/click the Journey rail | Cyan indicator behaves exactly as before | — |
@@ -311,6 +315,48 @@ its own background layer, and no grid gradients exist anywhere.
 | Indicator unaffected | Hover/click the Journey rail | Cyan indicator behaves exactly as before | — |
 | No horizontal scrollbar | 320 → 1440px | Never | — |
 | Console clean | DevTools on load | No errors | — |
+
+> **Superseded in one respect by BUG-003 (2026-09-23).** The "Background
+> fixed — stationary" row below was written when the backdrop genuinely never
+> moved. It now parallaxes with scroll by design. It is still *unattached* to
+> any section, which is what that row was protecting.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Background parallaxes | Scroll Hero → Contact **on desktop** | The artwork drifts slowly upward as the page descends — visible, but subtle enough that you notice depth rather than movement. This is the reported bug | — |
+| Not attached to a section | Scroll past a section boundary | The drift is continuous across the whole page. It must never jump, reset or track one section's edges | — |
+
+### Backdrop scroll parallax — BUG-003
+
+The backdrop was `position: fixed` with no transform, so desktop was exactly
+static. The motion on mobile Safari was **never this feature** — it is the
+collapsing URL bar resizing the visual viewport, which re-centres a `cover`
+background. Both platforms now get a real, scroll-linked parallax; on iOS the
+viewport artifact still composes on top, which is why touch gets less than half
+the desktop amplitude.
+
+⚙ = covered by `node tools/backdrop-motion.mjs`. It measures the published
+offset, so it proves the number is computed, bounded and eased — it cannot tell
+you whether the result looks right.
+
+| Check | Steps | Expected result | Actual |
+|---|---|---|---|
+| Offset changes with scroll ⚙ | `node tools/backdrop-motion.mjs` | Travels 89.96px between top and bottom; 0px would be the bug | ⚙ verified |
+| Eased, not stepped ⚙ | same | One frame after a full-page jump does not land on the final value | ⚙ verified |
+| Stays inside the slack ⚙ | same | Peak 44.98px against 63px of `inset: -7vh` | ⚙ verified |
+| Loop stops when settled ⚙ | same | No frame queued once still; a scroll restarts it | ⚙ verified |
+| Touch budget is smaller ⚙ | same | 40.5px vs 89.96px | ⚙ verified |
+| Reduced motion writes nothing ⚙ | same | Returns null, requests no frame, never sets `--bg-y` | ⚙ verified |
+| **Desktop motion visible** | Scroll the page on a desktop browser | The Earth and constellation visibly shift against the content. This is the whole report | — |
+| Subtle, not distracting | Read body copy while scrolling | The motion never pulls attention off the text | — |
+| Smooth and continuous | Scroll slowly, then fast, then flick | No stepping, stutter or snapping at any speed | — |
+| No edge exposed | Scroll fully to the top, then fully to the bottom | No band of flat `--bg` at either edge. If one appears, `inset: -7vh` is too small for the travel budget | — |
+| Mobile unchanged in feel | Scroll on iOS Safari | Still moves, still subtle. It must not now feel excessive — that is the risk of adding real motion on top of the viewport artifact | — |
+| Reduced motion still | Enable "reduce motion", reload, scroll | The backdrop does **not** move at all | — |
+| Sticky/scene behaviour intact | Scroll through every section | Scene transitions, canvas fades and the Journey indicator all behave exactly as before | — |
+| Pointer interactions intact | Hover cards, hover the rail, open a case study | Unchanged. The backdrop is `pointer-events: none` and cannot intercept | — |
+| No scroll jank | DevTools performance profile while scrolling | No long tasks and no layout thrash. `scrollHeight` is cached, and the offset is a composited `transform` | — |
+| Single backdrop still | Look at every section | Exactly one decorative background. No grid, no section-level layer | — |
 
 ### Case studies
 

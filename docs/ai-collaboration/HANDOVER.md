@@ -33,8 +33,8 @@ Read at the start of every session. Keep it current, not complete.
   README instructions, and a pre-deployment audit that came back **clean** —
   no root-relative references (which would 404 on a GitHub Pages *project*
   site while working perfectly on localhost), no secrets, no `localhost` in
-  shipped files. **24 files, 1412.0 KB** (code 144.2 KB + media 1267.8 KB) —
-  re-measured 2026-09-22 after the artwork arrived. The earlier figure of
+  shipped files. **25 files, 1422.8 KB** (code 155.0 KB + media 1267.8 KB) —
+  re-measured 2026-09-23 after `lib/backdrop.js` was added. The earlier figure of
   18 files / 134.1 KB counted no images at all, and understated the real
   payload roughly tenfold once they existed; `deploy-audit.mjs` now counts
   media. Re-measured also because the
@@ -69,6 +69,23 @@ wordmark, lattice, spine, constellation. A fifth scene should reuse one rather
 than invent another — the coherence of the set is the point.
 
 ## In Progress
+- **Backdrop scroll parallax added (2026-09-23) — BUG-003.** Krishna reported
+  the background static on desktop but moving on mobile Safari. **There was no
+  parallax system at all**: `body::before` is `position: fixed` with no
+  transform, so desktop was correctly immobile — and the mobile motion was an
+  iOS artifact (the collapsing URL bar resizes the visual viewport, which
+  re-centres a `cover` background), not a feature. `src/lib/backdrop.js` now
+  publishes a damped, scroll-linked `--bg-y` that `body::before` translates by.
+  Touch gets 4.5% of viewport height, mice 10%, because the iOS artifact still
+  composes on top. The loop stops when settled. `tools/backdrop-motion.mjs`
+  asserts it actually moves. **Awaiting browser confirmation.**
+- **Two Journey milestones added (2026-09-23) — FEATURE-012.** Skin Lesion
+  Classification (`December 2025`, inserted chronologically at index 1) and AI
+  Career Copilot. A `content.js`-only change; the rail, its styling and its
+  animations were not touched, and new rows pick up reveal, pin, hover and the
+  spine automatically. **AI Career Copilot's date is unconfirmed** — nothing in
+  the repo dates it, so it carries a bare `'2026'` rather than an invented
+  month. Krishna needs to supply the real one.
 - **Vercel deployment fixed (2026-09-22) — awaiting Krishna's redeploy.** The
   first real deploy failed: Vercel's framework auto-detection expected a
   `dist/` directory, which this project does not and should not produce. Added
@@ -213,15 +230,17 @@ Add a ROLLBACK entry before any further change.
 
 ## Last Session Handoff
 Rewrite these five lines at the end of every session.
-- Date: 2026-09-22
+- Date: 2026-09-23
 - AI model: Claude Opus 5 (1M context)
-- Did: Fixed the failing Vercel deploy by adding `vercel.json`
-  (`framework: null`, `outputDirectory: "."`) after confirming no bundler is
-  required — zero bare module specifiers, zero dependencies. No site file
-  changed. Full check suite green.
-- Left: Krishna's redeploy on Vercel, and the browser pass — still the whole
-  remaining risk, across all thirteen phases.
-- Watch out for: **Do not create a `dist/` directory and do not convert this to
+- Did: Added the backdrop scroll parallax (BUG-003) after establishing there was
+  never a parallax system to re-enable, and that the "working" mobile motion was
+  an iOS viewport artifact. Added two Journey milestones (FEATURE-012) as a
+  data-only edit. New contract test; full suite green.
+- Left: **AI Career Copilot's Journey date** — a bare `'2026'` until Krishna
+  supplies the month. Then the browser pass, still the whole remaining risk.
+- Watch out for: **`inset: -7vh 0` on `body::before` is the slack the parallax
+  translates within** — restoring `inset: 0` lets the layer's edge swing into
+  view. **Do not create a `dist/` directory and do not convert this to
   Vite/React to satisfy a host** — the error text invites both and neither is
   warranted. Projects 04 and 05 were described from Krishna's brief and
   **not** inspected — their `source: 'provided'` flag and disclaimers must

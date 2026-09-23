@@ -32,8 +32,19 @@ malformed, or if a link looks guessed or placeholder-shaped.
 node tools/journey-interaction.mjs   # timeline indicator state machine
 node tools/art-smoke.mjs             # per-project card art (drawing)
 node tools/art-loader.mjs            # artwork loader contract (~8s)
+node tools/backdrop-motion.mjs       # backdrop scroll parallax
 node tools/deploy-audit.mjs          # paths, secrets, payload
 ```
+
+`backdrop-motion` drives the real `initBackdrop()` against a stubbed DOM with a
+manual animation-frame queue, and measures the published offset at both ends of
+the page. It exists because the defect it guards is invisible: a backdrop that
+never moves produces no error, no warning and no broken layout — a
+`position: fixed` layer with no transform is doing exactly what it was told.
+Only comparing the offset across two scroll positions separates "parallax
+working" from "parallax absent", which is what was wrong in BUG-003. It also
+asserts the loop **stops** when the value settles, and that the travel budget
+stays inside the `inset: -7vh` slack `app.css` reserves for it.
 
 `art-loader` asserts one absolute property: **`art()` always settles**,
 whatever the image does — loads, errors, or hangs. It exists because nothing
@@ -112,6 +123,7 @@ src/data/content.js     ALL content — single source of truth
 src/lib/ease.js         easing + frame-rate independent damping
 src/lib/assets.js       optional-asset loader + generated placeholders
 src/lib/scene.js        scene lifecycle: on-screen and visibility gating
+src/lib/backdrop.js     scroll parallax for the fixed site backdrop
 src/lib/dialog.js       native <dialog> case study + #project/<id> deep links
 src/gl/renderer.js      WebGL2 helpers and the degrade path
 src/styles/             app (tokens, header) · scenes · project
@@ -218,6 +230,7 @@ node tools/deploy-audit.mjs          # expects: AUDIT CLEAN
 node tools/journey-interaction.mjs   # expects: ALL INTERACTION CHECKS PASSED
 node tools/art-smoke.mjs             # expects: SMOKE TEST CLEAN
 node tools/art-loader.mjs            # expects: ART LOADER CONTRACT HOLDS (~8s)
+node tools/backdrop-motion.mjs       # expects: BACKDROP PARALLAX CONTRACT HOLDS
 ```
 
 There is **nothing to compile** — `npm run build` does not produce output. It

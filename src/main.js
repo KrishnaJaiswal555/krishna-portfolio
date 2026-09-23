@@ -19,6 +19,7 @@ import { initJourney } from './scenes/journey.js';
 import { initUniverse } from './scenes/universe.js';
 import { initFinale } from './scenes/finale.js';
 import { reveal } from './lib/reveal.js';
+import { initBackdrop } from './lib/backdrop.js';
 
 const root = document.documentElement;
 const $ = (id) => document.getElementById(id);
@@ -371,6 +372,10 @@ function main() {
   renderSkills();
   renderContact();
   wireChrome();
+  // Page chrome rather than a scene: it owns no canvas and belongs to no
+  // section, so it is not part of the startScenes() registry. It returns null
+  // and does nothing under reduced motion.
+  initBackdrop();
   startScenes();
 
   initDialog({

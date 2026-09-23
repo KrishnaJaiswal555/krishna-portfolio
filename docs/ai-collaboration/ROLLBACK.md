@@ -10,6 +10,44 @@ Add an entry before any large or risky change.
 > **`d626ed5c157b5d3e228a02fbf1d7673302bc76fc`**
 > *"Portfolio scaffold and cinematic hero (Phases 1-4)"* — 28 files.
 
+## 2026-09-23 — Backdrop scroll parallax, and two more Journey milestones
+
+- Revert to commit: **`93ca2d0`**.
+- Files added:
+  - `src/lib/backdrop.js` — the parallax module
+  - `tools/backdrop-motion.mjs` — its headless contract test
+- Files modified:
+  - `src/styles/app.css` — `body::before` gains `inset: -7vh 0`, a
+    `translate3d(0, var(--bg-y, 0px), 0)` and `will-change`; the reduced-motion
+    block gains `body::before { transform: none !important; }`
+  - `src/main.js` — imports and calls `initBackdrop()`
+  - `src/data/content.js` — two `timeline` entries added
+  - `package.json` — `test:backdrop` script
+- **Two independent changes in one commit.** If only one needs undoing, revert
+  the files rather than the commit: the parallax is `backdrop.js` + `app.css` +
+  `main.js`, the Journey entries are `content.js` alone. They share nothing.
+- **`inset: -7vh 0` is not cosmetic.** It is the slack the translate moves
+  within. Restoring `inset: 0` while leaving the transform in place would let
+  the layer's edge swing into view at the top and bottom of the page. If
+  `TRAVEL_FINE` or `TRAVEL_COARSE` in `backdrop.js` is ever raised, raise the
+  inset first — `backdrop-motion.mjs` asserts the relationship and will fail.
+- **Do not "simplify" the custom property into an inline style.** The target is
+  a pseudo-element; JS cannot set inline styles on `::before`. The property on
+  `<html>` inheriting into it is the mechanism, not a detour.
+- **Do not make the rAF loop unconditional.** It stops when the offset settles
+  and restarts on scroll. This is the only frame loop in the project outside
+  `lib/scene.js`, and the only one not gated by an IntersectionObserver.
+- **Reverting restores the reported bug:** the backdrop becomes static on
+  desktop again. It will still appear to move on iOS Safari — that motion is a
+  viewport artifact of the collapsing URL bar and was never produced by this
+  code.
+- Re-check after rollback:
+  - `node tools/check_content.mjs` → expected: **14** checks; the timeline
+    assertion passes either way, since it is count-independent
+  - `node tools/backdrop-motion.mjs` → expected: fails at
+    "the backdrop MOVED between top and bottom", travelling 0px
+  - Scroll on desktop → expected: the background does not move at all
+
 ## 2026-09-22 — Add vercel.json so Vercel stops looking for dist/
 
 - Revert to commit: **`f0c773e`**.

@@ -128,14 +128,14 @@ done here until he reports it.
 - Actual: ✅ none (the dev-server URL lives only in docs)
 
 - Check: shipped payload
-- Actual: ✅ **24 files, 1412.0 KB** uncompressed, before Google Fonts
-  *(re-measured 2026-09-22, after the artwork was supplied)*
+- Actual: ✅ **25 files, 1422.8 KB** uncompressed, before Google Fonts
+  *(re-measured 2026-09-23, after `src/lib/backdrop.js` was added)*
 
   | | files | size |
   |---|---|---|
-  | code (html/js/css) | 18 | 144.2 KB |
+  | code (html/js/css) | 19 | 155.0 KB |
   | media (jpeg) | 6 | 1267.8 KB |
-  | **total** | **24** | **1412.0 KB** |
+  | **total** | **25** | **1422.8 KB** |
 
   **The audit previously excluded images entirely**, reporting 134.1 KB — a
   figure that described only what the *text* files weigh while claiming to

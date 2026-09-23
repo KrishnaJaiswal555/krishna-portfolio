@@ -114,6 +114,22 @@ export const timeline = [
     source: 'verified',
   },
   {
+    // Placed here to keep the rail chronological: December 2025 falls between
+    // the 2021 start and the Feb 2026 internship. No existing entry moved
+    // relative to any other.
+    year: 'December 2025',
+    key: 'Deep learning',
+    label: 'Skin Lesion Classification using CNNs',
+    lines: [
+      'DenseNet201 · MobileNetV2 · TensorFlow',
+      'HAM10000 · 85.0% with Color Constancy + CLAHE',
+    ],
+    // Matches the project's own `source` flag: described from Krishna's brief,
+    // not read from source. The 85.0% figure is the one already recorded in
+    // that project's `metrics` below — nothing new is asserted here.
+    source: 'provided',
+  },
+  {
     year: 'Feb – Jun 2026',
     key: 'Industry',
     label: 'Data Science Intern',
@@ -139,6 +155,22 @@ export const timeline = [
     key: 'Semantic search',
     label: 'AI Product Search',
     lines: ['Embeddings · FAISS', '5,295 products'],
+    source: 'verified',
+  },
+  {
+    // DATE UNCONFIRMED — the only honest value available. Nothing in this
+    // repository dates this project: it carries no date in `projects` below,
+    // none on the resume-derived entries above, and none was supplied. A bare
+    // '2026' asserts the year without inventing a month, which is the least
+    // specific claim that is still true. Krishna: replace with the real month
+    // (e.g. 'Sep 2026') and move the entry if that changes its order.
+    year: '2026',
+    key: 'Generative AI',
+    label: 'AI Career Copilot',
+    lines: [
+      'LangGraph · FastAPI · ChromaDB',
+      'AI resume & career platform · 8,971 postings',
+    ],
     source: 'verified',
   },
 ];
